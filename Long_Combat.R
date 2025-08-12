@@ -1,12 +1,16 @@
 # Here, we import all brain MRI data and run long.combat as a harmonization technique for dealing with multiple scanner sites (for three time points)
 
 # Set working directory
-setwd("/path/to/release/abcd-data-release-5.1/core/")
+setwd("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/ABCD_6.0/rawdata/phenotype")
 
 # Path output
-path_output = ("/path/to/data/folder/")
+path_output = ("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/pubertybrain")
 
 # Load longCombat libraries
+
+install.packages("remotes")
+remotes::install_github("jcbeer/longCombat")
+
 library(longCombat)
 library(tidyverse)
 library(dplyr)
@@ -23,7 +27,7 @@ library(cowplot)
 library(psych)
 
 
-scanner <- read.csv("imaging/mri_y_adm_info.csv") # import dataset
+scanner <- read_tsv("mr_y_adm__info.tsv") # import dataset
 df<-scanner[,c(1,2,6)] # remove first column
 rm(scanner)
 
@@ -31,9 +35,10 @@ names(df)[1] <- "ID"
 names(df)[2] <- "TP"
 names(df)[3] <- "batch"
 
-df$TP[df$TP=="baseline_year_1_arm_1"] <- 1
-df$TP[df$TP=="2_year_follow_up_y_arm_1"] <- 2 
-df$TP[df$TP=="4_year_follow_up_y_arm_1"] <- 3
+df$TP[df$TP=="ses-00A"] <- 1
+df$TP[df$TP=="ses-02A"] <- 2 
+df$TP[df$TP=="ses-04A"] <- 3
+df$TP[df$TP=="ses-06A"] <- 4
 
 #df$TP <- as.integer(df$TP)
 
@@ -73,41 +78,40 @@ df$batch<-gsub("TBC_UWM","32",as.character(df$batch))
 df$batch <- as.factor(df$batch)
 
 ### import brain measures
-cortical_thickness <- read.csv("/path/to/release/abcd-data-release-5.1/core/imaging/mri_y_smr_thk_dsk.csv") # import smri_thick_cdk_ variables
+GMV <- read_tsv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/ABCD_6.0/rawdata/phenotype/mr_y_smri__vol__dsk.tsv") # import mri__vol__dsk variables
 
-# clean cortical
-names(cortical_thickness)[1] <- "ID"
-names(cortical_thickness)[2] <- "TP"
-cortical_thickness$TP[cortical_thickness$TP=="baseline_year_1_arm_1"] <- 1
-cortical_thickness$TP[cortical_thickness$TP=="2_year_follow_up_y_arm_1"] <- 2 
-cortical_thickness$TP[cortical_thickness$TP=="4_year_follow_up_y_arm_1"] <- 3
-cortical_thickness <- cortical_thickness %>% 
-  filter(TP %in% c(1, 2, 3))
+# clean GMV
+names(GMV)[1] <- "ID"
+names(GMV)[2] <- "TP"
+GMV$TP[GMV$TP=="ses-00A"] <- 1
+GMV$TP[GMV$TP=="ses-02A"] <- 2 
+GMV$TP[GMV$TP=="ses-04A"] <- 3
+GMV$TP[GMV$TP=="ses-06A"] <- 4
 
+table(GMV$TP)
 
 # import MRI QC
-struc_include <- read.csv("/path/to/release/abcd-data-release-5.1/core/imaging/mri_y_qc_incl.csv")
-struc_include <- struc_include[,c(1:3,5)]
+struc_include <- read_tsv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/ABCD_6.0/rawdata/phenotype/mr_y_qc__incl.tsv")
+struc_include <- struc_include[,c(1:3)]
 names(struc_include)[1] <- "ID"
 names(struc_include)[2] <- "TP"
-struc_include$TP[struc_include$TP=="baseline_year_1_arm_1"] <- 1
-struc_include$TP[struc_include$TP=="2_year_follow_up_y_arm_1"] <- 2 
-struc_include$TP[struc_include$TP=="4_year_follow_up_y_arm_1"] <- 3
-struc_include <- struc_include %>% 
-  filter(TP %in% c(1, 2, 3))
+struc_include$TP[struc_include$TP=="ses-00A"] <- 1
+struc_include$TP[struc_include$TP=="ses-02A"] <- 2 
+struc_include$TP[struc_include$TP=="ses-04A"] <- 3
+struc_include$TP[struc_include$TP=="ses-06A"] <- 4
 
 t1.ids.pass <- struc_include %>% 
-  dplyr::select(ID,imgincl_t1w_include) %>%  
-  filter(imgincl_t1w_include >0) # t1 raw scans that passed QC
+  dplyr::select(ID,mr_y_qc__incl__smri__t1_indicator) %>%  
+  filter(mr_y_qc__incl__smri__t1_indicator >0) # t1 raw scans that passed QC
 t1.ids.pass <- t1.ids.pass$ID 
 
-# clean CT
-cortical_thickness <- cortical_thickness %>% 
+# clean GMV
+GMV <- GMV %>% 
   .[.$ID %in% t1.ids.pass,] 
 
 
 # remove hyper intensity measures not needed
-subcortical <- subcortical[,c(1:17,19:31,33:35,38:48)]
+GMV <- GMV[,c(1:17,19:31,33:35,38:48)]
 
 
 # import sex
