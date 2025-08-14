@@ -78,6 +78,9 @@ df$batch<-gsub("TBC_UWM","32",as.character(df$batch))
 df$batch <- as.factor(df$batch)
 
 ### import brain measures
+
+##cortical
+
 GMV <- read_tsv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/ABCD_6.0/rawdata/phenotype/mr_y_smri__vol__dsk.tsv") # import mri__vol__dsk variables
 
 # clean GMV
@@ -109,121 +112,120 @@ t1.ids.pass <- t1.ids.pass$ID
 GMV <- GMV %>% 
   .[.$ID %in% t1.ids.pass,] 
 
+##subcortical
 
-# remove hyper intensity measures not needed
-GMV <- GMV[,c(1:17,19:31,33:35,38:48)]
+sGMV <- read_tsv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/ABCD_6.0/rawdata/phenotype/mr_y_smri__vol__aseg.tsv") # import variables
 
+# clean sGMV
+names(sGMV)[1] <- "ID"
+names(sGMV)[2] <- "TP"
+sGMV$TP[sGMV$TP=="ses-00A"] <- 1
+sGMV$TP[sGMV$TP=="ses-02A"] <- 2 
+sGMV$TP[sGMV$TP=="ses-04A"] <- 3
+sGMV$TP[sGMV$TP=="ses-06A"] <- 4
+
+table(sGMV$TP)
+
+##merge cort and subcort
+GMV_merged <- GMV %>%
+  left_join(
+    sGMV %>% distinct(ID, TP, .keep_all = TRUE),
+    by = c("ID", "TP")
+  )
 
 # import sex
-sex <- read.csv("/path/to/release/abcd-data-release-5.1/core/gender-identity-sexual-health/gish_p_gi.csv")
-sex <- sex[,c(1,2,44)]
+sex <- read_tsv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/ABCD_6.0/rawdata/phenotype/ab_g_stc.tsv")
+sex <- sex  %>%
+  select(participant_id,ab_g_stc__cohort_sex)
 names(sex)[1] <- "ID"
-names(sex)[2] <- "TP"
-names(sex)[3] <- "sex"
-sex$TP[sex$TP=="baseline_year_1_arm_1"] <- 1
-sex$TP[sex$TP=="2_year_follow_up_y_arm_1"] <- 2 
-sex$TP[sex$TP=="4_year_follow_up_y_arm_1"] <- 3
-sex <- sex %>% 
-  filter(TP %in% c(1, 2, 3))
-
-sex <- sex %>%
-  group_by(ID) %>%                  # Group data by ID
-  mutate(sex = first(na.omit(sex))) # Fill missing sex values within each group
-
-sex <- sex[sex$sex != 3, ] # removes intersex or nonbinary
+names(sex)[2] <- "sex"
 
 # import age
-age <- read.csv("/path/to/release/abcd-data-release-5.1/core/abcd-general/abcd_y_lt.csv")
-age <- age[,c(1,2,9)]
+age <- read_tsv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/ABCD_6.0/rawdata/phenotype/ab_g_dyn.tsv")
+age <- age  %>%
+  select(participant_id,session_id,ab_g_dyn__visit_age)
 names(age)[1] <- "ID"
 names(age)[2] <- "TP"
 names(age)[3] <- "age"
-age$TP[age$TP=="baseline_year_1_arm_1"] <- 1
-age$TP[age$TP=="2_year_follow_up_y_arm_1"] <- 2 
-age$TP[age$TP=="4_year_follow_up_y_arm_1"] <- 3
+age$TP[age$TP=="ses-00A"] <- 1
+age$TP[age$TP=="ses-02A"] <- 2 
+age$TP[age$TP=="ses-04A"] <- 3
+age$TP[age$TP=="ses-06A"] <- 4
 age <- age %>% 
-  filter(TP %in% c(1, 2, 3))
-
-age <- age %>%
-  mutate(age = as.numeric(age)/12) # convert from months to years 
+  filter(TP %in% c(1, 2, 3, 4))
 
 # merge demographics
-demo <- merge(age, sex, by = c("ID","TP"))
+demo <- age %>%
+  left_join(sex, by = "ID")
 
 rm(age,sex,t1.ids.pass)
 
-
-## merge demographics with cleaned MRI data in preperation for combat
-cortical_thickness_demo <- merge(demo,cortical_thickness)
+## merge demographics with cleaned MRI data in preparation for combat
+GMVdemo <- merge(demo,GMV_merged)
 
 # Now remove NAs and make numerical
-cortical_thickness_demo <- na.omit(cortical_thickness_demo) # remove NAs
-cortical_thickness_demo[5:75] = lapply(cortical_thickness_demo[5:75], FUN = function(y){as.numeric(y)}) # change all brain variables to numeric
+
+GMVdemo <- na.omit(GMVdemo) # remove NAs
+GMVdemo[5:117] = lapply(GMVdemo[5:117], FUN = function(y){as.numeric(y)}) # change all brain variables to numeric
 
 # add batch to each dataframe
-cortical_thickness_final <- merge(cortical_thickness_demo, df, by = c("ID","TP"))
-cortical_thickness_final$batch <- as.factor(cortical_thickness_final$batch) # ensure factor before combat
+GMV_final <- merge(GMVdemo, df, by = c("ID","TP"))
+GMV_final$batch <- as.factor(GMV_final$batch) # ensure factor before combat
 
 
+#### Check and remove additional outliers before combat
 
-#### Check and remove additional outliers before combat cortical thickness
-
-# For cortical_thickness_final (column 75: smri_thick_cdk_mean)
-column_name_ct <- colnames(cortical_thickness_final)[75]
-column_data_ct <- cortical_thickness_final[[75]]
-
-# Boxplot visualization
-plot_ct <- ggplot(cortical_thickness_final, aes(x = "", y = !!sym(column_name_ct))) +
-  geom_boxplot(outlier.colour = "red", outlier.size = 2) +
-  geom_jitter(width = 0.2, alpha = 0.1, color = "forestgreen") +
-  labs(title = paste("Boxplot with Points of", column_name_ct), y = column_name_ct, x = "") +
-  theme_minimal()
-print(plot_ct)
-
-# Mean and SD
-mean_ct <- mean(column_data_ct, na.rm = TRUE)
-sd_ct <- sd(column_data_ct, na.rm = TRUE)
-
-# Outlier bounds (±5 SD)
-lower_bound_ct <- mean_ct - 5 * sd_ct
-upper_bound_ct <- mean_ct + 5 * sd_ct
-
-# Outlier count
-outliers_ct <- sum(column_data_ct < lower_bound_ct | column_data_ct > upper_bound_ct, na.rm = TRUE)
-print(paste("Column:", column_name_ct, "- Outliers beyond ±5 SD:", outliers_ct))
-
-# Replace outliers with NA
-cortical_thickness_final[[75]] <- ifelse(column_data_ct < lower_bound_ct | column_data_ct > upper_bound_ct, NA, column_data_ct)
-cortical_thickness_final <- na.omit(cortical_thickness_final)
-
-
-# For surface_area_final (column 75: smri_area_cdk_total)
-column_name_sa <- colnames(surface_area_final)[75]
-column_data_sa <- surface_area_final[[75]]
+# For GMV_final, cortical vol (column 75: mr_y_smri__vol__dsk_sum)
+column_name_gmv <- colnames(GMV_final)[75]
+column_data_gmv <- GMV_final[[75]]
 
 # Boxplot visualization
-plot_sa <- ggplot(surface_area_final, aes(x = "", y = !!sym(column_name_sa))) +
+plot_gmv <- ggplot(GMV_final, aes(x = "", y = !!sym(column_name_gmv))) +
   geom_boxplot(outlier.colour = "red", outlier.size = 2) +
   geom_jitter(width = 0.2, alpha = 0.1, color = "forestgreen") +
-  labs(title = paste("Boxplot with Points of", column_name_sa), y = column_name_sa, x = "") +
+  labs(title = paste("Boxplot with Points of", column_name_gmv), y = column_name_gmv, x = "") +
   theme_minimal()
-print(plot_sa)
+print(plot_gmv)
 
 # Mean and SD
-mean_sa <- mean(column_data_sa, na.rm = TRUE)
-sd_sa <- sd(column_data_sa, na.rm = TRUE)
+mean_gmv <- mean(column_data_gmv, na.rm = TRUE)
+sd_gmv <- sd(column_data_gmv, na.rm = TRUE)
 
 # Outlier bounds (±5 SD)
-lower_bound_sa <- mean_sa - 5 * sd_sa
-upper_bound_sa <- mean_sa + 5 * sd_sa
+lower_bound_gmv <- mean_gmv - 5 * sd_gmv
+upper_bound_gmv <- mean_gmv + 5 * sd_gmv
 
 # Outlier count
-outliers_sa <- sum(column_data_sa < lower_bound_sa | column_data_sa > upper_bound_sa, na.rm = TRUE)
-print(paste("Column:", column_name_sa, "- Outliers beyond ±5 SD:", outliers_sa))
+outliers_gmv <- sum(column_data_gmv < lower_bound_gmv | column_data_gmv > upper_bound_gmv, na.rm = TRUE)
+print(paste("Column:", column_name_gmv, "- Outliers beyond ±5 SD:", outliers_gmv))
 
-# Replace outliers with NA
-surface_area_final[[75]] <- ifelse(column_data_sa < lower_bound_sa | column_data_sa > upper_bound_sa, NA, column_data_sa)
-surface_area_final <- na.omit(surface_area_final)
+# no outliers
+
+#For GMV_final, subcortical vol (column 116: mr_y_smri__vol__aseg__whb_sum)
+column_name_sgmv <- colnames(GMV_final)[116]
+column_data_sgmv <- GMV_final[[116]]
+
+# Boxplot visualization
+plot_sgmv <- ggplot(GMV_final, aes(x = "", y = !!sym(column_name_sgmv))) +
+  geom_boxplot(outlier.colour = "red", outlier.size = 2) +
+  geom_jitter(width = 0.2, alpha = 0.1, color = "forestgreen") +
+  labs(title = paste("Boxplot with Points of", column_name_sgmv), y = column_name_sgmv, x = "") +
+  theme_minimal()
+print(plot_sgmv)
+
+# Mean and SD
+mean_sgmv <- mean(column_data_sgmv, na.rm = TRUE)
+sd_sgmv <- sd(column_data_sgmv, na.rm = TRUE)
+
+# Outlier bounds (±5 SD)
+lower_bound_sgmv <- mean_sgmv - 5 * sd_sgmv
+upper_bound_sgmv <- mean_sgmv + 5 * sd_sgmv
+
+# Outlier count
+outliers_sgmv <- sum(column_data_sgmv < lower_bound_sgmv | column_data_sgmv > upper_bound_sgmv, na.rm = TRUE)
+print(paste("Column:", column_name_sgmv, "- Outliers beyond ±5 SD:", outliers_sgmv))
+
+# no outliers
 
 
 
