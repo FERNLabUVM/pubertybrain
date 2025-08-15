@@ -227,7 +227,7 @@ print(paste("Column:", column_name_sgmv, "- Outliers beyond ±5 SD:", outliers_s
 
 # no outliers
 
-
+colnames(GMV_final)
 
 ##################################################################################################################
 ##################################################################################################################
@@ -252,83 +252,108 @@ library(longCombat)
 # longCombat() -- apply longitudinal ComBat
 
 
-brainname <- c( "smri_thick_cdk_banksstslh",  "smri_thick_cdk_cdacatelh",   "smri_thick_cdk_cdmdfrlh",    "smri_thick_cdk_cuneuslh",   
-                "smri_thick_cdk_ehinallh",    "smri_thick_cdk_fusiformlh", "smri_thick_cdk_ifpllh",      "smri_thick_cdk_iftmlh",     
-                "smri_thick_cdk_ihcatelh",    "smri_thick_cdk_locclh",    "smri_thick_cdk_lobfrlh",     "smri_thick_cdk_linguallh",  
-                "smri_thick_cdk_mobfrlh",   "smri_thick_cdk_mdtmlh",   "smri_thick_cdk_parahpallh",  "smri_thick_cdk_paracnlh",   
-                "smri_thick_cdk_parsopclh",  "smri_thick_cdk_parsobislh",  "smri_thick_cdk_parstgrislh", "smri_thick_cdk_pericclh",   
-                "smri_thick_cdk_postcnlh",  "smri_thick_cdk_ptcatelh",   "smri_thick_cdk_precnlh",     "smri_thick_cdk_pclh",       
-                "smri_thick_cdk_rracatelh",  "smri_thick_cdk_rrmdfrlh",   "smri_thick_cdk_sufrlh",      "smri_thick_cdk_supllh",     
-                "smri_thick_cdk_sutmlh",   "smri_thick_cdk_smlh",   "smri_thick_cdk_frpolelh",    "smri_thick_cdk_tmpolelh",   
-                "smri_thick_cdk_trvtmlh",   "smri_thick_cdk_insulalh" ,  "smri_thick_cdk_banksstsrh",  "smri_thick_cdk_cdacaterh",  
-                "smri_thick_cdk_cdmdfrrh",   "smri_thick_cdk_cuneusrh",   "smri_thick_cdk_ehinalrh",    "smri_thick_cdk_fusiformrh", 
-                "smri_thick_cdk_ifplrh",   "smri_thick_cdk_iftmrh",  "smri_thick_cdk_ihcaterh",    "smri_thick_cdk_loccrh",     
-                "smri_thick_cdk_lobfrrh",   "smri_thick_cdk_lingualrh",   "smri_thick_cdk_mobfrrh",     "smri_thick_cdk_mdtmrh",     
-                "smri_thick_cdk_parahpalrh",  "smri_thick_cdk_paracnrh",    "smri_thick_cdk_parsopcrh",   "smri_thick_cdk_parsobisrh", 
-                "smri_thick_cdk_parstgrisrh", "smri_thick_cdk_periccrh",    "smri_thick_cdk_postcnrh",    "smri_thick_cdk_ptcaterh",   
-                "smri_thick_cdk_precnrh",    "smri_thick_cdk_pcrh",        "smri_thick_cdk_rracaterh",   "smri_thick_cdk_rrmdfrrh",   
-                "smri_thick_cdk_sufrrh",    "smri_thick_cdk_suplrh",      "smri_thick_cdk_sutmrh",      "smri_thick_cdk_smrh",       
-                "smri_thick_cdk_frpolerh",    "smri_thick_cdk_tmpolerh",    "smri_thick_cdk_trvtmrh",     "smri_thick_cdk_insularh",   
-                "smri_thick_cdk_meanlh",    "smri_thick_cdk_meanrh",      "smri_thick_cdk_mean") # Adds all brain measures you want harmonised
+brainname <- c("mr_y_smri__vol__dsk__bstmps__lh_sum", "mr_y_smri__vol__dsk__cac__lh_sum", "mr_y_smri__vol__dsk__cmfrt__lh_sum", 
+               "mr_y_smri__vol__dsk__cn__lh_sum", "mr_y_smri__vol__dsk__er__lh_sum", "mr_y_smri__vol__dsk__ff__lh_sum", 
+               "mr_y_smri__vol__dsk__ic__lh_sum", "mr_y_smri__vol__dsk__ins__lh_sum", "mr_y_smri__vol__dsk__iprt__lh_sum", 
+               "mr_y_smri__vol__dsk__itmp__lh_sum", "mr_y_smri__vol__dsk__lg__lh_sum", "mr_y_smri__vol__dsk__lobfrt__lh_sum", 
+               "mr_y_smri__vol__dsk__locc__lh_sum", "mr_y_smri__vol__dsk__mobfrt__lh_sum", "mr_y_smri__vol__dsk__mtmp__lh_sum", 
+               "mr_y_smri__vol__dsk__pactr__lh_sum", "mr_y_smri__vol__dsk__pcc__lh_sum", "mr_y_smri__vol__dsk__pcg__lh_sum", 
+               "mr_y_smri__vol__dsk__pfrt__lh_sum", "mr_y_smri__vol__dsk__ph__lh_sum", "mr_y_smri__vol__dsk__pob__lh_sum", 
+               "mr_y_smri__vol__dsk__poctr__lh_sum", "mr_y_smri__vol__dsk__pop__lh_sum", "mr_y_smri__vol__dsk__prcn__lh_sum", 
+               "mr_y_smri__vol__dsk__prctr__lh_sum", "mr_y_smri__vol__dsk__ptg__lh_sum", "mr_y_smri__vol__dsk__ptmp__lh_sum", 
+               "mr_y_smri__vol__dsk__rac__lh_sum", "mr_y_smri__vol__dsk__rmfrt__lh_sum", "mr_y_smri__vol__dsk__sfrt__lh_sum", 
+               "mr_y_smri__vol__dsk__sm__lh_sum", "mr_y_smri__vol__dsk__sprt__lh_sum", "mr_y_smri__vol__dsk__stmp__lh_sum", 
+               "mr_y_smri__vol__dsk__ttmp__lh_sum", "mr_y_smri__vol__dsk__bstmps__rh_sum", "mr_y_smri__vol__dsk__cac__rh_sum", 
+               "mr_y_smri__vol__dsk__cmfrt__rh_sum", "mr_y_smri__vol__dsk__cn__rh_sum", "mr_y_smri__vol__dsk__er__rh_sum", 
+               "mr_y_smri__vol__dsk__ff__rh_sum", "mr_y_smri__vol__dsk__ic__rh_sum", "mr_y_smri__vol__dsk__ins__rh_sum", 
+               "mr_y_smri__vol__dsk__iprt__rh_sum", "mr_y_smri__vol__dsk__itmp__rh_sum", "mr_y_smri__vol__dsk__lg__rh_sum", 
+               "mr_y_smri__vol__dsk__lobfrt__rh_sum", "mr_y_smri__vol__dsk__locc__rh_sum", "mr_y_smri__vol__dsk__mobfrt__rh_sum", 
+               "mr_y_smri__vol__dsk__mtmp__rh_sum", "mr_y_smri__vol__dsk__pactr__rh_sum", "mr_y_smri__vol__dsk__pcc__rh_sum", 
+               "mr_y_smri__vol__dsk__pcg__rh_sum", "mr_y_smri__vol__dsk__pfrt__rh_sum", "mr_y_smri__vol__dsk__ph__rh_sum", 
+               "mr_y_smri__vol__dsk__pob__rh_sum", "mr_y_smri__vol__dsk__poctr__rh_sum", "mr_y_smri__vol__dsk__pop__rh_sum", 
+               "mr_y_smri__vol__dsk__prcn__rh_sum", "mr_y_smri__vol__dsk__prctr__rh_sum", "mr_y_smri__vol__dsk__ptg__rh_sum", 
+               "mr_y_smri__vol__dsk__ptmp__rh_sum", "mr_y_smri__vol__dsk__rac__rh_sum", "mr_y_smri__vol__dsk__rmfrt__rh_sum", 
+               "mr_y_smri__vol__dsk__sfrt__rh_sum", "mr_y_smri__vol__dsk__sm__rh_sum", "mr_y_smri__vol__dsk__sprt__rh_sum", 
+               "mr_y_smri__vol__dsk__stmp__rh_sum", "mr_y_smri__vol__dsk__ttmp__rh_sum", "mr_y_smri__vol__dsk__lh_sum", 
+               "mr_y_smri__vol__dsk__rh_sum", "mr_y_smri__vol__dsk_sum", "mr_y_smri__vol__aseg__ab__lh_sum", 
+               "mr_y_smri__vol__aseg__ag__lh_sum", "mr_y_smri__vol__aseg__cbc__lh_sum", "mr_y_smri__vol__aseg__cbwm__lh_sum", 
+               "mr_y_smri__vol__aseg__cd__lh_sum", "mr_y_smri__vol__aseg__cwm__lh_sum", "mr_y_smri__vol__aseg__hc__lh_sum", 
+               "mr_y_smri__vol__aseg__ilv__lh_sum", "mr_y_smri__vol__aseg__lv__lh_sum", "mr_y_smri__vol__aseg__pl__lh_sum", 
+               "mr_y_smri__vol__aseg__pt__lh_sum", "mr_y_smri__vol__aseg__th__lh_sum", "mr_y_smri__vol__aseg__vdc__lh_sum", 
+               "mr_y_smri__vol__aseg__ab__rh_sum", "mr_y_smri__vol__aseg__ag__rh_sum", "mr_y_smri__vol__aseg__cbc__rh_sum", 
+               "mr_y_smri__vol__aseg__cbwm__rh_sum", "mr_y_smri__vol__aseg__cd__rh_sum", "mr_y_smri__vol__aseg__cwm__rh_sum", 
+               "mr_y_smri__vol__aseg__hc__rh_sum", "mr_y_smri__vol__aseg__ilv__rh_sum", "mr_y_smri__vol__aseg__lv__rh_sum", 
+               "mr_y_smri__vol__aseg__pl__rh_sum", "mr_y_smri__vol__aseg__pt__rh_sum", "mr_y_smri__vol__aseg__th__rh_sum", 
+               "mr_y_smri__vol__aseg__vdc__rh_sum", "mr_y_smri__vol__aseg__3rdv_sum", "mr_y_smri__vol__aseg__4thv_sum", 
+               "mr_y_smri__vol__aseg__avs_sum", "mr_y_smri__vol__aseg__bs_sum", "mr_y_smri__vol__aseg__cca_sum", 
+               "mr_y_smri__vol__aseg__ccam_sum", "mr_y_smri__vol__aseg__ccc_sum", "mr_y_smri__vol__aseg__ccp_sum", 
+               "mr_y_smri__vol__aseg__ccpm_sum", "mr_y_smri__vol__aseg__csf_sum", "mr_y_smri__vol__aseg__icv_sum", 
+               "mr_y_smri__vol__aseg__lvs_sum", "mr_y_smri__vol__aseg__scgv_sum", "mr_y_smri__vol__aseg__stv_sum", 
+               "mr_y_smri__vol__aseg__whb_sum", "mr_y_smri__vol__aseg__wmh_sum") # Adds all brain measures you want harmonised
+
 model ='age + sex + TP' # adds the formula that will be used below
 random ='(1|ID)' # random effects since its longitudinal data
 
 
 #################################
-# Model: Cortical thickness
+# Model: GMV
 #################################
 
 #################################
 # longCombat() -- apply longitudinal ComBat
 #################################
-CT_combat <- longCombat(idvar='ID',
+
+#one observation has batch "Orchestra SDK", longCombat needs at least 2 observations per batch to 
+#harmonize variance across batch. Remove this row.
+
+GMV_final <- GMV_final %>%
+  filter(batch != "Orchestra SDK")
+
+gmv_combat <- longCombat(idvar='ID',
                         timevar='TP',
                         batchvar='batch', # should be a factor
                         features=brainname,
                         formula='age + sex + TP',
                         ranef=random,
-                        data=cortical_thickness_final)
+                        data=GMV_final)
 
 par(mfrow=c(1,2))
-hist(CT_combat$gammahat)
-hist(CT_combat$gammastarhat)
+hist(gmv_combat$gammahat)
+hist(gmv_combat$gammastarhat)
 
-hist(CT_combat$delta2hat)
-hist(CT_combat$delta2starhat)
+hist(gmv_combat$delta2hat)
+hist(gmv_combat$delta2starhat)
 
 # get the harmonized data
-CT_harmonized <- CT_combat$data_combat
+gmv_harmonized <- gmv_combat$data_combat
 # save combat feature names
-featurenames.combat <- names(CT_harmonized)[4:74]
+featurenames.combat <- names(gmv_harmonized)[4:116]
 
 # merge with original dataframe
-CT_final <- merge(cortical_thickness_final, CT_harmonized[,c(1,2,4:74)], by=c('ID','TP'))
 
-write.csv(CT_final, paste(path_output, 'CT_combat_harmonised.csv', sep=""), row.names = FALSE)
+GMV_final_harmonized <- merge(GMV_final, gmv_harmonized[,c(1,2,4:116)], by=c('ID','TP'))
 
-
-rm('CT_harmonized')
-rm('CT_combat')
+write.csv(GMV_final_harmonized, paste(path_output, 'GMV_combat_harmonized.csv', sep=""), row.names = FALSE)
 
 
-# check CT boxplot before combat
+# check boxplot before combat
 batchBoxplot(idvar='ID',
              batchvar='batch', 
-             feature='smri_thick_cdk_meanlh',
+             feature='mr_y_smri__vol__dsk_sum',
              formula='age + sex + TP',
              ranef='(1|ID)',
-             data=CT_final,
+             data=GMV_final_harmonized,
              colors=1:31,
              orderby='var',
-             title='Mean CT before ComBat')
+             title='cortical GMV before ComBat')
 
-# check CT boxplot after combat
+# check boxplot after combat
 batchBoxplot(idvar='ID', 
              batchvar='batch', 
-             feature='smri_thick_cdk_meanlh.combat', 
+             feature='mr_y_smri__vol__dsk_sum.combat', 
              formula='age + sex + TP',
              ranef='(1|ID)',
-             data=CT_final,
+             data=GMV_final_harmonized,
              colors=1:31,
              orderby='var',
-             title='Mean CT after combat')
+             title='cortical GMV after combat')
