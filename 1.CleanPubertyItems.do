@@ -223,27 +223,27 @@ egen pfGNDLm=rowmean(ppdsf4 ppdsf5) if male == 0
 egen pmGNDLm=rowmean(ppdsm4 ppdsm5) if male == 1
 
 ***save out all parent puberty estimates***
-save "parentpuberty_forgrowthcurves.dta", replace
+save "parentpuberty_long250818.dta", replace
 
 ***save out all parent puberty estimates for girls***
 clear 
-use "parentpuberty_forgrowthcurves.dta"
+use "parentpuberty_long250818.dta"
 
 drop if male == 1
 drop ppdsm5 ppdsm4 pmPDSm pmADRNDLm pmGNDLm
 sort ID year
 
-save "parentpubertygirls_forgrowthcurves.dta", replace
+save "parentpubertygirls_long250818.dta", replace
 
 ***save out all parent puberty estimates for girls***
 clear 
-use "parentpuberty_forgrowthcurves.dta"
+use "parentpuberty_long250818.dta"
 
 drop if male == 0
 drop ppdsf4 ppdsf5 pfPDSm pfADRNDLm pfGNDLm
 sort ID year
 
-save "parentpubertyboys_forgrowthcurves.dta", replace
+save "parentpubertyboys_long250818.dta", replace
 
 *
 * Clean youth data below
@@ -355,24 +355,24 @@ egen yfGNDLm=rowmean(ypdsf4 ypdsf5) if male == 0
 egen ymGNDLm=rowmean(ypdsm4 ypdsm5) if male == 1
 
 ***save out all youth puberty estimates***
-save "youthpuberty_forgrowthcurves.dta", replace
+save "youthpuberty_long250818.dta", replace
 
 ***save out all youth puberty estimates for girls***
 clear 
-use "youthpuberty_forgrowthcurves.dta"
+use "youthpuberty_long250818.dta"
 
 drop if male == 1
 drop ypdsm5 ypdsm4 ymPDSm ymADRNDLm ymGNDLm
 sort ID year
 
-save "youthpubertygirls_forgrowthcurves.dta", replace
+save "youthpubertygirls_long250818.dta", replace
 
 ***save out all youth puberty estimates for girls***
 clear 
-use "youthpuberty_forgrowthcurves.dta"
+use "youthpuberty_long250818.dta"
 
 drop if male == 0
 drop ypdsf5 ypdsf4 yfPDSm yfADRNDLm yfGNDLm
 sort ID year
 
-save "youthpubertyboys_forgrowthcurves.dta", replace
+save "youthpubertyboys_long250818.dta", replace
