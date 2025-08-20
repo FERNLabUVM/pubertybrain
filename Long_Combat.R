@@ -1,4 +1,4 @@
-# Here, we import all brain MRI data and run long.combat as a harmonization technique for dealing with multiple scanner sites (for three time points)
+# Here, we import all brain MRI data and run long.combat as a harmonization technique for dealing with multiple scanner sites (for four time points)
 
 # Set working directory
 setwd("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/ABCD_6.0/rawdata/phenotype")
@@ -83,6 +83,9 @@ df$batch <- as.factor(df$batch)
 
 GMV <- read_tsv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/ABCD_6.0/rawdata/phenotype/mr_y_smri__vol__dsk.tsv") # import mri__vol__dsk variables
 
+GMV %>%
+  summarise(n_ids = n_distinct(participant_id)) ##11,818 IDs -- others (n=50) presumably have no usable imaging data
+
 # clean GMV
 names(GMV)[1] <- "ID"
 names(GMV)[2] <- "TP"
@@ -111,6 +114,9 @@ t1.ids.pass <- t1.ids.pass$ID
 # clean GMV
 GMV <- GMV %>% 
   .[.$ID %in% t1.ids.pass,] 
+
+GMV %>%
+  summarise(n_ids = n_distinct(ID)) ##11,731 included
 
 ##subcortical
 
@@ -357,3 +363,62 @@ batchBoxplot(idvar='ID',
              colors=1:31,
              orderby='var',
              title='cortical GMV after combat')
+
+
+####create dataframe for mplus growth models
+
+#subset variables
+
+gmv_mplus <- GMV_final_harmonized[,c("ID", "TP","age","sex","mr_y_smri__vol__aseg__whb_sum.combat", 
+                                     "mr_y_smri__vol__dsk_sum.combat")]
+
+#shorten var names
+
+gmv_mplus <- gmv_mplus %>%
+  rename(
+    subcort_vol = mr_y_smri__vol__aseg__whb_sum.combat,
+    cort_vol = mr_y_smri__vol__dsk_sum.combat
+  )
+
+#convert to wide format
+
+gmv_mplus <- gmv_mplus %>%
+  pivot_wider(
+    id_cols = c(ID, sex),
+    names_from = TP,
+    values_from = c(age, subcort_vol, cort_vol)
+  )
+
+#add family ID
+
+fam <- read_tsv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/ABCD_6.0/rawdata/phenotype/ab_g_stc.tsv")
+fam <- fam  %>%
+  select(participant_id,ab_g_stc__design_id__fam)
+names(fam)[1] <- "ID"
+names(fam)[2] <- "fam_ID"
+
+gmv_mplus <- gmv_mplus %>%
+  left_join(fam, by = "ID")
+
+#create total gmv variable (subcort + cort)
+#####check this (mr_y_smri__vol__aseg__scgv_sum)
+
+gmv_mplus <- gmv_mplus %>%
+  mutate(
+    T1_totalGMV = subcort_vol_1 + cort_vol_1,
+    T2_totalGMV = subcort_vol_2 + cort_vol_2,
+    T3_totalGMV = subcort_vol_3 + cort_vol_3,
+    T4_totalGMV = subcort_vol_4 + cort_vol_4
+  )
+
+#assign numeric IDs
+
+describe(gmv_mplus)
+
+#code all missing as -999
+
+#save as .dat file
+
+
+
+

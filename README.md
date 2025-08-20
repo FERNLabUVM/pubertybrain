@@ -10,5 +10,5 @@ Variables included in analysis (6.0 data release):
 4. Girl's Puberty (youth-reported)      ph_y_pds (girls: ph_y_pds_age, ph_y_pds_001 ph_y_pds_002 ph_y_pds_003 ph_y_pds__f_001 ph_y_pds__f_002
 5. Boy's Puberty (youth-reported)       ph_y_pds (boys:  ph_y_pds_age, ph_y_pds_001 ph_y_pds_002 ph_y_pds_003 ph_y_pds__m_001 ph_y_pds__m_002)
 5. Gray matter volume (cortical)        mr_y_smri__vol__dsk_sum
-   Gray matter volume (subcortical)     mr_y_smri__vol__aseg__whb_sum
+   Gray matter volume (subcortical)     mr_y_smri__vol__aseg__scgv_sum
 6. [add working memory here-- NC]
