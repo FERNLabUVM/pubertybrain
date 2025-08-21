@@ -74,7 +74,13 @@ rename p_a btempo
 
 save "boypub.dta", replace
 
+*
+*Merge estimates
+*
 
+append using "Z:\Projects\Data\ABCD\Syntax\Puberty\PubertyGrowthModels\girlpub.dta"
+
+save "allpub.dta"
 
 
 
