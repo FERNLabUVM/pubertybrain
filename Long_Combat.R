@@ -232,6 +232,9 @@ outliers_sgmv <- sum(column_data_sgmv < lower_bound_sgmv | column_data_sgmv > up
 print(paste("Column:", column_name_sgmv, "- Outliers beyond ±5 SD:", outliers_sgmv))
 
 # 1 outlier
+# Replace outlier with NA
+GMV_final[[114]] <- ifelse(column_data_sgmv < lower_bound_sgmv | column_data_sgmv > upper_bound_sgmv, NA, column_data_sgmv)
+GMV_final <- na.omit(GMV_final)
 
 colnames(GMV_final)
 
@@ -402,7 +405,6 @@ gmv_mplus <- gmv_mplus %>%
   left_join(fam, by = "ID")
 
 #create total gmv variable (subcort + cort)
-#####check this (mr_y_smri__vol__aseg__scgv_sum)
 
 gmv_mplus <- gmv_mplus %>%
   mutate(
@@ -412,14 +414,19 @@ gmv_mplus <- gmv_mplus %>%
     T4_totalGMV = subcort_vol_4 + cort_vol_4
   )
 
+describe(gmv_mplus)
+
 #assign numeric IDs
 
-describe(gmv_mplus)
+gmv_mplus$numeric_id <- seq_len(nrow(gmv_mplus))
 
 #code all missing as -999
 
+gmv_mplus[is.na(gmv_mplus)] <- -999
+
 #save as .dat file
 
+write.csv(gmv_mplus, paste(path_output, 'gmv_mplus.csv', sep=""), row.names = FALSE)
 
 
 
