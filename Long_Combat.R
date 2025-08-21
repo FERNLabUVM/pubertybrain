@@ -207,9 +207,9 @@ print(paste("Column:", column_name_gmv, "- Outliers beyond ±5 SD:", outliers_gm
 
 # no outliers
 
-#For GMV_final, subcortical vol (column 116: mr_y_smri__vol__aseg__whb_sum)
-column_name_sgmv <- colnames(GMV_final)[116]
-column_data_sgmv <- GMV_final[[116]]
+#For GMV_final, subcortical vol (column 116: mr_y_smri__vol__aseg__scgv_sum)
+column_name_sgmv <- colnames(GMV_final)[114]
+column_data_sgmv <- GMV_final[[114]]
 
 # Boxplot visualization
 plot_sgmv <- ggplot(GMV_final, aes(x = "", y = !!sym(column_name_sgmv))) +
@@ -231,7 +231,7 @@ upper_bound_sgmv <- mean_sgmv + 5 * sd_sgmv
 outliers_sgmv <- sum(column_data_sgmv < lower_bound_sgmv | column_data_sgmv > upper_bound_sgmv, na.rm = TRUE)
 print(paste("Column:", column_name_sgmv, "- Outliers beyond ±5 SD:", outliers_sgmv))
 
-# no outliers
+# 1 outlier
 
 colnames(GMV_final)
 
@@ -366,17 +366,18 @@ batchBoxplot(idvar='ID',
 
 
 ####create dataframe for mplus growth models
+#Total GMV will be calculated by summing all cortical and subcortical volumes
 
 #subset variables
 
-gmv_mplus <- GMV_final_harmonized[,c("ID", "TP","age","sex","mr_y_smri__vol__aseg__whb_sum.combat", 
+gmv_mplus <- GMV_final_harmonized[,c("ID", "TP","age","sex","mr_y_smri__vol__aseg__scgv_sum.combat", 
                                      "mr_y_smri__vol__dsk_sum.combat")]
 
 #shorten var names
 
 gmv_mplus <- gmv_mplus %>%
   rename(
-    subcort_vol = mr_y_smri__vol__aseg__whb_sum.combat,
+    subcort_vol = mr_y_smri__vol__aseg__scgv_sum.combat,
     cort_vol = mr_y_smri__vol__dsk_sum.combat
   )
 
