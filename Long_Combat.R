@@ -86,6 +86,23 @@ GMV <- read_tsv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont
 GMV %>%
   summarise(n_ids = n_distinct(participant_id)) ##11,818 IDs -- others (n=50) presumably have no usable imaging data
 
+#select only participants who have data in the 6.0 release (n=5056)
+
+T4IDs <- read_tsv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/ABCD_6.0/rawdata/phenotype/ab_g_dyn.tsv") %>%
+  select(participant_id, session_id, ab_g_dyn__visit_dtt)
+
+unique_IDs_ses06A_vector <- T4IDs %>%
+  filter(session_id == "ses-06A") %>%
+  distinct(participant_id) %>%
+  pull(participant_id)
+
+GMV <- GMV %>%
+  filter(participant_id %in% unique_IDs_ses06A_vector)
+
+n_unique_IDs <- GMV %>%
+  summarise(n_ids = n_distinct(participant_id))
+n_unique_IDs #5045 -- 11 participants who participated at T4 but don't have any imaging data
+
 # clean GMV
 names(GMV)[1] <- "ID"
 names(GMV)[2] <- "TP"
@@ -116,11 +133,20 @@ GMV <- GMV %>%
   .[.$ID %in% t1.ids.pass,] 
 
 GMV %>%
-  summarise(n_ids = n_distinct(ID)) ##11,731 included
+  summarise(n_ids = n_distinct(ID)) ##5041 included
 
 ##subcortical
 
 sGMV <- read_tsv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/ABCD_6.0/rawdata/phenotype/mr_y_smri__vol__aseg.tsv") # import variables
+
+#select only participants who have data in the 6.0 release (n=5056)
+
+sGMV <- sGMV %>%
+  filter(participant_id %in% unique_IDs_ses06A_vector)
+
+n_unique_IDs <- sGMV %>%
+  summarise(n_ids = n_distinct(participant_id))
+n_unique_IDs #5045 -- 11 participants who participated at T4 but don't have any imaging data
 
 # clean sGMV
 names(sGMV)[1] <- "ID"
@@ -138,6 +164,10 @@ GMV_merged <- GMV %>%
     sGMV %>% distinct(ID, TP, .keep_all = TRUE),
     by = c("ID", "TP")
   )
+
+n_unique_IDs <- GMV_merged %>%
+  summarise(n_ids = n_distinct(ID))
+n_unique_IDs
 
 # import sex 1=male 2=female
 sex <- read_tsv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/ABCD_6.0/rawdata/phenotype/ab_g_stc.tsv")
@@ -178,6 +208,9 @@ GMVdemo[5:117] = lapply(GMVdemo[5:117], FUN = function(y){as.numeric(y)}) # chan
 GMV_final <- merge(GMVdemo, df, by = c("ID","TP"))
 GMV_final$batch <- as.factor(GMV_final$batch) # ensure factor before combat
 
+n_unique_IDs <- GMV_final %>%
+  summarise(n_ids = n_distinct(ID))
+n_unique_IDs
 
 #### Check and remove additional outliers before combat
 
