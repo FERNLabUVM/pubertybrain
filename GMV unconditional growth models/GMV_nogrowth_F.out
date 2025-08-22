@@ -1,0 +1,260 @@
+Mplus VERSION 8.8 (Mac)
+MUTHEN & MUTHEN
+08/21/2025   3:27 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE:	GMV growth model- NO GROWTH - FEMALE
+
+  DATA:	FILE IS gmv_mplus.dat;
+
+  DEFINE:
+    ! Rescale large variables to avoid variance > 1,000,000
+    ! r indicates rescaled
+    rT1_TOTAL = T1_totalGMV / 1000;
+    rT2_TOTAL = T2_totalGMV / 1000;
+    rT3_TOTAL = T3_totalGMV / 1000;
+    rT4_TOTAL = T4_totalGMV / 1000;
+
+  VARIABLE:	
+
+  NAMES = sex age_1 age_3 age_2 age_4
+          subcort_vol_1 subcort_vol_3 subcort_vol_2 subcort_vol_4
+          cort_vol_1 cort_vol_3 cort_vol_2 cort_vol_4
+          fam_ID T1_totalGMV T2_totalGMV T3_totalGMV T4_totalGMV
+          numeric_id;
+
+  MISSING = ALL (-999);
+  USEVAR = rT1_TOTAL rT2_TOTAL rT3_TOTAL rT4_TOTAL;
+  SUBPOPULATION = (sex NE 1);
+  CLUSTER = fam_ID;
+
+  ANALYSIS:
+
+  TYPE = COMPLEX;
+  ESTIMATOR = MLR;
+  	
+  MODEL:	intercept by rT1_TOTAL-rT4_TOTAL@1;
+  	intercept;
+  	[intercept];
+  	rT1_TOTAL-rT4_TOTAL (theta); !theta forces variances to be equal over time
+  	[rT1_TOTAL-rT4_TOTAL@0];
+
+  OUTPUT: SAMPSTAT;
+
+
+
+*** WARNING in VARIABLE command
+  Note that only the first 8 characters of variable names are used in the output.
+  Shorten variable names to avoid any confusion.
+   1 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+GMV growth model- NO GROWTH - FEMALE
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                        2397
+
+Number of dependent variables                                    4
+Number of independent variables                                  0
+Number of continuous latent variables                            1
+
+Observed dependent variables
+
+  Continuous
+   RT1_TOTAL   RT2_TOTAL   RT3_TOTAL   RT4_TOTAL
+
+Continuous latent variables
+   INTERCEP
+
+Variables with special functions
+
+  Cluster variable      FAM_ID
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+
+Input data file(s)
+  gmv_mplus.dat
+
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            15
+     Number of clusters                       2064
+
+
+
+SAMPLE STATISTICS
+
+
+     ESTIMATED SAMPLE STATISTICS
+
+
+           Means
+              RT1_TOTA      RT2_TOTA      RT3_TOTA      RT4_TOTA
+              ________      ________      ________      ________
+              634.525       622.803       596.587       578.848
+
+
+           Covariances
+              RT1_TOTA      RT2_TOTA      RT3_TOTA      RT4_TOTA
+              ________      ________      ________      ________
+ RT1_TOTA    2610.162
+ RT2_TOTA    2524.449      2680.999
+ RT3_TOTA    2480.565      2550.612      2717.594
+ RT4_TOTA    2363.488      2408.460      2475.297      2438.575
+
+
+           Correlations
+              RT1_TOTA      RT2_TOTA      RT3_TOTA      RT4_TOTA
+              ________      ________      ________      ________
+ RT1_TOTA       1.000
+ RT2_TOTA       0.954         1.000
+ RT3_TOTA       0.931         0.945         1.000
+ RT4_TOTA       0.937         0.942         0.962         1.000
+
+
+     MAXIMUM LOG-LIKELIHOOD VALUE FOR THE UNRESTRICTED (H1) MODEL IS -35028.024
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     RT1_TOTAL           634.689       0.160     479.890    0.04%     592.666    620.900    632.997
+            2378.000    2590.611       0.217     850.486    0.04%     646.562    677.395
+     RT2_TOTAL           622.983       0.111     436.067    0.05%     580.603    608.043    621.984
+            1994.000    2717.006       0.178     861.602    0.05%     635.168    667.984
+     RT3_TOTAL           597.941       0.217     448.933    0.07%     555.143    583.301    595.198
+            1467.000    2659.263       0.199     821.976    0.07%     609.600    642.020
+     RT4_TOTAL           579.784       0.143     393.740    0.05%     537.099    565.576    578.750
+            1940.000    2466.505       0.202     809.586    0.05%     591.485    622.594
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                        3
+
+Loglikelihood
+
+          H0 Value                      -39865.690
+          H0 Scaling Correction Factor      1.0127
+            for MLR
+          H1 Value                      -35028.024
+          H1 Scaling Correction Factor      1.7931
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                   79737.380
+          Bayesian (BIC)                 79754.726
+          Sample-Size Adjusted BIC       79745.194
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                           4823.381*
+          Degrees of Freedom                    11
+          P-Value                           0.0000
+          Scaling Correction Factor         2.0059
+            for MLR
+
+*   The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV cannot be used
+    for chi-square difference testing in the regular way.  MLM, MLR and WLSM
+    chi-square difference testing is described on the Mplus website.  MLMV, WLSMV,
+    and ULSMV difference testing is done using the DIFFTEST option.
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.427
+          90 Percent C.I.                    0.417  0.437
+          Probability RMSEA <= .05           0.000
+
+CFI/TLI
+
+          CFI                                0.055
+          TLI                                0.485
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                           5100.058
+          Degrees of Freedom                     6
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.540
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_TOTAL          1.000      0.000    999.000    999.000
+    RT2_TOTAL          1.000      0.000    999.000    999.000
+    RT3_TOTAL          1.000      0.000    999.000    999.000
+    RT4_TOTAL          1.000      0.000    999.000    999.000
+
+ Means
+    INTERCEPT        611.496      1.126    542.923      0.000
+
+ Intercepts
+    RT1_TOTAL          0.000      0.000    999.000    999.000
+    RT2_TOTAL          0.000      0.000    999.000    999.000
+    RT3_TOTAL          0.000      0.000    999.000    999.000
+    RT4_TOTAL          0.000      0.000    999.000    999.000
+
+ Variances
+    INTERCEPT       2256.037     81.648     27.631      0.000
+
+ Residual Variances
+    RT1_TOTAL        825.047     12.193     67.664      0.000
+    RT2_TOTAL        825.047     12.193     67.664      0.000
+    RT3_TOTAL        825.047     12.193     67.664      0.000
+    RT4_TOTAL        825.047     12.193     67.664      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.268E-02
+       (ratio of smallest to largest eigenvalue)
+
+
+     Beginning Time:  15:27:31
+        Ending Time:  15:27:31
+       Elapsed Time:  00:00:00
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2022 Muthen & Muthen

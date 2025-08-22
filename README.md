@@ -1,6 +1,9 @@
 # pubertybrain
 Project files for ABCD adversity, puberty, brain development
 
+Participants:
+The 6.0 release includes data for 5056 participants
+
 Variables included in analysis (6.0 data release):
 
 1. Participant's sex                    ab_g_stc__cohort_sex        

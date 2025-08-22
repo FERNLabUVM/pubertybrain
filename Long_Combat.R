@@ -139,7 +139,7 @@ GMV_merged <- GMV %>%
     by = c("ID", "TP")
   )
 
-# import sex
+# import sex 1=male 2=female
 sex <- read_tsv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/ABCD_6.0/rawdata/phenotype/ab_g_stc.tsv")
 sex <- sex  %>%
   select(participant_id,ab_g_stc__cohort_sex)
@@ -420,13 +420,21 @@ describe(gmv_mplus)
 
 gmv_mplus$numeric_id <- seq_len(nrow(gmv_mplus))
 
+#remove string ID
+gmv_mplus <- gmv_mplus %>%
+  select(-ID)
+
 #code all missing as -999
 
 gmv_mplus[is.na(gmv_mplus)] <- -999
 
 #save as .dat file
 
-write.csv(gmv_mplus, paste(path_output, 'gmv_mplus.csv', sep=""), row.names = FALSE)
+write.table(gmv_mplus, paste(path_output,'gmv_mplus.dat', sep = " "), row.names = FALSE, col.names = FALSE)
+
+colnames(gmv_mplus)
+
+#write.csv(gmv_mplus, paste(path_output, 'gmv_mplus.csv', sep=""), row.names = FALSE)
 
 
 
