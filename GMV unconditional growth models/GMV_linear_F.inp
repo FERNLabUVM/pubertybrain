@@ -32,9 +32,9 @@ MODEL:	intercept by rT1_TOTAL-rT4_TOTAL@1;
 	intercept;
 	[intercept];
 	slope BY rT1_TOTAL@0
-		rT2_TOTAL*
-		rT3_TOTAL*
-		rT4_TOTAL@1;
+		rT2_TOTAL@1
+		rT3_TOTAL@2
+		rT4_TOTAL@3;
 	slope;
 	[slope];
 	intercept WITH slope;
