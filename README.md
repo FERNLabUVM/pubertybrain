@@ -2,7 +2,7 @@
 Project files for ABCD adversity, puberty, brain development
 
 Participants:
-The 6.0 release includes data for 5056 participants
+The 6.0 release includes data for 5056 participants. 4086 have structural imaging data at Time 4.
 
 Variables included in analysis (6.0 data release):
 
