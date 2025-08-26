@@ -453,13 +453,16 @@ describe(gmv_mplus)
 
 gmv_mplus$numeric_id <- seq_len(nrow(gmv_mplus))
 
-#remove string ID
-gmv_mplus <- gmv_mplus %>%
-  select(-ID)
-
 #code all missing as -999
 
 gmv_mplus[is.na(gmv_mplus)] <- -999
+
+#write csv (includes subjectkey and numeric ID)
+write.csv(gmv_mplus, paste(path_output, 'gmv_mplus.csv', sep=""), row.names = FALSE)
+
+#remove string ID for mplus
+gmv_mplus <- gmv_mplus %>%
+  select(-ID)
 
 #save as .dat file
 
@@ -467,7 +470,7 @@ write.table(gmv_mplus, paste(path_output,'gmv_mplus.dat', sep = " "), row.names 
 
 colnames(gmv_mplus)
 
-#write.csv(gmv_mplus, paste(path_output, 'gmv_mplus.csv', sep=""), row.names = FALSE)
+
 
 
 
