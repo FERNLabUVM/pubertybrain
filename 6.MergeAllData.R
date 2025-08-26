@@ -33,7 +33,7 @@ lostIDs <- setdiff(dfpub$ID, dfbrain$ID)
 length(lostIDs)   #count
 head(lostIDs)     #peek at first few
 
-#dropped 90 participants
+#dropped 5081 participants
 
 names(dfmerged)
 
