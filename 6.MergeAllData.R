@@ -78,7 +78,7 @@ dfmerged_mplus <- dfmerged_mplus %>%
 
 write.table(dfmerged_mplus,'/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/pubertybrain/dfmerged_mplus.dat', row.names = FALSE, col.names = FALSE)
 
-
+colnames(dfmerged_mplus)
 
 
 #########Negative life events variable#################

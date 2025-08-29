@@ -1,0 +1,726 @@
+Mplus VERSION 8.8 (Mac)
+MUTHEN & MUTHEN
+08/29/2025   1:54 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE:	full model - FEMALE
+
+  DATA:
+  FILE IS dfmerged_mplus.dat;
+
+
+  DEFINE:
+    ! Rescale large variables to avoid variance > 1,000,000
+    ! r indicates rescaled
+    rT1_TOTAL = T1_totalGMV / 1000;
+    rT2_TOTAL = T2_totalGMV / 1000;
+    rT3_TOTAL = T3_totalGMV / 1000;
+    rT4_TOTAL = T4_totalGMV / 1000;
+
+  VARIABLE:	
+
+  NAMES =
+  numeric_id
+  ela_plus
+  sex
+  age_1
+  age_2
+  age_3
+  age_4
+  subcort_vol_1
+  subcort_vol_2
+  subcort_vol_3
+  subcort_vol_4
+  cort_vol_1
+  cort_vol_2
+  cort_vol_3
+  cort_vol_4
+  fam_ID
+  T1_totalGMV
+  T2_totalGMV
+  T3_totalGMV
+  T4_totalGMV
+  btempo
+  btiming
+  gtiming
+  gtempo;
+
+
+  MISSING = ALL (-999);
+  USEVAR =
+  ela_plus
+  gtiming
+  gtempo
+  rT1_TOTAL
+  rT2_TOTAL
+  rT3_TOTAL
+  rT4_TOTAL;
+  SUBPOPULATION = (sex NE 1);
+  CLUSTER = fam_ID;
+
+  ANALYSIS:
+
+  TYPE = COMPLEX;
+  ESTIMATOR = MLR;
+  	
+  MODEL:	intercept by rT1_TOTAL-rT4_TOTAL@1;
+  	intercept;
+  	[intercept];
+  	slope BY rT1_TOTAL@0
+  		rT2_TOTAL*
+  		rT3_TOTAL*
+  		rT4_TOTAL@1;
+  	slope;
+  	[slope];
+  	intercept WITH slope;
+  	rT1_TOTAL-rT4_TOTAL (theta); !theta forces variances to be equal over time
+  	[rT1_TOTAL-rT4_TOTAL@0];
+  	
+  ela_plus;
+  gtiming;
+  gtempo;
+  gtiming WITH gtempo;
+
+  intercept slope gtiming gtempo ON ela_plus;
+  intercept WITH gtiming;
+  slope WITH gtempo;
+  slope ON gtiming;
+
+
+  OUTPUT: SAMPSTAT STANDARDIZED TECH4;
+
+
+
+
+*** WARNING in VARIABLE command
+  Note that only the first 8 characters of variable names are used in the output.
+  Shorten variable names to avoid any confusion.
+   1 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+full model - FEMALE
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                        2397
+
+Number of dependent variables                                    6
+Number of independent variables                                  1
+Number of continuous latent variables                            2
+
+Observed dependent variables
+
+  Continuous
+   GTIMING     GTEMPO      RT1_TOTAL   RT2_TOTAL   RT3_TOTAL   RT4_TOTAL
+
+Observed independent variables
+   ELA_PLUS
+
+Continuous latent variables
+   INTERCEP    SLOPE
+
+Variables with special functions
+
+  Cluster variable      FAM_ID
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+
+Input data file(s)
+  dfmerged_mplus.dat
+
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            44
+     Number of clusters                       2064
+
+
+
+SAMPLE STATISTICS
+
+
+     ESTIMATED SAMPLE STATISTICS
+
+
+           Means
+              GTIMING       GTEMPO        RT1_TOTA      RT2_TOTA      RT3_TOTA
+              ________      ________      ________      ________      ________
+               12.449         0.679       634.524       622.816       596.593
+
+
+           Means
+              RT4_TOTA      ELA_PLUS
+              ________      ________
+              578.843         1.825
+
+
+           Covariances
+              GTIMING       GTEMPO        RT1_TOTA      RT2_TOTA      RT3_TOTA
+              ________      ________      ________      ________      ________
+ GTIMING        3.180
+ GTEMPO        -0.008         0.020
+ RT1_TOTA      -3.582        -0.041      2610.094
+ RT2_TOTA      -2.794         0.092      2524.639      2681.461
+ RT3_TOTA       0.112         0.215      2482.370      2552.902      2721.769
+ RT4_TOTA      -0.468         0.213      2363.703      2409.272      2477.843
+ ELA_PLUS      -0.016        -0.015       -12.775       -14.079       -14.528
+
+
+           Covariances
+              RT4_TOTA      ELA_PLUS
+              ________      ________
+ RT4_TOTA    2439.415
+ ELA_PLUS     -14.363         3.261
+
+
+           Correlations
+              GTIMING       GTEMPO        RT1_TOTA      RT2_TOTA      RT3_TOTA
+              ________      ________      ________      ________      ________
+ GTIMING        1.000
+ GTEMPO        -0.033         1.000
+ RT1_TOTA      -0.039        -0.006         1.000
+ RT2_TOTA      -0.030         0.013         0.954         1.000
+ RT3_TOTA       0.001         0.029         0.931         0.945         1.000
+ RT4_TOTA      -0.005         0.030         0.937         0.942         0.962
+ ELA_PLUS      -0.005        -0.057        -0.138        -0.151        -0.154
+
+
+           Correlations
+              RT4_TOTA      ELA_PLUS
+              ________      ________
+ RT4_TOTA       1.000
+ ELA_PLUS      -0.161         1.000
+
+
+     MAXIMUM LOG-LIKELIHOOD VALUE FOR THE UNRESTRICTED (H1) MODEL IS -42217.923
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     GTIMING              12.457       0.678       7.032    0.05%      11.282     12.010     12.281
+            1836.000       3.180       2.498      19.861    0.05%      12.638     13.494
+     GTEMPO                0.680       0.802       0.267    0.05%       0.573      0.633      0.660
+            1836.000       0.020       1.419       1.370    0.05%       0.689      0.780
+     RT1_TOTAL           634.689       0.160     479.890    0.04%     592.666    620.900    632.997
+            2378.000    2590.611       0.217     850.486    0.04%     646.562    677.395
+     RT2_TOTAL           622.983       0.111     436.067    0.05%     580.603    608.043    621.984
+            1994.000    2717.006       0.178     861.602    0.05%     635.168    667.984
+     RT3_TOTAL           597.941       0.217     448.933    0.07%     555.143    583.301    595.198
+            1467.000    2659.263       0.199     821.976    0.07%     609.600    642.020
+     RT4_TOTAL           579.784       0.143     393.740    0.05%     537.099    565.576    578.750
+            1940.000    2466.505       0.202     809.586    0.05%     591.485    622.594
+     ELA_PLUS              1.822       1.191       0.000   26.81%       0.000      1.000      1.000
+            2264.000       3.261       1.164      10.000    0.04%       2.000      3.000
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       23
+
+Loglikelihood
+
+          H0 Value                      -42299.164
+          H0 Scaling Correction Factor      1.3782
+            for MLR
+          H1 Value                      -42217.923
+          H1 Scaling Correction Factor      1.4176
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                   84644.327
+          Bayesian (BIC)                 84777.313
+          Sample-Size Adjusted BIC       84704.237
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                            108.812*
+          Degrees of Freedom                    12
+          P-Value                           0.0000
+          Scaling Correction Factor         1.4932
+            for MLR
+
+*   The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV cannot be used
+    for chi-square difference testing in the regular way.  MLM, MLR and WLSM
+    chi-square difference testing is described on the Mplus website.  MLMV, WLSMV,
+    and ULSMV difference testing is done using the DIFFTEST option.
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.058
+          90 Percent C.I.                    0.048  0.068
+          Probability RMSEA <= .05           0.086
+
+CFI/TLI
+
+          CFI                                0.989
+          TLI                                0.981
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                           9053.500
+          Degrees of Freedom                    21
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.081
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_TOTAL          1.000      0.000    999.000    999.000
+    RT2_TOTAL          1.000      0.000    999.000    999.000
+    RT3_TOTAL          1.000      0.000    999.000    999.000
+    RT4_TOTAL          1.000      0.000    999.000    999.000
+
+ SLOPE    BY
+    RT1_TOTAL          0.000      0.000    999.000    999.000
+    RT2_TOTAL          0.210      0.006     37.120      0.000
+    RT3_TOTAL          0.684      0.007     93.768      0.000
+    RT4_TOTAL          1.000      0.000    999.000    999.000
+
+ INTERCEP ON
+    ELA_PLUS          -4.035      0.613     -6.581      0.000
+
+ SLOPE    ON
+    ELA_PLUS          -0.427      0.232     -1.838      0.066
+    GTIMING            1.107      0.246      4.501      0.000
+
+ GTIMING  ON
+    ELA_PLUS          -0.006      0.026     -0.220      0.826
+
+ GTEMPO   ON
+    ELA_PLUS          -0.005      0.002     -2.408      0.016
+
+ INTERCEP WITH
+    SLOPE           -123.065     21.104     -5.831      0.000
+    GTIMING           -3.523      2.183     -1.614      0.107
+
+ SLOPE    WITH
+    GTEMPO             0.252      0.069      3.649      0.000
+
+ GTEMPO   WITH
+    INTERCEPT         -0.068      0.177     -0.384      0.701
+
+ GTIMING  WITH
+    GTEMPO            -0.008      0.005     -1.651      0.099
+
+ Means
+    ELA_PLUS           1.825      0.042     43.444      0.000
+
+ Intercepts
+    GTIMING           12.461      0.058    216.110      0.000
+    GTEMPO             0.687      0.005    139.275      0.000
+    RT1_TOTAL          0.000      0.000    999.000    999.000
+    RT2_TOTAL          0.000      0.000    999.000    999.000
+    RT3_TOTAL          0.000      0.000    999.000    999.000
+    RT4_TOTAL          0.000      0.000    999.000    999.000
+    INTERCEPT        641.903      1.601    400.994      0.000
+    SLOPE            -68.624      3.090    -22.212      0.000
+
+ Variances
+    ELA_PLUS           3.261      0.132     24.730      0.000
+
+ Residual Variances
+    GTIMING            3.180      0.158     20.143      0.000
+    GTEMPO             0.020      0.001     22.802      0.000
+    RT1_TOTAL        118.944      6.679     17.807      0.000
+    RT2_TOTAL        118.944      6.679     17.807      0.000
+    RT3_TOTAL        118.944      6.679     17.807      0.000
+    RT4_TOTAL        118.944      6.679     17.807      0.000
+    INTERCEPT       2494.694     83.945     29.718      0.000
+    SLOPE            114.936     14.885      7.722      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.297E-06
+       (ratio of smallest to largest eigenvalue)
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_TOTAL          0.977      0.001    679.953      0.000
+    RT2_TOTAL          0.986      0.002    424.747      0.000
+    RT3_TOTAL          0.998      0.006    176.915      0.000
+    RT4_TOTAL          1.001      0.008    124.101      0.000
+
+ SLOPE    BY
+    RT1_TOTAL          0.000      0.000    999.000    999.000
+    RT2_TOTAL          0.045      0.003     15.314      0.000
+    RT3_TOTAL          0.148      0.010     14.584      0.000
+    RT4_TOTAL          0.217      0.014     15.471      0.000
+
+ INTERCEP ON
+    ELA_PLUS          -0.144      0.022     -6.662      0.000
+
+ SLOPE    ON
+    ELA_PLUS          -0.071      0.039     -1.827      0.068
+    GTIMING            0.181      0.039      4.582      0.000
+
+ GTIMING  ON
+    ELA_PLUS          -0.006      0.026     -0.220      0.826
+
+ GTEMPO   ON
+    ELA_PLUS          -0.057      0.024     -2.419      0.016
+
+ INTERCEP WITH
+    SLOPE             -0.230      0.036     -6.298      0.000
+    GTIMING           -0.040      0.024     -1.624      0.104
+
+ SLOPE    WITH
+    GTEMPO             0.165      0.045      3.679      0.000
+
+ GTEMPO   WITH
+    INTERCEPT         -0.010      0.025     -0.384      0.701
+
+ GTIMING  WITH
+    GTEMPO            -0.033      0.020     -1.668      0.095
+
+ Means
+    ELA_PLUS           1.011      0.018     56.734      0.000
+
+ Intercepts
+    GTIMING            6.987      0.169     41.258      0.000
+    GTEMPO             4.825      0.098     49.170      0.000
+    RT1_TOTAL          0.000      0.000    999.000    999.000
+    RT2_TOTAL          0.000      0.000    999.000    999.000
+    RT3_TOTAL          0.000      0.000    999.000    999.000
+    RT4_TOTAL          0.000      0.000    999.000    999.000
+    INTERCEPT         12.717      0.209     60.824      0.000
+    SLOPE             -6.279      0.459    -13.684      0.000
+
+ Variances
+    ELA_PLUS           1.000      0.000    999.000    999.000
+
+ Residual Variances
+    GTIMING            1.000      0.000   3360.110      0.000
+    GTEMPO             0.997      0.003    369.408      0.000
+    RT1_TOTAL          0.045      0.003     15.872      0.000
+    RT2_TOTAL          0.045      0.003     15.988      0.000
+    RT3_TOTAL          0.047      0.003     16.003      0.000
+    RT4_TOTAL          0.047      0.003     15.714      0.000
+    INTERCEPT          0.979      0.006    156.500      0.000
+    SLOPE              0.962      0.016     61.183      0.000
+
+
+STDY Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_TOTAL          0.977      0.001    679.953      0.000
+    RT2_TOTAL          0.986      0.002    424.747      0.000
+    RT3_TOTAL          0.998      0.006    176.915      0.000
+    RT4_TOTAL          1.001      0.008    124.101      0.000
+
+ SLOPE    BY
+    RT1_TOTAL          0.000      0.000    999.000    999.000
+    RT2_TOTAL          0.045      0.003     15.314      0.000
+    RT3_TOTAL          0.148      0.010     14.584      0.000
+    RT4_TOTAL          0.217      0.014     15.471      0.000
+
+ INTERCEP ON
+    ELA_PLUS          -0.144      0.022     -6.662      0.000
+
+ SLOPE    ON
+    ELA_PLUS          -0.071      0.039     -1.827      0.068
+    GTIMING            0.181      0.039      4.582      0.000
+
+ GTIMING  ON
+    ELA_PLUS          -0.006      0.026     -0.220      0.826
+
+ GTEMPO   ON
+    ELA_PLUS          -0.057      0.024     -2.419      0.016
+
+ INTERCEP WITH
+    SLOPE             -0.230      0.036     -6.298      0.000
+    GTIMING           -0.040      0.024     -1.624      0.104
+
+ SLOPE    WITH
+    GTEMPO             0.165      0.045      3.679      0.000
+
+ GTEMPO   WITH
+    INTERCEPT         -0.010      0.025     -0.384      0.701
+
+ GTIMING  WITH
+    GTEMPO            -0.033      0.020     -1.668      0.095
+
+ Means
+    ELA_PLUS           1.011      0.018     56.734      0.000
+
+ Intercepts
+    GTIMING            6.987      0.169     41.258      0.000
+    GTEMPO             4.825      0.098     49.170      0.000
+    RT1_TOTAL          0.000      0.000    999.000    999.000
+    RT2_TOTAL          0.000      0.000    999.000    999.000
+    RT3_TOTAL          0.000      0.000    999.000    999.000
+    RT4_TOTAL          0.000      0.000    999.000    999.000
+    INTERCEPT         12.717      0.209     60.824      0.000
+    SLOPE             -6.279      0.459    -13.684      0.000
+
+ Variances
+    ELA_PLUS           1.000      0.000    999.000    999.000
+
+ Residual Variances
+    GTIMING            1.000      0.000   3360.110      0.000
+    GTEMPO             0.997      0.003    369.408      0.000
+    RT1_TOTAL          0.045      0.003     15.872      0.000
+    RT2_TOTAL          0.045      0.003     15.988      0.000
+    RT3_TOTAL          0.047      0.003     16.003      0.000
+    RT4_TOTAL          0.047      0.003     15.714      0.000
+    INTERCEPT          0.979      0.006    156.500      0.000
+    SLOPE              0.962      0.016     61.183      0.000
+
+
+STD Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_TOTAL         50.476      0.847     59.581      0.000
+    RT2_TOTAL         50.476      0.847     59.581      0.000
+    RT3_TOTAL         50.476      0.847     59.581      0.000
+    RT4_TOTAL         50.476      0.847     59.581      0.000
+
+ SLOPE    BY
+    RT1_TOTAL          0.000      0.000    999.000    999.000
+    RT2_TOTAL          2.296      0.144     15.971      0.000
+    RT3_TOTAL          7.481      0.493     15.177      0.000
+    RT4_TOTAL         10.929      0.686     15.930      0.000
+
+ INTERCEP ON
+    ELA_PLUS          -0.080      0.012     -6.683      0.000
+
+ SLOPE    ON
+    ELA_PLUS          -0.039      0.021     -1.830      0.067
+    GTIMING            0.101      0.023      4.479      0.000
+
+ GTIMING  ON
+    ELA_PLUS          -0.006      0.026     -0.220      0.826
+
+ GTEMPO   ON
+    ELA_PLUS          -0.005      0.002     -2.408      0.016
+
+ INTERCEP WITH
+    SLOPE             -0.230      0.036     -6.298      0.000
+    GTIMING           -0.071      0.044     -1.616      0.106
+
+ SLOPE    WITH
+    GTEMPO             0.024      0.006      3.639      0.000
+
+ GTEMPO   WITH
+    INTERCEPT         -0.001      0.004     -0.383      0.701
+
+ GTIMING  WITH
+    GTEMPO            -0.008      0.005     -1.651      0.099
+
+ Means
+    ELA_PLUS           1.825      0.042     43.444      0.000
+
+ Intercepts
+    GTIMING           12.461      0.058    216.110      0.000
+    GTEMPO             0.687      0.005    139.275      0.000
+    RT1_TOTAL          0.000      0.000    999.000    999.000
+    RT2_TOTAL          0.000      0.000    999.000    999.000
+    RT3_TOTAL          0.000      0.000    999.000    999.000
+    RT4_TOTAL          0.000      0.000    999.000    999.000
+    INTERCEPT         12.717      0.209     60.824      0.000
+    SLOPE             -6.279      0.459    -13.684      0.000
+
+ Variances
+    ELA_PLUS           3.261      0.132     24.730      0.000
+
+ Residual Variances
+    GTIMING            3.180      0.158     20.143      0.000
+    GTEMPO             0.020      0.001     22.802      0.000
+    RT1_TOTAL        118.944      6.679     17.807      0.000
+    RT2_TOTAL        118.944      6.679     17.807      0.000
+    RT3_TOTAL        118.944      6.679     17.807      0.000
+    RT4_TOTAL        118.944      6.679     17.807      0.000
+    INTERCEPT          0.979      0.006    156.500      0.000
+    SLOPE              0.962      0.016     61.183      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    GTIMING            0.000      0.000      0.110      0.912
+    GTEMPO             0.003      0.003      1.209      0.227
+    RT1_TOTA           0.955      0.003    339.977      0.000
+    RT2_TOTA           0.955      0.003    336.325      0.000
+    RT3_TOTA           0.953      0.003    327.988      0.000
+    RT4_TOTA           0.953      0.003    320.332      0.000
+
+     Latent                                         Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    INTERCEP           0.021      0.006      3.331      0.001
+    SLOPE              0.038      0.016      2.402      0.016
+
+
+TECHNICAL 4 OUTPUT
+
+
+     ESTIMATES DERIVED FROM THE MODEL
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         GTIMING       GTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+              634.538       -55.617        12.450         0.679         1.825
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         GTIMING       GTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+                1.142         0.414         0.043         0.003         0.042
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         GTIMING       GTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+              555.432      -134.410       291.065       201.288        43.444
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         GTIMING       GTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         GTIMING       GTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+ INTERCEP    2547.794
+ SLOPE       -121.260       119.450
+ GTIMING       -3.449         3.530         3.180
+ GTEMPO        -0.009         0.249        -0.008         0.020
+ ELA_PLUS     -13.159        -1.414        -0.018        -0.015         3.261
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         GTIMING       GTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+ INTERCEP      85.523
+ SLOPE         21.395        14.997
+ GTIMING        2.210         0.758         0.158
+ GTEMPO         0.179         0.070         0.005         0.001
+ ELA_PLUS       2.046         0.758         0.084         0.006         0.132
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         GTIMING       GTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+ INTERCEP      29.791
+ SLOPE         -5.668         7.965
+ GTIMING       -1.561         4.655        20.148
+ GTEMPO        -0.049         3.561        -1.632        22.739
+ ELA_PLUS      -6.431        -1.865        -0.220        -2.398        24.730
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         GTIMING       GTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.000         0.000
+ GTIMING        0.119         0.000         0.000
+ GTEMPO         0.961         0.000         0.103         0.000
+ ELA_PLUS       0.000         0.062         0.826         0.016         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         GTIMING       GTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+ INTERCEP       1.000
+ SLOPE         -0.220         1.000
+ GTIMING       -0.038         0.181         1.000
+ GTEMPO        -0.001         0.160        -0.033         1.000
+ ELA_PLUS      -0.144        -0.072        -0.006        -0.057         1.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         GTIMING       GTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.036         0.000
+ GTIMING        0.024         0.040         0.000
+ GTEMPO         0.025         0.044         0.020         0.000
+ ELA_PLUS       0.022         0.038         0.026         0.024         0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         GTIMING       GTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+ INTERCEP     999.000
+ SLOPE         -6.110       999.000
+ GTIMING       -1.570         4.581       999.000
+ GTEMPO        -0.049         3.606        -1.649       999.000
+ ELA_PLUS      -6.662        -1.862        -0.220        -2.419       999.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         GTIMING       GTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.000         0.000
+ GTIMING        0.116         0.000         0.000
+ GTEMPO         0.961         0.000         0.099         0.000
+ ELA_PLUS       0.000         0.063         0.826         0.016         0.000
+
+
+     Beginning Time:  13:54:19
+        Ending Time:  13:54:19
+       Elapsed Time:  00:00:00
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2022 Muthen & Muthen

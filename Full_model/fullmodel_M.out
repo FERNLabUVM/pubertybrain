@@ -1,0 +1,726 @@
+Mplus VERSION 8.8 (Mac)
+MUTHEN & MUTHEN
+08/29/2025   2:00 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE:	full model - MALE
+
+  DATA:
+  FILE IS dfmerged_mplus.dat;
+
+
+  DEFINE:
+    ! Rescale large variables to avoid variance > 1,000,000
+    ! r indicates rescaled
+    rT1_TOTAL = T1_totalGMV / 1000;
+    rT2_TOTAL = T2_totalGMV / 1000;
+    rT3_TOTAL = T3_totalGMV / 1000;
+    rT4_TOTAL = T4_totalGMV / 1000;
+
+  VARIABLE:	
+
+  NAMES =
+  numeric_id
+  ela_plus
+  sex
+  age_1
+  age_2
+  age_3
+  age_4
+  subcort_vol_1
+  subcort_vol_2
+  subcort_vol_3
+  subcort_vol_4
+  cort_vol_1
+  cort_vol_2
+  cort_vol_3
+  cort_vol_4
+  fam_ID
+  T1_totalGMV
+  T2_totalGMV
+  T3_totalGMV
+  T4_totalGMV
+  btempo
+  btiming
+  gtiming
+  gtempo;
+
+
+  MISSING = ALL (-999);
+  USEVAR =
+  ela_plus
+  btiming
+  btempo
+  rT1_TOTAL
+  rT2_TOTAL
+  rT3_TOTAL
+  rT4_TOTAL;
+  SUBPOPULATION = (sex NE 2);
+  CLUSTER = fam_ID;
+
+  ANALYSIS:
+
+  TYPE = COMPLEX;
+  ESTIMATOR = MLR;
+  	
+  MODEL:	intercept by rT1_TOTAL-rT4_TOTAL@1;
+  	intercept;
+  	[intercept];
+  	slope BY rT1_TOTAL@0
+  		rT2_TOTAL*
+  		rT3_TOTAL*
+  		rT4_TOTAL@1;
+  	slope;
+  	[slope];
+  	intercept WITH slope;
+  	rT1_TOTAL-rT4_TOTAL (theta); !theta forces variances to be equal over time
+  	[rT1_TOTAL-rT4_TOTAL@0];
+  	
+  ela_plus;
+  btiming;
+  btempo;
+  btiming WITH btempo;
+
+  intercept slope btiming btempo ON ela_plus;
+  intercept WITH btiming;
+  slope WITH btempo;
+  slope ON btiming;
+
+
+  OUTPUT: SAMPSTAT STANDARDIZED TECH4;
+
+
+
+
+*** WARNING in VARIABLE command
+  Note that only the first 8 characters of variable names are used in the output.
+  Shorten variable names to avoid any confusion.
+   1 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+full model - MALE
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                        2644
+
+Number of dependent variables                                    6
+Number of independent variables                                  1
+Number of continuous latent variables                            2
+
+Observed dependent variables
+
+  Continuous
+   BTIMING     BTEMPO      RT1_TOTAL   RT2_TOTAL   RT3_TOTAL   RT4_TOTAL
+
+Observed independent variables
+   ELA_PLUS
+
+Continuous latent variables
+   INTERCEP    SLOPE
+
+Variables with special functions
+
+  Cluster variable      FAM_ID
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+
+Input data file(s)
+  dfmerged_mplus.dat
+
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            38
+     Number of clusters                       2324
+
+
+
+SAMPLE STATISTICS
+
+
+     ESTIMATED SAMPLE STATISTICS
+
+
+           Means
+              BTIMING       BTEMPO        RT1_TOTA      RT2_TOTA      RT3_TOTA
+              ________      ________      ________      ________      ________
+               13.927         0.324       682.764       674.386       662.405
+
+
+           Means
+              RT4_TOTA      ELA_PLUS
+              ________      ________
+              645.745         1.812
+
+
+           Covariances
+              BTIMING       BTEMPO        RT1_TOTA      RT2_TOTA      RT3_TOTA
+              ________      ________      ________      ________      ________
+ BTIMING        0.916
+ BTEMPO         0.037         0.020
+ RT1_TOTA      -1.481         0.339      3249.521
+ RT2_TOTA      -3.104         0.349      3126.050      3267.249
+ RT3_TOTA       0.183         0.604      3085.222      3103.951      3258.417
+ RT4_TOTA       1.987         0.665      2971.468      2971.387      3035.757
+ ELA_PLUS       0.010        -0.013       -13.236       -14.765       -13.777
+
+
+           Covariances
+              RT4_TOTA      ELA_PLUS
+              ________      ________
+ RT4_TOTA    3065.447
+ ELA_PLUS     -13.207         3.131
+
+
+           Correlations
+              BTIMING       BTEMPO        RT1_TOTA      RT2_TOTA      RT3_TOTA
+              ________      ________      ________      ________      ________
+ BTIMING        1.000
+ BTEMPO         0.273         1.000
+ RT1_TOTA      -0.027         0.042         1.000
+ RT2_TOTA      -0.057         0.043         0.959         1.000
+ RT3_TOTA       0.003         0.074         0.948         0.951         1.000
+ RT4_TOTA       0.038         0.084         0.941         0.939         0.961
+ ELA_PLUS       0.006        -0.050        -0.131        -0.146        -0.136
+
+
+           Correlations
+              RT4_TOTA      ELA_PLUS
+              ________      ________
+ RT4_TOTA       1.000
+ ELA_PLUS      -0.135         1.000
+
+
+     MAXIMUM LOG-LIKELIHOOD VALUE FOR THE UNRESTRICTED (H1) MODEL IS -46648.529
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     BTIMING              13.931       0.316      10.850    0.05%      13.122     13.632     13.858
+            2141.000       0.912       0.198      17.240    0.05%      14.115     14.709
+     BTEMPO                0.325      -0.127      -0.249    0.05%       0.209      0.294      0.331
+            2141.000       0.020       0.314       0.861    0.05%       0.364      0.439
+     RT1_TOTAL           682.791       0.019     473.564    0.04%     636.795    667.928    681.974
+            2630.000    3252.951       0.218     898.523    0.04%     697.662    729.543
+     RT2_TOTAL           674.915      -0.057     461.582    0.04%     628.481    660.634    675.566
+            2310.000    3228.411       0.241     864.066    0.04%     689.701    721.483
+     RT3_TOTAL           663.521       0.055     461.797    0.06%     615.665    648.680    664.492
+            1672.000    3257.475       0.219     880.075    0.06%     676.584    709.796
+     RT4_TOTAL           646.391       0.090     445.656    0.05%     601.424    632.918    646.119
+            2146.000    3025.072       0.320     854.206    0.05%     659.285    689.392
+     ELA_PLUS              1.809       1.181       0.000   26.22%       0.000      1.000      1.000
+            2513.000       3.131       1.216       9.000    0.28%       2.000      3.000
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       23
+
+Loglikelihood
+
+          H0 Value                      -46717.945
+          H0 Scaling Correction Factor      1.3909
+            for MLR
+          H1 Value                      -46648.529
+          H1 Scaling Correction Factor      1.5276
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                   93481.890
+          Bayesian (BIC)                 93617.131
+          Sample-Size Adjusted BIC       93544.053
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                             77.586*
+          Degrees of Freedom                    12
+          P-Value                           0.0000
+          Scaling Correction Factor         1.7894
+            for MLR
+
+*   The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV cannot be used
+    for chi-square difference testing in the regular way.  MLM, MLR and WLSM
+    chi-square difference testing is described on the Mplus website.  MLMV, WLSMV,
+    and ULSMV difference testing is done using the DIFFTEST option.
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.045
+          90 Percent C.I.                    0.036  0.055
+          Probability RMSEA <= .05           0.764
+
+CFI/TLI
+
+          CFI                                0.993
+          TLI                                0.987
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                           9140.198
+          Degrees of Freedom                    21
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.039
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_TOTAL          1.000      0.000    999.000    999.000
+    RT2_TOTAL          1.000      0.000    999.000    999.000
+    RT3_TOTAL          1.000      0.000    999.000    999.000
+    RT4_TOTAL          1.000      0.000    999.000    999.000
+
+ SLOPE    BY
+    RT1_TOTAL          0.000      0.000    999.000    999.000
+    RT2_TOTAL          0.215      0.008     27.967      0.000
+    RT3_TOTAL          0.556      0.010     56.467      0.000
+    RT4_TOTAL          1.000      0.000    999.000    999.000
+
+ INTERCEP ON
+    ELA_PLUS          -4.440      0.681     -6.523      0.000
+
+ SLOPE    ON
+    ELA_PLUS           0.134      0.262      0.511      0.609
+    BTIMING            4.466      0.480      9.297      0.000
+
+ BTIMING  ON
+    ELA_PLUS           0.002      0.013      0.142      0.887
+
+ BTEMPO   ON
+    ELA_PLUS          -0.004      0.002     -2.200      0.028
+
+ INTERCEP WITH
+    SLOPE           -142.436     25.415     -5.604      0.000
+    BTIMING           -2.344      1.198     -1.957      0.050
+
+ SLOPE    WITH
+    BTEMPO             0.198      0.062      3.190      0.001
+
+ BTEMPO   WITH
+    INTERCEPT          0.271      0.178      1.517      0.129
+
+ BTIMING  WITH
+    BTEMPO             0.037      0.003     11.221      0.000
+
+ Means
+    ELA_PLUS           1.812      0.039     46.651      0.000
+
+ Intercepts
+    BTIMING           13.924      0.032    436.263      0.000
+    BTEMPO             0.331      0.005     73.338      0.000
+    RT1_TOTAL          0.000      0.000    999.000    999.000
+    RT2_TOTAL          0.000      0.000    999.000    999.000
+    RT3_TOTAL          0.000      0.000    999.000    999.000
+    RT4_TOTAL          0.000      0.000    999.000    999.000
+    INTERCEPT        690.670      1.721    401.315      0.000
+    SLOPE            -99.310      6.670    -14.890      0.000
+
+ Variances
+    ELA_PLUS           3.132      0.122     25.644      0.000
+
+ Residual Variances
+    BTIMING            0.914      0.030     30.302      0.000
+    BTEMPO             0.020      0.001     30.044      0.000
+    RT1_TOTAL        134.811      7.382     18.261      0.000
+    RT2_TOTAL        134.811      7.382     18.261      0.000
+    RT3_TOTAL        134.811      7.382     18.261      0.000
+    RT4_TOTAL        134.811      7.382     18.261      0.000
+    INTERCEPT       3093.954     96.696     31.997      0.000
+    SLOPE            116.976     16.418      7.125      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.326E-06
+       (ratio of smallest to largest eigenvalue)
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_TOTAL          0.979      0.001    780.068      0.000
+    RT2_TOTAL          0.988      0.002    463.300      0.000
+    RT3_TOTAL          0.999      0.004    222.923      0.000
+    RT4_TOTAL          1.006      0.008    127.348      0.000
+
+ SLOPE    BY
+    RT1_TOTAL          0.000      0.000    999.000    999.000
+    RT2_TOTAL          0.044      0.003     15.509      0.000
+    RT3_TOTAL          0.115      0.008     15.223      0.000
+    RT4_TOTAL          0.208      0.013     15.567      0.000
+
+ INTERCEP ON
+    ELA_PLUS          -0.140      0.021     -6.519      0.000
+
+ SLOPE    ON
+    ELA_PLUS           0.020      0.040      0.508      0.611
+    BTIMING            0.367      0.041      9.012      0.000
+
+ BTIMING  ON
+    ELA_PLUS           0.003      0.024      0.142      0.887
+
+ BTEMPO   ON
+    ELA_PLUS          -0.051      0.023     -2.198      0.028
+
+ INTERCEP WITH
+    SLOPE             -0.237      0.039     -6.028      0.000
+    BTIMING           -0.044      0.022     -1.963      0.050
+
+ SLOPE    WITH
+    BTEMPO             0.128      0.040      3.202      0.001
+
+ BTEMPO   WITH
+    INTERCEPT          0.034      0.022      1.518      0.129
+
+ BTIMING  WITH
+    BTEMPO             0.273      0.023     11.777      0.000
+
+ Means
+    ELA_PLUS           1.024      0.017     59.441      0.000
+
+ Intercepts
+    BTIMING           14.565      0.237     61.525      0.000
+    BTEMPO             2.320      0.051     45.617      0.000
+    RT1_TOTAL          0.000      0.000    999.000    999.000
+    RT2_TOTAL          0.000      0.000    999.000    999.000
+    RT3_TOTAL          0.000      0.000    999.000    999.000
+    RT4_TOTAL          0.000      0.000    999.000    999.000
+    INTERCEPT         12.295      0.190     64.550      0.000
+    SLOPE             -8.539      0.676    -12.623      0.000
+
+ Variances
+    ELA_PLUS           1.000      0.000    999.000    999.000
+
+ Residual Variances
+    BTIMING            1.000      0.000   6154.211      0.000
+    BTEMPO             0.997      0.002    427.761      0.000
+    RT1_TOTAL          0.041      0.002     16.662      0.000
+    RT2_TOTAL          0.042      0.002     16.701      0.000
+    RT3_TOTAL          0.043      0.003     16.620      0.000
+    RT4_TOTAL          0.043      0.003     16.129      0.000
+    INTERCEPT          0.980      0.006    163.327      0.000
+    SLOPE              0.865      0.030     28.777      0.000
+
+
+STDY Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_TOTAL          0.979      0.001    780.068      0.000
+    RT2_TOTAL          0.988      0.002    463.300      0.000
+    RT3_TOTAL          0.999      0.004    222.923      0.000
+    RT4_TOTAL          1.006      0.008    127.348      0.000
+
+ SLOPE    BY
+    RT1_TOTAL          0.000      0.000    999.000    999.000
+    RT2_TOTAL          0.044      0.003     15.509      0.000
+    RT3_TOTAL          0.115      0.008     15.223      0.000
+    RT4_TOTAL          0.208      0.013     15.567      0.000
+
+ INTERCEP ON
+    ELA_PLUS          -0.140      0.021     -6.519      0.000
+
+ SLOPE    ON
+    ELA_PLUS           0.020      0.040      0.508      0.611
+    BTIMING            0.367      0.041      9.012      0.000
+
+ BTIMING  ON
+    ELA_PLUS           0.003      0.024      0.142      0.887
+
+ BTEMPO   ON
+    ELA_PLUS          -0.051      0.023     -2.198      0.028
+
+ INTERCEP WITH
+    SLOPE             -0.237      0.039     -6.028      0.000
+    BTIMING           -0.044      0.022     -1.963      0.050
+
+ SLOPE    WITH
+    BTEMPO             0.128      0.040      3.202      0.001
+
+ BTEMPO   WITH
+    INTERCEPT          0.034      0.022      1.518      0.129
+
+ BTIMING  WITH
+    BTEMPO             0.273      0.023     11.777      0.000
+
+ Means
+    ELA_PLUS           1.024      0.017     59.441      0.000
+
+ Intercepts
+    BTIMING           14.565      0.237     61.525      0.000
+    BTEMPO             2.320      0.051     45.617      0.000
+    RT1_TOTAL          0.000      0.000    999.000    999.000
+    RT2_TOTAL          0.000      0.000    999.000    999.000
+    RT3_TOTAL          0.000      0.000    999.000    999.000
+    RT4_TOTAL          0.000      0.000    999.000    999.000
+    INTERCEPT         12.295      0.190     64.550      0.000
+    SLOPE             -8.539      0.676    -12.623      0.000
+
+ Variances
+    ELA_PLUS           1.000      0.000    999.000    999.000
+
+ Residual Variances
+    BTIMING            1.000      0.000   6154.211      0.000
+    BTEMPO             0.997      0.002    427.761      0.000
+    RT1_TOTAL          0.041      0.002     16.662      0.000
+    RT2_TOTAL          0.042      0.002     16.701      0.000
+    RT3_TOTAL          0.043      0.003     16.620      0.000
+    RT4_TOTAL          0.043      0.003     16.129      0.000
+    INTERCEPT          0.980      0.006    163.327      0.000
+    SLOPE              0.865      0.030     28.777      0.000
+
+
+STD Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_TOTAL         56.176      0.878     63.956      0.000
+    RT2_TOTAL         56.176      0.878     63.956      0.000
+    RT3_TOTAL         56.176      0.878     63.956      0.000
+    RT4_TOTAL         56.176      0.878     63.956      0.000
+
+ SLOPE    BY
+    RT1_TOTAL          0.000      0.000    999.000    999.000
+    RT2_TOTAL          2.499      0.157     15.950      0.000
+    RT3_TOTAL          6.466      0.411     15.742      0.000
+    RT4_TOTAL         11.630      0.729     15.949      0.000
+
+ INTERCEP ON
+    ELA_PLUS          -0.079      0.012     -6.624      0.000
+
+ SLOPE    ON
+    ELA_PLUS           0.011      0.023      0.509      0.611
+    BTIMING            0.384      0.042      9.150      0.000
+
+ BTIMING  ON
+    ELA_PLUS           0.002      0.013      0.142      0.887
+
+ BTEMPO   ON
+    ELA_PLUS          -0.004      0.002     -2.200      0.028
+
+ INTERCEP WITH
+    SLOPE             -0.237      0.039     -6.028      0.000
+    BTIMING           -0.042      0.022     -1.960      0.050
+
+ SLOPE    WITH
+    BTEMPO             0.018      0.006      3.205      0.001
+
+ BTEMPO   WITH
+    INTERCEPT          0.005      0.003      1.519      0.129
+
+ BTIMING  WITH
+    BTEMPO             0.037      0.003     11.221      0.000
+
+ Means
+    ELA_PLUS           1.812      0.039     46.651      0.000
+
+ Intercepts
+    BTIMING           13.924      0.032    436.263      0.000
+    BTEMPO             0.331      0.005     73.338      0.000
+    RT1_TOTAL          0.000      0.000    999.000    999.000
+    RT2_TOTAL          0.000      0.000    999.000    999.000
+    RT3_TOTAL          0.000      0.000    999.000    999.000
+    RT4_TOTAL          0.000      0.000    999.000    999.000
+    INTERCEPT         12.295      0.190     64.550      0.000
+    SLOPE             -8.539      0.676    -12.623      0.000
+
+ Variances
+    ELA_PLUS           3.132      0.122     25.644      0.000
+
+ Residual Variances
+    BTIMING            0.914      0.030     30.302      0.000
+    BTEMPO             0.020      0.001     30.044      0.000
+    RT1_TOTAL        134.811      7.382     18.261      0.000
+    RT2_TOTAL        134.811      7.382     18.261      0.000
+    RT3_TOTAL        134.811      7.382     18.261      0.000
+    RT4_TOTAL        134.811      7.382     18.261      0.000
+    INTERCEPT          0.980      0.006    163.327      0.000
+    SLOPE              0.865      0.030     28.777      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    BTIMING            0.000      0.000      0.071      0.944
+    BTEMPO             0.003      0.002      1.099      0.272
+    RT1_TOTA           0.959      0.002    390.034      0.000
+    RT2_TOTA           0.958      0.002    383.461      0.000
+    RT3_TOTA           0.957      0.003    372.965      0.000
+    RT4_TOTA           0.957      0.003    356.671      0.000
+
+     Latent                                         Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    INTERCEP           0.020      0.006      3.259      0.001
+    SLOPE              0.135      0.030      4.500      0.000
+
+
+TECHNICAL 4 OUTPUT
+
+
+     ESTIMATES DERIVED FROM THE MODEL
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         BTIMING       BTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+              682.623       -36.871        13.927         0.324         1.812
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         BTIMING       BTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+                1.196         0.422         0.022         0.003         0.039
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         BTIMING       BTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+              570.832       -87.310       639.053       102.917        46.651
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         BTIMING       BTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         BTIMING       BTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+ INTERCEP    3155.696
+ SLOPE       -154.875       135.266
+ BTIMING       -2.369         4.082         0.914
+ BTEMPO         0.327         0.362         0.037         0.020
+ ELA_PLUS     -13.905         0.444         0.006        -0.013         3.132
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         BTIMING       BTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+ INTERCEP      98.683
+ SLOPE         26.088        16.963
+ BTIMING        1.210         0.463         0.030
+ BTEMPO         0.177         0.066         0.003         0.001
+ ELA_PLUS       2.233         0.839         0.041         0.006         0.122
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         BTIMING       BTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+ INTERCEP      31.978
+ SLOPE         -5.937         7.974
+ BTIMING       -1.958         8.819        30.309
+ BTEMPO         1.847         5.499        11.226        30.120
+ ELA_PLUS      -6.227         0.529         0.142        -2.189        25.644
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         BTIMING       BTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.000         0.000
+ BTIMING        0.050         0.000         0.000
+ BTEMPO         0.065         0.000         0.000         0.000
+ ELA_PLUS       0.000         0.597         0.887         0.029         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         BTIMING       BTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+ INTERCEP       1.000
+ SLOPE         -0.237         1.000
+ BTIMING       -0.044         0.367         1.000
+ BTEMPO         0.041         0.218         0.272         1.000
+ ELA_PLUS      -0.140         0.022         0.003        -0.051         1.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         BTIMING       BTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.037         0.000
+ BTIMING        0.022         0.041         0.000
+ BTEMPO         0.022         0.039         0.023         0.000
+ ELA_PLUS       0.021         0.041         0.024         0.023         0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         BTIMING       BTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+ INTERCEP     999.000
+ SLOPE         -6.379       999.000
+ BTIMING       -1.964         9.004       999.000
+ BTEMPO         1.848         5.595        11.810       999.000
+ ELA_PLUS      -6.519         0.527         0.142        -2.198       999.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         BTIMING       BTEMPO        ELA_PLUS
+              ________      ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.000         0.000
+ BTIMING        0.050         0.000         0.000
+ BTEMPO         0.065         0.000         0.000         0.000
+ ELA_PLUS       0.000         0.598         0.887         0.028         0.000
+
+
+     Beginning Time:  14:00:26
+        Ending Time:  14:00:27
+       Elapsed Time:  00:00:01
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2022 Muthen & Muthen
