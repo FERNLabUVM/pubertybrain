@@ -42,9 +42,46 @@ dfmerged <- dfmerged %>%
 
 write.csv(dfmerged, "~/GitHub/pubertybrain/dfmerged.csv", row.names = TRUE)
 
-#######merge in adversity data
+#######merge in adversity data##########
 
-dfmerged <- read.csv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/pubertybrain/dfmerged.csv")
+dfmerged <- read.csv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/pubertybrain/dfmerged.csv") %>% 
+  select(-starts_with("X"))
+                    
+
+######ELA plus composite (from 5.1 data release)###########
+
+ELA <- read.csv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/ela_plus_abcd.csv") %>%
+  filter(eventname == "baseline_year_1_arm_1")
+
+hist(ELA$ela_plus)
+table(ELA$ela_plus)
+
+####standardize IDs and merge across 5.1 and 6.0
+
+#Clean IDs in 5.1
+ELA <- ELA %>%
+  mutate(ID = paste0("sub-", sub("NDAR_INV", "", src_subject_id))) %>%
+  select(ID, everything()) %>%
+  select(-starts_with("X"))
+
+#Merge datasets on cleaned IDs
+dfmerged <- ELA %>%
+  inner_join(dfmerged, by = "ID")
+
+dfmerged_mplus <- dfmerged %>%
+  select(-(`abuse_phy`:`eventname`)) %>%
+  select(-('ID':'src_subject_id')) %>%
+  select(numeric_id, everything())
+
+dfmerged_mplus <- dfmerged_mplus %>%
+  mutate(across(everything(), ~ ifelse(is.na(.), -999, .)))
+
+write.table(dfmerged_mplus,'/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/pubertybrain/dfmerged_mplus.dat', row.names = FALSE, col.names = FALSE)
+
+
+
+
+#########Negative life events variable#################
 
 NLE <- read_tsv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/ABCD_6.0/rawdata/phenotype/mh_y_ple.tsv") %>%
   filter(session_id == "ses-01A")
@@ -101,3 +138,4 @@ NLE5 <- read_csv(paste(path, 'mental-health/mh_y_le.csv', sep='/'), col_names=TR
 
 table(NLE5$ple_y_ss_total_bad)
 
+save.image(file = "/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/pubertybrain/my_R_environment.RData")
