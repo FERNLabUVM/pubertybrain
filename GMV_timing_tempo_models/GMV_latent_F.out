@@ -1,6 +1,6 @@
 Mplus VERSION 8.8 (Mac)
 MUTHEN & MUTHEN
-08/22/2025   9:46 AM
+08/30/2025   9:51 PM
 
 INPUT INSTRUCTIONS
 
@@ -52,6 +52,9 @@ INPUT INSTRUCTIONS
   PLOT:
   TYPE = PLOT3;
   SERIES = rT1_TOTAL-rT4_TOTAL (slope);
+
+  SAVEDATA:
+    FILE = latentFplot.gh5;
 
 
 
@@ -534,9 +537,35 @@ The following plots are available:
   Observed individual values
   Estimated individual values
 
-     Beginning Time:  09:46:42
-        Ending Time:  09:46:43
-       Elapsed Time:  00:00:01
+SAVEDATA INFORMATION
+
+
+  Save file
+    latentFplot.gh5
+
+  Order and format of variables
+
+    RT1_TOTA       F10.3
+    RT2_TOTA       F10.3
+    RT3_TOTA       F10.3
+    RT4_TOTA       F10.3
+    INTERCEPT      F10.3
+    INTERCEP_SE    F10.3
+    SLOPE          F10.3
+    SLOPE_SE       F10.3
+    FAM_ID         I6
+
+  Save file format
+    8F10.3 I6
+
+  Save file record length    10000
+
+  Save missing symbol        *
+
+
+     Beginning Time:  21:51:09
+        Ending Time:  21:51:09
+       Elapsed Time:  00:00:00
 
 
 
