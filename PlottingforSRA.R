@@ -14,63 +14,71 @@ library(ggplot2)
 setwd("~/Documents/GitHub/pubertybrain")
 
 #read in file!
-df <- read.csv("dfmerged.csv")
+df <- read.csv("dfmerged_mplus.csv")
 names(df)
 
 df <- df %>%
   mutate(across(where(is.numeric), ~ na_if(., -999)))
 
-# --- choose girls (robust to different encodings) and require timing/tempo ---
-library(dplyr)
-library(tidyr)
+#Girl's plots
 
-# Keep girls with timing/tempo + GMV & age fields
+#Select girls!
 girls <- df %>%
   filter(!is.na(gtiming), !is.na(gtempo)) %>%
-  select(ID, gtiming, gtempo,
+  select(numeric_id, gtiming, gtempo,
          age_1, age_2, age_3, age_4,
-         T1_totalGMV, T2_totalGMV, T3_totalGMV, T4_totalGMV)
+         T1_totalGMV, T2_totalGMV, T3_totalGMV, T4_totalGMV,
+         ela_plus)
 
-# Long GMV by wave with the matching age
+#Make long
 gmv_long <- girls %>%
-  pivot_longer(cols = c(T1_totalGMV, T2_totalGMV, T3_totalGMV, T4_totalGMV),
+  pivot_longer(c(T1_totalGMV, T2_totalGMV, T3_totalGMV, T4_totalGMV),
                names_to = "wave_gmv", values_to = "GMV") %>%
-  pivot_longer(cols = c(age_1, age_2, age_3, age_4),
+  pivot_longer(c(age_1, age_2, age_3, age_4),
                names_to = "wave_age", values_to = "age") %>%
   filter(substr(wave_gmv, 2, 2) == substr(wave_age, 5, 5)) %>%
   mutate(wave = as.integer(substr(wave_gmv, 2, 2))) %>%
-  select(ID, gtiming, gtempo, wave, age, GMV) %>%
-  arrange(ID, wave) %>%
+  select(numeric_id, gtiming, gtempo, wave, age, GMV) %>%
+  arrange(numeric_id, wave) %>%
   filter(!is.na(GMV)) %>%
-  mutate(GMV_k = GMV / 1000)   # scale by 1,000
+  mutate(
+    GMV_k = GMV / 1000,
+    numeric_id = as.factor(numeric_id)                      
+  )
 
-# ==== TIMING GROUPS: 20/60/20 =================================================
+#Create timing groups and merge with gmv_long
 q20 <- quantile(girls$gtiming, 0.20, na.rm = TRUE)
 q80 <- quantile(girls$gtiming, 0.80, na.rm = TRUE)
 muT <- mean(girls$gtiming, na.rm = TRUE)
 
+muT
+
 timing_groups <- girls %>%
   transmute(
-    ID, gtiming,
+    numeric_id = as.character(numeric_id),
+    gtiming,
     timing_group = case_when(
-      gtiming <= q20 ~ "Early (bottom 20%)",
-      gtiming >= q80 ~ "Late (top 20%)",
-      TRUE           ~ "On-time (middle 60%)"
+      gtiming <= q20 ~ "Early",
+      gtiming >= q80 ~ "Late",
+      TRUE           ~ "On-time"
     )
-  )
+  ) %>%
+  select(numeric_id, timing_group)
 
-gmv_long <- gmv_long %>% left_join(timing_groups, by = c("ID","gtiming"))
+gmv_long <- gmv_long %>%
+  mutate(numeric_id = as.character(numeric_id)) %>%
+  left_join(timing_groups, by = "numeric_id") %>%
+  mutate(timing_group = factor(timing_group, levels = c("Early","On-time","Late")))
 
-# Color-blind-safe palette
-cols3 <- c("Early (bottom 20%)"   = "#D55E00",  # orange
-           "On-time (middle 60%)" = "#7F7F7F",  # grey
-           "Late (top 20%)"       = "#0072B2")  # blue
-
+#Color-blind-safe palette and theme
+cols3 <- c("Early"="#D55E00","On-time"="#7F7F7F","Late"="#0072B2")
 theme_base <- theme_minimal(base_size = 12) +
   theme(panel.grid.minor = element_blank(),
         panel.grid.major = element_line(linewidth = 0.2))
 
-# ==== (A) EMPIRICAL GMV TRAJECTORIES BY TIMING GROUP ==========================
+table(gmv_long$timing_group, useNA = "ifany")
+
+#Empirical GMV trajectories with timing
 summs <- gmv_long %>%
   group_by(timing_group, wave) %>%
   summarise(n = dplyr::n(),
@@ -79,263 +87,540 @@ summs <- gmv_long %>%
             .groups = "drop")
 
 pA <- ggplot() +
-  geom_line(data = gmv_long, aes(wave, GMV_k, group = ID),
+  geom_line(data = gmv_long, aes(wave, GMV_k, group = numeric_id),
             alpha = 0.05, linewidth = 0.2, color = "grey35") +
   geom_point(data = gmv_long, aes(wave, GMV_k),
              alpha = 0.04, size = 0.6, color = "grey35") +
-  geom_errorbar(data = summs,
-                aes(wave, ymin = mean_k - 1.96*se_k, ymax = mean_k + 1.96*se_k, color = timing_group),
-                width = .08, linewidth = .6) +
   geom_line(data = summs, aes(wave, mean_k, color = timing_group), linewidth = 1.8) +
   geom_point(data = summs, aes(wave, mean_k, color = timing_group), size = 2.2) +
-  scale_x_continuous(breaks = c(1,2,3,4), labels = c("W1","W2","W3","W4")) +
+  scale_x_continuous(breaks = c(1,2,3,4),
+                     labels = c("Baseline","Year 2","Year 4","Year 6")) +
   scale_color_manual(values = cols3) +
-  labs(x = "Wave", y = "Total GMV (÷1,000)", color = NULL,
-       title = "Empirical GMV trajectories (girls) by pubertal timing (20/60/20)") +
+  coord_cartesian(ylim = c(400, 800)) +                       # <- view 0–1000
+  scale_y_continuous(breaks = seq(400, 800, by = 100)) +      # tidy ticks
+  labs(x = "Year", y = "Total GMV (÷1,000)", color = NULL,   # label matches GMV_k
+       title = "Empirical GMV trajectories (girls) by pubertal timing") +
   theme_base
 
 pA
 
-# --- Robust anchors (scaled) ---
+#Model-estimated trajectories with timing
+tload <- c(`1`=0.000, `2`=0.210, `3`=0.684, `4`=1.000)
+
 mu_I_k <- mean(gmv_long$GMV_k[gmv_long$wave == 1], na.rm = TRUE)
 mu_F_k <- mean(gmv_long$GMV_k[gmv_long$wave == 4], na.rm = TRUE)
-mu_S_k <- mu_F_k - mu_I_k   # average total change W1->W4 (should be negative)
+mu_S_k <- mu_F_k - mu_I_k   # mean total change W1→W4
 
-# --- Shifts for 20/60/20 groups relative to the mean timing ---
-shift_early <- as.numeric(q20 - muT)
-shift_late  <- as.numeric(q80 - muT)
+id_slopes_gt <- gmv_long %>%
+  mutate(t = tload[as.character(wave)]) %>%
+  group_by(numeric_id, gtiming) %>%
+  filter(n() >= 2) %>%
+  do({ fit <- lm(GMV_k ~ t, data = .); tibble(slope_k = coef(fit)[["t"]]) }) %>%
+  ungroup()
 
-shifts <- c("Early (bottom 20%)"   = shift_early,
-            "On-time (middle 60%)" = 0,
-            "Late (top 20%)"       = shift_late)
+b_hat_gt <- unname(coef(lm(slope_k ~ gtiming, data = id_slopes_gt))["gtiming"])
 
-# Ensure consistent factor levels for colors
-lvl3 <- names(shifts)
+# 3) Shifts for 20/60/20 timing groups relative to mean timing
+shift_early <- as.numeric(q20 - muT)  # earlier than mean (negative)
+shift_late  <- as.numeric(q80 - muT)  # later than mean (positive)
 
-# --- Model-implied predictions (absolute GMV) ---
-pred <- tidyr::expand_grid(timing_group = lvl3, wave = c(1,2,3,4)) |>
-  dplyr::mutate(
+shifts <- c("Early" = shift_early, "On-time" = 0, "Late" = shift_late)
+lvl3   <- names(shifts)
+
+pred <- tidyr::expand_grid(timing_group = lvl3, wave = c(1,2,3,4)) %>%
+  mutate(
     t        = tload[as.character(wave)],
-    slope_k  = mu_S_k + beta_timing_k * shifts[timing_group],
+    slope_k  = mu_S_k + b_hat_gt * shifts[timing_group],
     GMV_k    = mu_I_k + slope_k * t,
     timing_group = factor(timing_group, levels = lvl3)
   )
 
+#Plot
 pB_abs <- ggplot() +
-  geom_line(data = gmv_long, aes(wave, GMV_k, group = ID),
+  # raw backdrop (grey)
+  geom_line(data = gmv_long, aes(wave, GMV_k, group = numeric_id),
             alpha = 0.05, linewidth = 0.2, color = "grey40") +
   geom_point(data = gmv_long, aes(wave, GMV_k),
              alpha = 0.04, size = 0.5, color = "grey40") +
+  # model-implied lines
   geom_line(data = pred, aes(wave, GMV_k, color = timing_group), linewidth = 2) +
   geom_point(data = pred, aes(wave, GMV_k, color = timing_group), size = 2.2) +
-  scale_x_continuous(breaks = c(1,2,3,4), labels = c("W1","W2","W3","W4")) +
+  scale_x_continuous(breaks = c(1,2,3,4),
+                     labels = c("Baseline","Year 2","Year 4","Year 6")) +
   scale_color_manual(values = cols3) +
-  labs(x = "Wave", y = "Total GMV (÷1,000)", color = NULL,
-       title = "Model-implied GMV (girls): absolute levels",
-       subtitle = sprintf("Loads: 0,.215,.556,1.0 · SLOPE ON timing b = %.3f (÷1,000); groups = 20/60/20",
-                          beta_timing_raw)) +
+  coord_cartesian(ylim = c(400, 800)) +
+  scale_y_continuous(breaks = seq(400, 800, by = 100)) +
+  labs(x = "Year", y = "Total GMV (÷1,000)", color = NULL,
+       title = "Model-implied GMV (girls): absolute levels") +
   theme_base
 
-# --- Optional: emphasize differences as Δ from baseline (easier to see) ---
+pB_abs
+
 # Model-implied ΔGMV from baseline is just slope_k * t (starts at 0)
 pred_delta <- pred |>
   dplyr::mutate(Delta_k = slope_k * t)
 
-# If you want raw Δ background, compute per-ID baseline and subtract:
-raw_delta <- gmv_long |>
-  dplyr::group_by(ID) |>
-  dplyr::mutate(GMV0_k = GMV_k[wave == 1][1]) |>
-  dplyr::ungroup() |>
-  dplyr::filter(!is.na(GMV0_k)) |>
+raw_delta <- gmv_long %>%
+  dplyr::group_by(numeric_id) %>%
+  dplyr::mutate(GMV0_k = GMV_k[wave == 1][1]) %>%
+  dplyr::ungroup() %>%
+  dplyr::filter(!is.na(GMV0_k)) %>%
   dplyr::mutate(Delta_k = GMV_k - GMV0_k)
+
+raw_delta %>% summarise(min = min(Delta_k, na.rm=TRUE),
+                        max = max(Delta_k, na.rm=TRUE),
+                        n_na = sum(!is.finite(Delta_k)))
+#Plot
+pB_delta <- ggplot() +
+  geom_hline(yintercept = 0, linetype = 2, linewidth = 0.4) +
+  geom_line(data = raw_delta, aes(wave, Delta_k, group = numeric_id),
+            alpha = 0.05, linewidth = 0.2, color = "grey40", na.rm = TRUE) +
+  geom_point(data = raw_delta, aes(wave, Delta_k),
+             alpha = 0.04, size = 0.5, color = "grey40", na.rm = TRUE) +
+  geom_line(data = pred_delta, aes(wave, Delta_k, color = timing_group), linewidth = 1) +
+  geom_point(data = pred_delta, aes(wave, Delta_k, color = timing_group), size = 2.2) +
+  scale_x_continuous(breaks = c(1,2,3,4),
+                     labels = c("Baseline","Year 2","Year 4","Year 6")) +
+  coord_cartesian(ylim = c(-175, 75)) +                        # show +100 … -200
+  scale_y_continuous(breaks = seq(100, -200, by = -25)) +       # ticks every 25
+  scale_color_manual(values = cols3) +
+  labs(x = "Year", y = "Δ GMV from Baseline (÷1,000)", color = NULL,
+       title = "Model-implied GMV change (girls): Δ from baseline") +
+  theme_base
+
+pB_delta
+
+tload <- c(`1`=0.000, `2`=0.210, `3`=0.684, `4`=1.000)   # from Mplus
+
+# Mplus unstandardized growth-factor means (divide by 1000 to match GMV_k)
+I_mean_k <- 641.903 
+S_mean_k <- -68.624
+
+# Mplus unstandardized slope-on-timing effect (also ÷1000 to match GMV_k units)
+b_mplus_k <- 1.107 
+
+# 4) Define timing shifts for Early/On-time/Late (20/60/20 cutpoints from YOUR data)
+#    (These are in the units of gtiming, typically 'years' or 'z-scores' depending on your coding)
+if (!exists("q20") || !exists("q80") || !exists("muT")) {
+  q20 <- quantile(girls$gtiming, 0.20, na.rm = TRUE)
+  q80 <- quantile(girls$gtiming, 0.80, na.rm = TRUE)
+  muT <- mean(girls$gtiming, na.rm = TRUE)
+}
+shifts <- c("Early"   = as.numeric(q20 - muT),   # earlier than mean (usually negative)
+            "On-time" = 0,
+            "Late"    = as.numeric(q80 - muT))   # later than mean (usually positive)
+
+# 5) Model-implied slope for each timing group: S̄ + (b * Δtiming)
+pred <- tidyr::expand_grid(timing_group = names(shifts), wave = c(1,2,3,4)) %>%
+  mutate(
+    t            = tload[as.character(wave)],
+    slope_k      = S_mean_k + b_mplus_k * shifts[timing_group],
+    GMV_k        = I_mean_k + slope_k * t,
+    timing_group = factor(timing_group, levels = c("Early","On-time","Late"))
+  )
+
+# Absolute GMV with raw backdrop
+pB_abs <- ggplot() +
+  geom_line(data = gmv_long, aes(wave, GMV_k, group = numeric_id),
+            alpha = 0.05, linewidth = 0.2, color = "grey40", na.rm = TRUE) +
+  geom_point(data = gmv_long, aes(wave, GMV_k),
+             alpha = 0.04, size = 0.5, color = "grey40", na.rm = TRUE) +
+  geom_line(data = pred, aes(wave, GMV_k, color = timing_group), linewidth = 1) +
+  geom_point(data = pred, aes(wave, GMV_k, color = timing_group), size = 2.2) +
+  scale_x_continuous(breaks = c(1,2,3,4),
+                     labels = c("Baseline","Year 2","Year 4","Year 6")) +
+  coord_cartesian(ylim = c(400, 800)) +
+  scale_y_continuous(breaks = seq(400, 800, by = 100)) +
+  scale_color_manual(values = cols3) +
+  labs(x = "Year", y = "Total GMV (÷1,000)", color = NULL,
+       title = "Model-implied GMV (girls): absolute levels (Mplus-driven)",
+       subtitle = "Ī = 641.903, S̄ = −68.624, SLOPE ON GTIMING = b_mplus_k; loads: 0, .210, .684, 1.0") +
+  theme_base
+
+pB_abs
+
+# Δ from baseline (Mplus-driven)
+pred_delta <- pred %>% mutate(Delta_k = slope_k * t)
+
+# Raw Δ backdrop from your data
+raw_delta <- gmv_long %>%
+  group_by(numeric_id) %>%
+  mutate(GMV0_k = GMV_k[wave == 1][1]) %>%
+  ungroup() %>%
+  filter(is.finite(GMV0_k)) %>%
+  mutate(Delta_k = GMV_k - GMV0_k)
 
 pB_delta <- ggplot() +
   geom_hline(yintercept = 0, linetype = 2, linewidth = 0.4) +
-  geom_line(data = raw_delta, aes(wave, Delta_k, group = ID),
-            alpha = 0.05, linewidth = 0.2, color = "grey40") +
+  geom_line(data = raw_delta, aes(wave, Delta_k, group = numeric_id),
+            alpha = 0.05, linewidth = 0.2, color = "grey40", na.rm = TRUE) +
   geom_point(data = raw_delta, aes(wave, Delta_k),
-             alpha = 0.04, size = 0.5, color = "grey40") +
-  geom_line(data = pred_delta, aes(wave, Delta_k, color = timing_group), linewidth = 2) +
+             alpha = 0.04, size = 0.5, color = "grey40", na.rm = TRUE) +
+  geom_line(data = pred_delta, aes(wave, Delta_k, color = timing_group), linewidth = 1) +
   geom_point(data = pred_delta, aes(wave, Delta_k, color = timing_group), size = 2.2) +
-  scale_x_continuous(breaks = c(1,2,3,4), labels = c("W1","W2","W3","W4")) +
+  scale_x_continuous(breaks = c(1,2,3,4),
+                     labels = c("Baseline","Year 2","Year 4","Year 6")) +
+  coord_cartesian(ylim = c(-150, 50)) +
+  scale_y_continuous(breaks = seq(100, -200, by = -25)) +
   scale_color_manual(values = cols3) +
-  labs(x = "Wave", y = "Δ GMV from baseline (÷1,000)", color = NULL,
-       title = "Model-implied GMV change (girls): Δ from baseline",
-       subtitle = "Same baseline for all groups; lines differ only in change (slope)") +
+  labs(x = "Year", y = "Δ GMV from Baseline (÷1,000)", color = NULL,
+       title = "Model-implied GMV change (girls): Δ from baseline (Mplus-driven)",
+       subtitle = "Δ = (S̄ + b·Δtiming) × t; params from fullModel_F") +
   theme_base
 
-# Draw
+pB_delta
+
+# --- 1) Latent-basis time scores from Mplus ---
+tload <- c(`1`=0.000, `2`=0.210, `3`=0.684, `4`=1.000)
+
+# --- 2) Mplus growth-factor means (already GMV÷1,000 units) ---
+I_mean_k <- 641.903     # INTERCEPT mean
+S_mean_k <- -68.624     # SLOPE mean
+
+# --- 3) Mplus unstandardized effect of timing on slope (same units) ---
+b_timing_k <- 1.107     # SLOPE ON GTIMING
+
+# --- 4) Define timing shifts for Early/On-time/Late (20/60/20), centered at Mplus timing mean ---
+gtiming_mean_mplus <- 12.461  # "Intercepts: GTIMING"
+q20 <- quantile(girls$gtiming, 0.20, na.rm = TRUE)
+q80 <- quantile(girls$gtiming, 0.80, na.rm = TRUE)
+
+shifts <- c("Early"   = as.numeric(q20 - gtiming_mean_mplus),
+            "On-time" = 0,
+            "Late"    = as.numeric(q80 - gtiming_mean_mplus))
+
+# --- 5) Model-implied trajectories from Mplus parameters ---
+pred <- tidyr::expand_grid(timing_group = names(shifts), wave = c(1,2,3,4)) %>%
+  mutate(
+    t            = tload[as.character(wave)],
+    slope_k      = S_mean_k + b_timing_k * shifts[timing_group],   # Mplus slope mean + timing nudge
+    GMV_k        = I_mean_k + slope_k * t,                          # Mplus intercept mean + change
+    timing_group = factor(timing_group, levels = c("Early","On-time","Late"))
+  )
+
+# --- 6) Absolute-level plot (Mplus-driven) ---
+pB_abs <- ggplot() +
+  geom_line(data = gmv_long, aes(wave, GMV_k, group = numeric_id),
+            alpha = 0.05, linewidth = 0.2, color = "grey40", na.rm = TRUE) +
+  geom_point(data = gmv_long, aes(wave, GMV_k),
+             alpha = 0.04, size = 0.5, color = "grey40", na.rm = TRUE) +
+  geom_line(data = pred, aes(wave, GMV_k, color = timing_group), linewidth = 2) +
+  geom_point(data = pred, aes(wave, GMV_k, color = timing_group), size = 2.2) +
+  scale_x_continuous(breaks = c(1,2,3,4),
+                     labels = c("Baseline","Year 2","Year 4","Year 6")) +
+  coord_cartesian(ylim = c(400, 800)) +
+  scale_y_continuous(breaks = seq(400, 800, by = 100)) +
+  scale_color_manual(values = cols3) +
+  labs(x = "Year", y = "Total GMV (÷1,000)", color = NULL,
+       title = "Model-implied GMV (girls): absolute levels (Mplus-driven)",
+       subtitle = "Ī=641.9, S̄=−68.6, SLOPE ON GTIMING=+1.107; loads 0,.210,.684,1.0") +
+  theme_base
+
+# --- 7) Δ-from-baseline version (Mplus-driven) ---
+# In the model block, everyone starts at Ī, so Δ = slope_k * t
+pred_delta <- pred %>% mutate(Delta_k = slope_k * t)
+
+# Raw Δ background
+raw_delta <- gmv_long %>%
+  group_by(numeric_id) %>%
+  mutate(GMV0_k = GMV_k[wave == 1][1]) %>%
+  ungroup() %>%
+  filter(is.finite(GMV0_k)) %>%
+  mutate(Delta_k = GMV_k - GMV0_k)
+
+pB_delta <- ggplot() +
+  geom_hline(yintercept = 0, linetype = 2, linewidth = 0.4) +
+  geom_line(data = raw_delta, aes(wave, Delta_k, group = numeric_id),
+            alpha = 0.05, linewidth = 0.2, color = "grey40", na.rm = TRUE) +
+  geom_point(data = raw_delta, aes(wave, Delta_k),
+             alpha = 0.04, size = 0.5, color = "grey40", na.rm = TRUE) +
+  geom_line(data = pred_delta, aes(wave, Delta_k, color = timing_group), linewidth = 2) +
+  geom_point(data = pred_delta, aes(wave, Delta_k, color = timing_group), size = 2.2) +
+  scale_x_continuous(breaks = c(1,2,3,4),
+                     labels = c("Baseline","Year 2","Year 4","Year 6")) +
+  coord_cartesian(ylim = c(-175, 75)) +
+  scale_y_continuous(breaks = seq(100, -200, by = -25)) +
+  scale_color_manual(values = cols3) +
+  labs(x = "Year", y = "Δ GMV from Baseline (÷1,000)", color = NULL,
+       title = "Model-implied GMV change (girls): Δ from baseline (Mplus-driven)",
+       subtitle = "Δ = (S̄ + b·Δtiming) × t; parameters from fullModel_F") +
+  theme_base
+
 pB_abs
 pB_delta
 
-pB
-
-library(dplyr); library(tidyr); library(ggplot2)
-
-# --- latent-basis time scores
-tload <- c(`1`=0.000, `2`=0.215, `3`=0.556, `4`=1.000)
-
-# gmv_long: girls-only long table from earlier, with GMV_k = GMV/1000
-# timing groups already defined via 20/60/20 cutoffs:
-q20 <- quantile(girls$gtiming, 0.20, na.rm = TRUE)
-q80 <- quantile(girls$gtiming, 0.80, na.rm = TRUE)
-muT <- mean(girls$gtiming, na.rm = TRUE)
-
-gmv_long <- gmv_long %>%
-  mutate(GMV_k = GMV / 1000)
-
-# 1) Per-ID slope (latent-basis) in *your* units
-id_slopes <- gmv_long %>%
-  mutate(t = tload[as.character(wave)]) %>%
-  group_by(ID, gtiming) %>%
-  filter(n() >= 2) %>%
-  do({
-    fit <- lm(GMV_k ~ t, data = .)
-    tibble(slope_k = coef(fit)[["t"]])   # total change W1→W4 (scaled)
-  }) %>%
-  ungroup()
-
-# 2) Regress slope on gtiming to get the effect in your units
-fit_slope_timing <- lm(slope_k ~ gtiming, data = id_slopes)
-b_hat  <- unname(coef(fit_slope_timing)["gtiming"])         # unstd effect in GMV_k units / year
-mu_S_k <- mean(id_slopes$slope_k, na.rm = TRUE)             # mean total change W1→W4 (scaled)
-mu_I_k <- mean(gmv_long$GMV_k[gmv_long$wave==1], na.rm=TRUE) # baseline mean (scaled)
-
-# 3) Build model-implied trajectories for timing groups using 20/60/20 shifts
-shift_early <- as.numeric(q20 - muT)
-shift_late  <- as.numeric(q80 - muT)
-
-shifts <- c("Early (bottom 20%)"   = shift_early,
-            "On-time (middle 60%)" = 0,
-            "Late (top 20%)"       = shift_late)
-
-pred_delta <- tidyr::expand_grid(timing_group = names(shifts), wave = c(1,2,3,4)) %>%
-  mutate(t        = tload[as.character(wave)],
-         slope_k  = mu_S_k + b_hat * shifts[timing_group],
-         Delta_k  = slope_k * t,
-         timing_group = factor(timing_group, levels = names(shifts)))
-
-# (optional) raw Δ background for context
-raw_delta <- gmv_long %>%
-  group_by(ID) %>%
-  mutate(GMV0_k = GMV_k[wave==1][1]) %>%
-  ungroup() %>%
-  filter(!is.na(GMV0_k)) %>%
-  mutate(Delta_k = GMV_k - GMV0_k)
-
-# Color-blind-safe palette
-cols3 <- c("Early (bottom 20%)"="#D55E00", "On-time (middle 60%)"="#7F7F7F", "Late (top 20%)"="#0072B2")
-
-# 4) Plot Δ from baseline (differences pop out)
-pB_delta <- ggplot() +
-  geom_hline(yintercept = 0, linetype = 2, linewidth = 0.4) +
-  geom_line(data = raw_delta, aes(wave, Delta_k, group = ID),
-            alpha = 0.05, linewidth = 0.2, color = "grey40") +
-  geom_point(data = raw_delta, aes(wave, Delta_k),
-             alpha = 0.04, size = 0.5, color = "grey40") +
-  geom_line(data = pred_delta, aes(wave, Delta_k, color = timing_group), linewidth = 2) +
-  geom_point(data = pred_delta, aes(wave, Delta_k, color = timing_group), size = 2.2) +
-  scale_x_continuous(breaks = c(1,2,3,4), labels = c("W1","W2","W3","W4")) +
-  scale_color_manual(values = cols3) +
-  labs(x = "Wave", y = "Δ GMV from baseline (÷1,000)", color = NULL,
-       title = "Model-implied GMV change (girls): Δ from baseline",
-       subtitle = sprintf("Effect estimated from data: slope_k ~ gtiming (b = %.3f)", b_hat)) +
-  theme_minimal(base_size = 12) +
-  theme(panel.grid.minor = element_blank(),
-        panel.grid.major = element_line(linewidth = 0.2))
-
-pB_delta
-
-pB_delta +
-  scale_y_continuous(limits = c(-100, 0),
-                     breaks = seq(0, -100, by = -20))
 
 
-# ---- 20/60/20 groups on tempo ----
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#Now girl's tempo models
 q20_t <- quantile(girls$gtempo, 0.20, na.rm = TRUE)
 q80_t <- quantile(girls$gtempo, 0.80, na.rm = TRUE)
 muT_t <- mean(girls$gtempo, na.rm = TRUE)
 
-tempo_groups_206020 <- girls %>%
+muT 
+
+tempo_groups <- girls %>%
   transmute(
-    ID, gtempo,
+    numeric_id = as.character(numeric_id),
     tempo_group = case_when(
-      gtempo <= q20_t ~ "Slow (bottom 20%)",
-      gtempo >= q80_t ~ "Fast (top 20%)",
-      TRUE            ~ "Typical (middle 60%)"
+      gtempo <= quantile(girls$gtempo, 0.20, na.rm = TRUE) ~ "Slow tempo",
+      gtempo >= quantile(girls$gtempo, 0.80, na.rm = TRUE) ~ "Fast tempo",
+      TRUE                                                 ~ "Typical tempo"
     )
   )
 
-gmv_long_t <- gmv_long %>% left_join(tempo_groups_206020, by = c("ID","gtempo"))
+gmv_long <- gmv_long %>%
+  mutate(numeric_id = as.character(numeric_id)) %>%
+  select(-any_of("tempo_group")) %>%                 # remove if already present
+  left_join(tempo_groups, by = "numeric_id") %>%
+  mutate(tempo_group = factor(tempo_group,
+                              levels = c("Slow tempo","Typical tempo","Fast tempo")))
 
-# ---- Per-ID GMV slope (latent-basis proxy) & slope~tempo effect ----
-tload <- c(`1`=0.000, `2`=0.215, `3`=0.556, `4`=1.000)
+table(gmv_long$tempo_group, useNA = "ifany")
 
-id_slopes_t <- gmv_long_t %>%
+cols_t <- c("Slow tempo"="#0072B2", "Typical tempo"="#7F7F7F", "Fast tempo"="#D55E00")
+if (!exists("theme_base")) {
+  theme_base <- theme_minimal(base_size = 12) +
+    theme(panel.grid.minor = element_blank(),
+          panel.grid.major = element_line(linewidth = 0.2))
+}
+
+gmv_long <- gmv_long %>%
+  mutate(tempo_group = factor(tempo_group, levels = c("Slow tempo","Typical tempo","Fast tempo")))
+
+#pA: Raw spaghetti + means
+summs_t <- gmv_long %>%
+  filter(!is.na(tempo_group)) %>%
+  group_by(tempo_group, wave) %>%
+  summarise(n = dplyr::n(),
+            mean_k = mean(GMV_k, na.rm = TRUE),
+            se_k   = sd(GMV_k,   na.rm = TRUE)/sqrt(n),
+            .groups = "drop")
+
+pA <- ggplot() +
+  geom_line(data = gmv_long, aes(wave, GMV_k, group = numeric_id),
+            alpha = 0.05, linewidth = 0.2, color = "grey35", na.rm = TRUE) +
+  geom_point(data = gmv_long, aes(wave, GMV_k),
+             alpha = 0.04, size = 0.6, color = "grey35", na.rm = TRUE) +
+  geom_line(data = summs_t, aes(wave, mean_k, color = tempo_group), linewidth = 1) +
+  geom_point(data = summs_t, aes(wave, mean_k, color = tempo_group), size = 2.2) +
+  scale_x_continuous(breaks = c(1,2,3,4),
+                     labels = c("Baseline","Year 2","Year 4","Year 6")) +
+  coord_cartesian(ylim = c(400, 800)) +
+  scale_y_continuous(breaks = seq(400, 800, by = 100)) +
+  scale_color_manual(values = cols_t) +
+  labs(x = "Year", y = "Total GMV (÷1,000)", color = NULL,
+       title = "Empirical GMV trajectories (girls) by pubertal tempo") +
+  theme_base
+
+pA
+
+# Anchors
+mu_I_k <- mean(gmv_long$GMV_k[gmv_long$wave == 1], na.rm = TRUE)
+mu_F_k <- mean(gmv_long$GMV_k[gmv_long$wave == 4], na.rm = TRUE)
+mu_S_k <- mu_F_k - mu_I_k
+
+# Empirical slope ~ tempo effect in your units
+id_slopes_t <- gmv_long %>%
   mutate(t = tload[as.character(wave)]) %>%
-  group_by(ID, gtempo, tempo_group) %>%
+  group_by(numeric_id, gtempo, tempo_group) %>%
   filter(n() >= 2) %>%
-  do({
-    fit <- lm(GMV_k ~ t, data = .)
-    tibble(slope_k = coef(fit)[["t"]])
-  }) %>% ungroup()
+  do({ fit <- lm(GMV_k ~ t, data = .); tibble(slope_k = coef(fit)[["t"]]) }) %>%
+  ungroup()
 
-fit_slope_tempo <- lm(slope_k ~ gtempo, data = id_slopes_t)
-b_hat_tempo <- unname(coef(fit_slope_tempo)["gtempo"])   # effect in GMV_k units / (tempo unit)
+b_hat_tempo <- unname(coef(lm(slope_k ~ gtempo, data = id_slopes_t))["gtempo"])
 
-# ---- Model-implied Δ from baseline for 20/60/20 tempo shifts ----
-mu_S_k <- mean(id_slopes_t$slope_k, na.rm = TRUE)                     # mean W4→W1 change
-shift_slow <- as.numeric(q20_t - muT_t)
-shift_fast <- as.numeric(q80_t - muT_t)
+# 20/60/20 shifts for tempo (relative to mean)
+muT_t <- mean(gmv_long$gtempo, na.rm = TRUE)
+q20_t <- quantile(gmv_long$gtempo, 0.20, na.rm = TRUE)
+q80_t <- quantile(gmv_long$gtempo, 0.80, na.rm = TRUE)
+shifts_t <- c("Slow tempo" = as.numeric(q20_t - muT_t),
+              "Typical tempo" = 0,
+              "Fast tempo" = as.numeric(q80_t - muT_t))
 
-shifts_t <- c("Slow (bottom 20%)"   = shift_slow,
-              "Typical (middle 60%)"= 0,
-              "Fast (top 20%)"      = shift_fast)
+pred_t <- tidyr::expand_grid(tempo_group = names(shifts_t), wave = c(1,2,3,4)) %>%
+  mutate(
+    t        = tload[as.character(wave)],
+    slope_k  = mu_S_k + b_hat_tempo * shifts_t[tempo_group],
+    GMV_k    = mu_I_k + slope_k * t,
+    tempo_group = factor(tempo_group, levels = c("Slow tempo","Typical tempo","Fast tempo"))
+  )
 
-pred_delta_t <- tidyr::expand_grid(tempo_group = names(shifts_t), wave = c(1,2,3,4)) %>%
-  mutate(t       = tload[as.character(wave)],
-         slope_k = mu_S_k + b_hat_tempo * shifts_t[tempo_group],
-         Delta_k = slope_k * t,
-         tempo_group = factor(tempo_group, levels = names(shifts_t)))
+pB <- ggplot() +
+  geom_line(data = gmv_long, aes(wave, GMV_k, group = numeric_id),
+            alpha = 0.05, linewidth = 0.2, color = "grey40", na.rm = TRUE) +
+  geom_point(data = gmv_long, aes(wave, GMV_k),
+             alpha = 0.04, size = 0.5, color = "grey40", na.rm = TRUE) +
+  geom_line(data = pred_t, aes(wave, GMV_k, color = tempo_group), linewidth = 1) +
+  geom_point(data = pred_t, aes(wave, GMV_k, color = tempo_group), size = 2.2) +
+  scale_x_continuous(breaks = c(1,2,3,4),
+                     labels = c("Baseline","Year 2","Year 4","Year 6")) +
+  coord_cartesian(ylim = c(400, 800)) +
+  scale_y_continuous(breaks = seq(400, 800, by = 100)) +
+  scale_color_manual(values = cols_t) +
+  labs(x = "Year", y = "Total GMV (÷1,000)", color = NULL,
+       title = "Model-implied GMV (girls) by pubertal tempo: absolute levels",
+       subtitle = sprintf("Effect from data: slope_k ~ gtempo (b = %.3f)", b_hat_tempo)) +
+  theme_base
 
-# ---- Raw Δ background for context ----
-raw_delta_t <- gmv_long_t %>%
-  group_by(ID) %>%
-  mutate(GMV0_k = GMV_k[wave==1][1]) %>%
+pB
+
+# pB_delta: Δ from baseline (raw bg + model-implied)
+pred_delta_t <- pred_t %>% mutate(Delta_k = GMV_k - mu_I_k)
+
+raw_delta_t <- gmv_long %>%
+  group_by(numeric_id) %>%
+  mutate(GMV0_k = GMV_k[wave == 1][1]) %>%
   ungroup() %>%
-  filter(!is.na(GMV0_k)) %>%
+  filter(is.finite(GMV0_k)) %>%
   mutate(Delta_k = GMV_k - GMV0_k)
 
-# ---- Plot (Δ from baseline) with y 0…−100 ----
-cols_t <- c("Slow (bottom 20%)"="#0072B2",   # blue
-            "Typical (middle 60%)"="#7F7F7F",# grey
-            "Fast (top 20%)"="#D55E00")      # orange
-
-pTempo_delta <- ggplot() +
+pB_delta <- ggplot() +
   geom_hline(yintercept = 0, linetype = 2, linewidth = 0.4) +
-  geom_line(data = raw_delta_t, aes(wave, Delta_k, group = ID),
-            alpha = 0.05, linewidth = 0.2, color = "grey40") +
+  geom_line(data = raw_delta_t, aes(wave, Delta_k, group = numeric_id),
+            alpha = 0.05, linewidth = 0.2, color = "grey40", na.rm = TRUE) +
   geom_point(data = raw_delta_t, aes(wave, Delta_k),
-             alpha = 0.04, size = 0.5, color = "grey40") +
-  geom_line(data = pred_delta_t, aes(wave, Delta_k, color = tempo_group), linewidth = 2) +
+             alpha = 0.04, size = 0.5, color = "grey40", na.rm = TRUE) +
+  geom_line(data = pred_delta_t, aes(wave, Delta_k, color = tempo_group), linewidth = .5) +
   geom_point(data = pred_delta_t, aes(wave, Delta_k, color = tempo_group), size = 2.2) +
-  scale_x_continuous(breaks = c(1,2,3,4), labels = c("W1","W2","W3","W4")) +
-  scale_y_continuous(limits = c(-100, 0), breaks = seq(0, -100, by = -20)) +
+  scale_x_continuous(breaks = c(1,2,3,4),
+                     labels = c("Baseline","Year 2","Year 4","Year 6")) +
+  coord_cartesian(ylim = c(-150, 50)) +                        # show +100 … -200
+  scale_y_continuous(breaks = seq(100, -200, by = -25)) +       # ticks every 25
   scale_color_manual(values = cols_t) +
-  labs(x = "Wave", y = "Δ GMV from baseline (÷1,000)", color = NULL,
-       title = "Model-implied GMV change (girls) by tempo: Δ from baseline (20/60/20)",
-       subtitle = sprintf("Effect from data: slope_k ~ gtempo  (b = %.3f)", b_hat_tempo)) +
-  theme_minimal(base_size = 12) +
-  theme(panel.grid.minor = element_blank(),
-        panel.grid.major = element_line(linewidth = 0.2))
+  labs(x = "Year", y = "Δ GMV from Baseline (÷1,000)", color = NULL,
+       title = "Model-implied GMV change (girls) by pubertal tempo: Δ from baseline",
+       subtitle = sprintf("Dashed logic: Δ = (μΔ + b·Δtempo) × t;  b = %.3f", b_hat_tempo)) +
+  theme_base
 
-pTempo_delta
+pB_delta
 
-library(dplyr); library(tidyr); library(ggplot2); library(patchwork)
+# 1) Model-implied lines using ±1 SD shifts of tempo
+sd_tempo <- sd(gmv_long$gtempo, na.rm = TRUE)
+shifts_sd <- c("Slow tempo" = -sd_tempo,
+               "Typical tempo" = 0,
+               "Fast tempo" = +sd_tempo)
 
-# ---------- Clean & prep (boys) ----------
-df <- df %>% mutate(across(where(is.numeric), ~ na_if(., -999)))
+pred_t_sd <- tidyr::expand_grid(tempo_group = names(shifts_sd), wave = c(1,2,3,4)) %>%
+  dplyr::mutate(
+    t        = tload[as.character(wave)],
+    slope_k  = mu_S_k + b_hat_tempo * shifts_sd[tempo_group],
+    GMV_k    = mu_I_k + slope_k * t,
+    tempo_group = factor(tempo_group, levels = c("Slow tempo","Typical tempo","Fast tempo"))
+  )
 
+pred_delta_t_sd <- pred_t_sd %>% dplyr::mutate(Delta_k = GMV_k - mu_I_k)
+
+# 2) Absolute GMV plot (pB) with thicker model lines + zoom
+pB <- ggplot() +
+  geom_line(data = gmv_long, aes(wave, GMV_k, group = numeric_id),
+            alpha = 0.04, linewidth = 0.2, color = "grey40", na.rm = TRUE) +
+  geom_point(data = gmv_long, aes(wave, GMV_k),
+             alpha = 0.03, size = 0.5, color = "grey40", na.rm = TRUE) +
+  geom_line(data = pred_t_sd, aes(wave, GMV_k, color = tempo_group),
+            linewidth = 2) +
+  geom_point(data = pred_t_sd, aes(wave, GMV_k, color = tempo_group), size = 2.2) +
+  scale_x_continuous(breaks = c(1,2,3,4),
+                     labels = c("Baseline","Year 2","Year 4","Year 6")) +
+  coord_cartesian(ylim = c(450, 750)) +
+  scale_y_continuous(breaks = seq(450, 750, by = 50)) +
+  scale_color_manual(values = cols_t) +
+  labs(x = "Year", y = "Total GMV (÷1,000)", color = NULL,
+       title = "Model-implied GMV (girls) by pubertal tempo: absolute levels",
+       subtitle = sprintf("Model shift = ±1 SD of tempo · b = %.3f", b_hat_tempo)) +
+  theme_base
+
+# 3) Δ-from-baseline plot (pB_delta) with ±1 SD lines + zoom
+raw_delta_t <- gmv_long %>%
+  dplyr::group_by(numeric_id) %>%
+  dplyr::mutate(GMV0_k = GMV_k[wave == 1][1]) %>%
+  dplyr::ungroup() %>%
+  dplyr::filter(is.finite(GMV0_k)) %>%
+  dplyr::mutate(Delta_k = GMV_k - GMV0_k)
+
+pB_delta <- ggplot() +
+  geom_hline(yintercept = 0, linetype = 2, linewidth = 0.4) +
+  geom_line(data = raw_delta_t, aes(wave, Delta_k, group = numeric_id),
+            alpha = 0.05, linewidth = 0.2, color = "grey40", na.rm = TRUE) +
+  geom_point(data = raw_delta_t, aes(wave, Delta_k),
+             alpha = 0.04, size = 0.5, color = "grey40", na.rm = TRUE) +
+  geom_line(data = pred_delta_t_sd, aes(wave, Delta_k, color = tempo_group),
+            linewidth = .5) +
+  geom_point(data = pred_delta_t_sd, aes(wave, Delta_k, color = tempo_group), size = 2.2) +
+  scale_x_continuous(breaks = c(1,2,3,4),
+                     labels = c("Baseline","Year 2","Year 4","Year 6")) +
+  coord_cartesian(ylim = c(-120, 40)) +
+  scale_y_continuous(breaks = seq(40, -120, by = -20)) +
+  scale_color_manual(values = cols_t) +
+  labs(x = "Year", y = "Δ GMV from Baseline (÷1,000)", color = NULL,
+       title = "Model-implied GMV change (girls) by tempo: Δ from baseline",
+       subtitle = sprintf("Model shift = ±1 SD of tempo · b = %.3f", b_hat_tempo)) +
+  theme_base
+
+pB_delta
+
+pB_delta <- ggplot() +
+  geom_hline(yintercept = 0, linetype = 2, linewidth = 0.4) +
+  geom_line(data = pred_delta_t_sd, aes(wave, Delta_k, color = tempo_group),
+            linewidth = .5) +
+  geom_point(data = pred_delta_t_sd, aes(wave, Delta_k, color = tempo_group), size = 2.2) +
+  scale_x_continuous(breaks = c(1,2,3,4),
+                     labels = c("Baseline","Year 2","Year 4","Year 6")) +
+  coord_cartesian(ylim = c(-60, 20)) +
+  scale_y_continuous(breaks = seq(40, -120, by = -20)) +
+  scale_color_manual(values = cols_t) +
+  labs(x = "Year", y = "Δ GMV from Baseline (÷1,000)", color = NULL,
+       title = "Model-implied GMV change (girls) by tempo: Δ from baseline",
+       subtitle = sprintf("Model shift = ±1 SD of tempo · b = %.3f", b_hat_tempo)) +
+  theme_base
+
+pB_delta
+
+
+names(df)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#Boys
 boys <- df %>%
   filter(!is.na(btiming), !is.na(btempo)) %>%
   select(ID, btiming, btempo,
