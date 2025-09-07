@@ -18,6 +18,59 @@ setwd("~/Documents/GitHub/pubertybrain")
 df <- read.csv("dfmerged_mplus.csv")
 names(df)
 
+# Clean + label
+df_ela <- df %>%
+  mutate(across(where(is.numeric), ~ na_if(., -999))) %>%
+  filter(sex %in% c(1, 2), !is.na(ela_plus), ela_plus >= 0, ela_plus <= 10) %>%
+  mutate(sex = factor(sex, levels = c(1, 2), labels = c("Boys", "Girls")))
+
+# assumes df_ela already made as in your last step
+stats <- df_ela %>%
+  group_by(sex) %>%
+  summarise(N = dplyr::n(),
+            mean = mean(ela_plus),
+            sd   = sd(ela_plus),
+            .groups = "drop")
+
+# find a nice y position inside each facet (max bin count by sex)
+counts_fac <- df_ela %>%
+  count(sex, bin = cut(ela_plus, breaks = 0:10, right = FALSE, include.lowest = TRUE)) %>%
+  group_by(sex) %>% summarise(ymax = max(n), .groups = "drop")
+
+ann_fac <- stats %>%
+  left_join(counts_fac, by = "sex") %>%
+  mutate(
+    x = 8.8,
+    y = ymax * 0.92,
+    label = sprintf("Mean = %.2f\nSD = %.2f", mean, sd)
+  )
+
+p_hist_faceted +
+  geom_label(
+    data = ann_fac,
+    aes(x = x, y = y, label = label, fill = sex),
+    color = "white", label.size = 0, alpha = 0.90, show.legend = FALSE
+  )
+
+# global y max to place labels nicely
+counts_ov <- df_ela %>%
+  count(sex, bin = cut(ela_plus, breaks = 0:10, right = FALSE, include.lowest = TRUE))
+ymax_global <- max(counts_ov$n)
+
+ann_ov <- stats %>%
+  mutate(
+    x = 8.8,
+    y = ymax_global * c(0.92, 0.80)[as.integer(sex)],  # stagger Boys/Girls
+    label = sprintf("%s: Mean = %.2f, SD = %.2f", sex, mean, sd)
+  )
+
+p_hist_overlay +
+  geom_label(
+    data = ann_ov,
+    aes(x = x, y = y, label = label, fill = sex),
+    color = "white", label.size = 0, alpha = 0.90
+  )
+
 # -----------------------------
 # 0) Data prep (boys only)
 # -----------------------------
@@ -580,6 +633,9 @@ scatter_b
 
 
 
+
+
+
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -719,3 +775,272 @@ p_lines_g <- gmv_long_g %>%
 p_lines_g
 
 (p_lines_b | p_lines_g) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+# --- Boys long GMV (÷1,000) -----------------------------------------------
+boys <- df %>%
+  mutate(across(where(is.numeric), ~ na_if(., -999))) %>%
+  filter(sex %in% c(1, "1")) %>%
+  select(numeric_id, btiming,
+         T1_totalGMV, T2_totalGMV, T3_totalGMV, T4_totalGMV)
+
+gmv_long_b <- boys %>%
+  pivot_longer(starts_with("T"), names_to = "wave_gmv", values_to = "GMV") %>%
+  mutate(
+    wave  = as.integer(substr(wave_gmv, 2, 2)),
+    GMV_k = GMV / 1000
+  ) %>%
+  filter(!is.na(GMV_k)) %>%
+  select(numeric_id, btiming, wave, GMV_k)
+
+# --- Latent-basis time scores (boys Mplus) ---------------------------------
+tload <- c(`1` = 0.000, `2` = 0.215, `3` = 0.556, `4` = 1.000)
+
+# --- Per-ID latent-basis intercepts (need ≥2 waves) ------------------------
+ints_b <- gmv_long_b %>%
+  mutate(t = tload[as.character(wave)]) %>%
+  group_by(numeric_id) %>%
+  filter(n() >= 2) %>%
+  summarise(int_k = unname(coef(lm(GMV_k ~ t))[1]), .groups = "drop") %>%  # intercept at t=0
+  left_join(boys %>% distinct(numeric_id, btiming), by = "numeric_id") %>%
+  filter(!is.na(btiming))
+
+# --- Scatter: pubertal timing vs latent-basis intercept --------------------
+p_intercept <- ggplot(ints_b, aes(btiming, int_k)) +
+  geom_point(alpha = 0.35, size = 2, color = "aquamarine3") +
+  geom_smooth(method = "lm", se = TRUE, color = "grey25") +  # empirical OLS (optional)
+  scale_x_continuous(name = "Pubertal timing (age at onset)",
+                     breaks = scales::pretty_breaks(8)) +
+  scale_y_continuous(name = "GMV intercept (latent-basis; ÷1,000)",
+                     breaks = scales::pretty_breaks(8)) +
+  theme_minimal(base_size = 14) +
+  theme(panel.grid.minor = element_blank())
+
+p_intercept
+
+
+
+
+
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+# --- Boys + clean -----------------------------------------------------------
+boys <- df %>%
+  mutate(across(where(is.numeric), ~ na_if(., -999))) %>%
+  filter(sex %in% c(1, "1")) %>%
+  select(numeric_id, ela_plus,
+         T1_totalGMV, T2_totalGMV, T3_totalGMV, T4_totalGMV)
+
+gmv_long_b <- boys %>%
+  pivot_longer(starts_with("T"), names_to = "wave_gmv", values_to = "GMV") %>%
+  mutate(
+    wave  = as.integer(substr(wave_gmv, 2, 2)),
+    GMV_k = GMV / 1000
+  ) %>%
+  filter(!is.na(GMV_k)) %>%
+  select(numeric_id, ela_plus, wave, GMV_k)
+
+# --- Boys’ latent-basis time scores (from Mplus) ----------------------------
+tload <- c(`1` = 0.000, `2` = 0.215, `3` = 0.556, `4` = 1.000)
+
+# --- Per-ID latent-basis intercepts (need ≥ 2 waves) ------------------------
+ints_b <- gmv_long_b %>%
+  mutate(t = tload[as.character(wave)]) %>%
+  group_by(numeric_id) %>%
+  filter(n() >= 2) %>%
+  summarise(int_k = unname(coef(lm(GMV_k ~ t))[1]), .groups = "drop") %>%  # intercept at t=0
+  left_join(boys %>% distinct(numeric_id, ela_plus), by = "numeric_id") %>%
+  filter(!is.na(ela_plus))
+
+N_b <- nrow(ints_b)
+r_b <- cor(ints_b$ela_plus, ints_b$int_k, use = "pairwise.complete.obs")
+
+# --- Scatter + OLS fit ------------------------------------------------------
+p_ela_intercept_b <- ggplot(ints_b, aes(ela_plus, int_k)) +
+  geom_point(alpha = 0.35, size = 2, color = "aquamarine3") +
+  geom_smooth(method = "lm", se = TRUE, color = "grey20", linewidth = 1.2) +
+  labs(
+    title=NULL, x = "Early-Life Adversity (ELA)",
+    y = "GMV intercept"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(panel.grid.minor = element_blank())
+
+p_ela_intercept_b
+
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+# --- Girls + clean ----------------------------------------------------------
+girls <- df %>%
+  mutate(across(where(is.numeric), ~ na_if(., -999))) %>%
+  filter(sex %in% c(2, "2")) %>%
+  select(numeric_id, ela_plus,
+         T1_totalGMV, T2_totalGMV, T3_totalGMV, T4_totalGMV)
+
+gmv_long_g <- girls %>%
+  pivot_longer(starts_with("T"), names_to = "wave_gmv", values_to = "GMV") %>%
+  mutate(
+    wave  = as.integer(substr(wave_gmv, 2, 2)),
+    GMV_k = GMV / 1000
+  ) %>%
+  filter(!is.na(GMV_k)) %>%
+  select(numeric_id, ela_plus, wave, GMV_k)
+
+# --- Girls’ latent-basis time scores (Mplus) --------------------------------
+tload <- c(`1` = 0.000, `2` = 0.210, `3` = 0.684, `4` = 1.000)
+
+# --- Per-ID latent-basis intercepts (need ≥ 2 waves) ------------------------
+ints_g <- gmv_long_g %>%
+  mutate(t = tload[as.character(wave)]) %>%
+  group_by(numeric_id) %>%
+  filter(n() >= 2) %>%
+  summarise(int_k = unname(coef(lm(GMV_k ~ t))[1]), .groups = "drop") %>%  # intercept at t=0
+  left_join(girls %>% distinct(numeric_id, ela_plus), by = "numeric_id") %>%
+  filter(!is.na(ela_plus))
+
+N_g <- nrow(ints_g)
+r_g <- cor(ints_g$ela_plus, ints_g$int_k, use = "pairwise.complete.obs")
+
+# --- Mplus-implied regression line: INTERCEPT ON ELA_PLUS -------------------
+# from your girls unstandardized output (GMV already ÷1,000):
+I_mean_g      <- 641.903
+mu_ELA_g      <- 1.825
+b_Mplus_IonEg <- -4.035
+
+ab_intercept_g <- I_mean_g - b_Mplus_IonEg * mu_ELA_g  # centers at (mu_ELA, I_mean)
+ab_slope_g     <- b_Mplus_IonEg
+
+# --- Plot -------------------------------------------------------------------
+p_ela_intercept_g <- ggplot(ints_g, aes(ela_plus, int_k)) +
+  geom_point(alpha = 0.35, size = 2, color = "darksalmon") +
+  geom_smooth(method = "lm", se = TRUE, color = "grey20", linewidth = 1.2) + 
+  scale_x_continuous(limits = c(0, 10), breaks = 0:10) +
+  scale_y_continuous(limits = c(400, 900), breaks = seq(400, 900, 100)) +
+  labs(
+    title = NULL, x = "Early-Life Adversity (ELA)",
+    y = "GMV intercept"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(panel.grid.minor = element_blank())
+
+p_ela_intercept_b <- ggplot(ints_b, aes(ela_plus, int_k)) +
+  geom_point(alpha = 0.35, size = 2, color = "aquamarine3") +
+  geom_smooth(method = "lm", se = TRUE, color = "grey20", linewidth = 1.2) +
+  scale_x_continuous(limits = c(0, 10), breaks = 0:10) +
+  scale_y_continuous(limits = c(400, 900), breaks = seq(400, 900, 100)) +
+  labs(
+    title = NULL, x = "Early-Life Adversity (ELA)",
+    y = "GMV intercept"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(panel.grid.minor = element_blank())
+
+p_ela_intercept_g
+
+(p_ela_intercept_b / p_ela_intercept_g)
+
+
+
+
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+# ---------------------------
+# Common cleaning
+# ---------------------------
+df_clean <- df %>%
+  mutate(across(where(is.numeric), ~ na_if(., -999)))
+
+# Axis helpers
+x_sc <- scale_x_continuous(limits = c(0, 10), breaks = 0:10)      # ELA 0–10
+y_sc <- scale_y_continuous(limits = c(0, 1.5), breaks = seq(0, 1.5, 0.1))  # tempo 0–1.5
+
+# ===========================
+# BOYS: ELA vs BTEMPO
+# ===========================
+boys_t <- df_clean %>%
+  filter(sex %in% c(1, "1")) %>%
+  select(numeric_id, ela_plus, btempo) %>%
+  filter(!is.na(ela_plus), !is.na(btempo))
+
+N_b <- nrow(boys_t)
+r_b <- cor(boys_t$ela_plus, boys_t$btempo, use = "pairwise.complete.obs")
+
+p_ela_tempo_boys <- ggplot(boys_t, aes(ela_plus, btempo)) +
+  geom_point(alpha = 0.4, size = 2, color = "aquamarine3") +
+  geom_smooth(method = "lm", se = TRUE, color = "grey20", linewidth = 1.2) +  # empirical
+  x_sc + y_sc +
+  labs(title = NULL,
+       x = "Early-Life Adversity (ELA)",
+       y = "Pubertal tempo") +
+  theme_minimal(base_size = 14) +
+  theme(panel.grid.minor = element_blank())
+
+p_ela_tempo_boys
+
+# (Optional) If you have the BOYS Mplus coefficient (BTEMPO ON ELA = b_boys),
+#   and Mplus means for btempo (mu_btempo) & ELA (mu_ela_b), add this:
+# b_boys   <- NA_real_   # fill from Mplus if available
+# mu_btempo<- NA_real_
+# mu_ela_b <- NA_real_
+# if (!is.na(b_boys) && !is.na(mu_btempo) && !is.na(mu_ela_b)) {
+#   ab_int_b <- mu_btempo - b_boys * mu_ela_b
+#   p_ela_tempo_boys <- p_ela_tempo_boys +
+#     geom_abline(intercept = ab_int_b, slope = b_boys,
+#                 color = "#0072B2", linewidth = 1.4)
+# }
+
+# ===========================
+# GIRLS: ELA vs GTEMPO (+ Mplus line)
+# ===========================
+girls_t <- df_clean %>%
+  filter(sex %in% c(2, "2")) %>%
+  select(numeric_id, ela_plus, gtempo) %>%
+  filter(!is.na(ela_plus), !is.na(gtempo))
+
+N_g <- nrow(girls_t)
+r_g <- cor(girls_t$ela_plus, girls_t$gtempo, use = "pairwise.complete.obs")
+
+# Mplus (unstandardized) from your output:
+b_girls   <- -0.005   # GTEMPO ON ELA_PLUS
+mu_gtempo <-  0.687   # mean GTEMPO
+mu_ela_g  <-  1.825   # mean ELA
+ab_int_g  <- mu_gtempo - b_girls * mu_ela_g  # centers at (μ_ELA, μ_tempo)
+
+p_ela_tempo_girls <- ggplot(girls_t, aes(ela_plus, gtempo)) +
+  geom_point(alpha = 0.4, size = 2, color = "darksalmon") +
+  geom_smooth(method = "lm", se = TRUE, color = "grey20", linewidth = 1.2) +  # empirical
+  x_sc + y_sc +
+  labs(title = NULL,
+       x = "Early-Life Adversity (ELA)",
+       y = "Pubertal tempo") +
+  theme_minimal(base_size = 14) +
+  theme(panel.grid.minor = element_blank())
+
+p_ela_tempo_girls
+
+(p_ela_tempo_boys / p_ela_tempo_girls)
