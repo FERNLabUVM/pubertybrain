@@ -83,4 +83,9 @@ slope ON gtiming;
 
 
 OUTPUT: SAMPSTAT STANDARDIZED TECH4;
+PLOT:
+    TYPE = PLOT3;                       ! enables LOOP function plots
+    SERIES = rT1_TOTAL-rT4_TOTAL (*);   ! optional: shows observed/model means over waves
+
+
 

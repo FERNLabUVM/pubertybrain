@@ -1,0 +1,223 @@
+VERSION 1.1.0
+INPUT
+TITLE:
+ full model - MALE
+
+DATA:
+FILE IS dfmerged_mplus.dat;
+VARIABLE:
+NAMES =
+numeric_id
+ela_plus
+sex
+age_1
+age_2
+age_3
+age_4
+subcort_vol_1
+subcort_vol_2
+subcort_vol_3
+subcort_vol_4
+cort_vol_1
+cort_vol_2
+cort_vol_3
+cort_vol_4
+fam_ID
+T1_totalGMV
+T2_totalGMV
+T3_totalGMV
+T4_totalGMV
+btempo
+btiming
+gtiming
+gtempo;
+MISSING = ALL (-999);
+USEVAR =
+ela_plus
+btiming
+btempo
+rT1_TOTAL
+rT2_TOTAL
+rT3_TOTAL
+rT4_TOTAL;
+SUBPOPULATION = (sex NE 2);
+CLUSTER = fam_ID;
+DEFINE:
+  rT1_TOTAL = T1_totalGMV / 1000;
+  rT2_TOTAL = T2_totalGMV / 1000;
+  rT3_TOTAL = T3_totalGMV / 1000;
+  rT4_TOTAL = T4_totalGMV / 1000;
+ANALYSIS:
+TYPE = COMPLEX;
+ESTIMATOR = MLR;
+OUTPUT:
+ SAMPSTAT STANDARDIZED TECH4;
+PLOT:
+    TYPE = PLOT3;
+    SERIES = rT1_TOTAL-rT4_TOTAL (*);
+MODEL:
+ intercept by rT1_TOTAL-rT4_TOTAL@1;
+ intercept;
+ [intercept];
+ slope BY rT1_TOTAL@0
+  rT2_TOTAL*
+  rT3_TOTAL*
+  rT4_TOTAL@1;
+ slope;
+ [slope];
+ intercept WITH slope;
+ rT1_TOTAL-rT4_TOTAL (theta);
+ [rT1_TOTAL-rT4_TOTAL@0];
+ela_plus;
+btiming;
+btempo;
+btiming WITH btempo;
+intercept slope btiming btempo ON ela_plus;
+intercept WITH btiming;
+slope WITH btempo;
+slope ON btiming;
+INPUT_END
+2
+2
+2
+2
+MLR
+1
+GENERAL
+0
+7
+2
+0
+btiming btempo rt1_total rt2_total rt3_total rt4_total ela_plus intercept slope
+3
+1 1 -1 -1 -1 -1 0 1 2
+0
+2
+intercept
+rt1_total rt2_total rt3_total rt4_total
+slope
+rt1_total rt2_total rt3_total rt4_total
+1 1 intercept rt1_total 1.000 0.000
+1 1 intercept rt2_total 1.000 0.000
+1 1 intercept rt3_total 1.000 0.000
+1 1 intercept rt4_total 1.000 0.000
+1 1 slope rt1_total 0.000 0.000
+1 1 slope rt2_total 0.215 0.008
+1 1 slope rt3_total 0.556 0.010
+1 1 slope rt4_total 1.000 0.000
+1 1 ela_plus intercept -4.440 0.681
+1 1 ela_plus slope 0.134 0.262
+1 1 btiming slope 4.466 0.480
+1 1 ela_plus btiming 0.002 0.013
+1 1 ela_plus btempo -0.004 0.002
+2 1 btiming btempo 0.037 0.003
+2 1 intercept slope -142.436 25.415
+2 1 intercept btiming -2.344 1.198
+2 1 slope btempo 0.198 0.062
+2 1 btempo intercept 0.271 0.178
+4 1 btiming 0.914 0.030
+4 1 btempo 0.020 0.0006770668551
+4 1 rt1_total 134.811 7.382
+94 1 rt1_total theta
+4 1 rt2_total 134.811 7.382
+94 1 rt2_total theta
+4 1 rt3_total 134.811 7.382
+94 1 rt3_total theta
+4 1 rt4_total 134.811 7.382
+94 1 rt4_total theta
+4 1 intercept 3093.954 96.696
+4 1 slope 116.976 16.418
+5 1 ela_plus 3.132 0.122
+11 1 intercept rt1_total 0.979 0.001
+11 1 intercept rt2_total 0.988 0.002
+11 1 intercept rt3_total 0.999 0.004
+11 1 intercept rt4_total 1.006 0.008
+11 1 slope rt1_total 0.000 0.0000000001000
+11 1 slope rt2_total 0.044 0.003
+11 1 slope rt3_total 0.115 0.008
+11 1 slope rt4_total 0.208 0.013
+11 1 ela_plus intercept -0.140 0.021
+11 1 ela_plus slope 0.020 0.040
+11 1 btiming slope 0.367 0.041
+11 1 ela_plus btiming 0.003 0.024
+11 1 ela_plus btempo -0.051 0.023
+12 1 btiming btempo 0.273 0.023
+12 1 intercept slope -0.237 0.039
+12 1 intercept btiming -0.044 0.022
+12 1 slope btempo 0.128 0.040
+12 1 btempo intercept 0.034 0.022
+14 1 btiming 1.000 0.0001624883298
+14 1 btempo 0.997 0.002
+14 1 rt1_total 0.041 0.002
+94 1 rt1_total theta
+14 1 rt2_total 0.042 0.002
+94 1 rt2_total theta
+14 1 rt3_total 0.043 0.003
+94 1 rt3_total theta
+14 1 rt4_total 0.043 0.003
+94 1 rt4_total theta
+14 1 intercept 0.980 0.006
+14 1 slope 0.865 0.030
+15 1 ela_plus 1.000 0.0000000001000
+21 1 intercept rt1_total 0.979 0.001
+21 1 intercept rt2_total 0.988 0.002
+21 1 intercept rt3_total 0.999 0.004
+21 1 intercept rt4_total 1.006 0.008
+21 1 slope rt1_total 0.000 0.0000000001000
+21 1 slope rt2_total 0.044 0.003
+21 1 slope rt3_total 0.115 0.008
+21 1 slope rt4_total 0.208 0.013
+21 1 ela_plus intercept -0.140 0.021
+21 1 ela_plus slope 0.020 0.040
+21 1 btiming slope 0.367 0.041
+21 1 ela_plus btiming 0.003 0.024
+21 1 ela_plus btempo -0.051 0.023
+22 1 btiming btempo 0.273 0.023
+22 1 intercept slope -0.237 0.039
+22 1 intercept btiming -0.044 0.022
+22 1 slope btempo 0.128 0.040
+22 1 btempo intercept 0.034 0.022
+24 1 btiming 1.000 0.0001624883298
+24 1 btempo 0.997 0.002
+24 1 rt1_total 0.041 0.002
+94 1 rt1_total theta
+24 1 rt2_total 0.042 0.002
+94 1 rt2_total theta
+24 1 rt3_total 0.043 0.003
+94 1 rt3_total theta
+24 1 rt4_total 0.043 0.003
+94 1 rt4_total theta
+24 1 intercept 0.980 0.006
+24 1 slope 0.865 0.030
+25 1 ela_plus 1.000 0.0000000001000
+31 1 intercept rt1_total 56.176 0.878
+31 1 intercept rt2_total 56.176 0.878
+31 1 intercept rt3_total 56.176 0.878
+31 1 intercept rt4_total 56.176 0.878
+31 1 slope rt1_total 0.000 0.0000000001000
+31 1 slope rt2_total 2.499 0.157
+31 1 slope rt3_total 6.466 0.411
+31 1 slope rt4_total 11.630 0.729
+31 1 ela_plus intercept -0.079 0.012
+31 1 ela_plus slope 0.011 0.023
+31 1 btiming slope 0.384 0.042
+31 1 ela_plus btiming 0.002 0.013
+31 1 ela_plus btempo -0.004 0.002
+32 1 btiming btempo 0.037 0.003
+32 1 intercept slope -0.237 0.039
+32 1 intercept btiming -0.042 0.022
+32 1 slope btempo 0.018 0.006
+32 1 btempo intercept 0.005 0.003
+34 1 btiming 0.914 0.030
+34 1 btempo 0.020 0.0006770668551
+34 1 rt1_total 134.811 7.382
+94 1 rt1_total theta
+34 1 rt2_total 134.811 7.382
+94 1 rt2_total theta
+34 1 rt3_total 134.811 7.382
+94 1 rt3_total theta
+34 1 rt4_total 134.811 7.382
+94 1 rt4_total theta
+34 1 intercept 0.980 0.006
+34 1 slope 0.865 0.030
+35 1 ela_plus 3.132 0.122

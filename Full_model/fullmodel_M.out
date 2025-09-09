@@ -1,6 +1,6 @@
-Mplus VERSION 8.8 (Mac)
+Mplus VERSION 8.11
 MUTHEN & MUTHEN
-08/29/2025   2:00 PM
+09/05/2025   4:35 PM
 
 INPUT INSTRUCTIONS
 
@@ -89,6 +89,10 @@ INPUT INSTRUCTIONS
 
 
   OUTPUT: SAMPSTAT STANDARDIZED TECH4;
+  PLOT:
+      TYPE = PLOT3;                       ! enables LOOP function plots
+      SERIES = rT1_TOTAL-rT4_TOTAL (*);   ! optional: shows observed/model means over waves
+
 
 
 
@@ -96,7 +100,11 @@ INPUT INSTRUCTIONS
 *** WARNING in VARIABLE command
   Note that only the first 8 characters of variable names are used in the output.
   Shorten variable names to avoid any confusion.
-   1 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+*** WARNING in PLOT command
+  Note that only the first 8 characters of variable names are used in plots.
+  If variable names are not unique within the first 8 characters, problems
+  may occur.
+   2 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
 
 
 
@@ -375,7 +383,7 @@ STDYX Standardization
                     Estimate       S.E.  Est./S.E.    P-Value
 
  INTERCEP BY
-    RT1_TOTAL          0.979      0.001    780.068      0.000
+    RT1_TOTAL          0.979      0.001    780.069      0.000
     RT2_TOTAL          0.988      0.002    463.300      0.000
     RT3_TOTAL          0.999      0.004    222.923      0.000
     RT4_TOTAL          1.006      0.008    127.348      0.000
@@ -429,7 +437,7 @@ STDYX Standardization
     ELA_PLUS           1.000      0.000    999.000    999.000
 
  Residual Variances
-    BTIMING            1.000      0.000   6154.211      0.000
+    BTIMING            1.000      0.000   6154.217      0.000
     BTEMPO             0.997      0.002    427.761      0.000
     RT1_TOTAL          0.041      0.002     16.662      0.000
     RT2_TOTAL          0.042      0.002     16.701      0.000
@@ -445,7 +453,7 @@ STDY Standardization
                     Estimate       S.E.  Est./S.E.    P-Value
 
  INTERCEP BY
-    RT1_TOTAL          0.979      0.001    780.068      0.000
+    RT1_TOTAL          0.979      0.001    780.069      0.000
     RT2_TOTAL          0.988      0.002    463.300      0.000
     RT3_TOTAL          0.999      0.004    222.923      0.000
     RT4_TOTAL          1.006      0.008    127.348      0.000
@@ -499,7 +507,7 @@ STDY Standardization
     ELA_PLUS           1.000      0.000    999.000    999.000
 
  Residual Variances
-    BTIMING            1.000      0.000   6154.211      0.000
+    BTIMING            1.000      0.000   6154.217      0.000
     BTEMPO             0.997      0.002    427.761      0.000
     RT1_TOTAL          0.041      0.002     16.662      0.000
     RT2_TOTAL          0.042      0.002     16.701      0.000
@@ -708,9 +716,61 @@ TECHNICAL 4 OUTPUT
  ELA_PLUS       0.000         0.598         0.887         0.028         0.000
 
 
-     Beginning Time:  14:00:26
-        Ending Time:  14:00:27
-       Elapsed Time:  00:00:01
+SAMPLE STATISTICS FOR ESTIMATED FACTOR SCORES
+
+
+     SAMPLE STATISTICS
+
+
+           Means
+              INTERCEP      INTERCEP      SLOPE         SLOPE_SE
+              ________      ________      ________      ________
+              682.623         7.535       -36.871         9.118
+
+
+           Covariances
+              INTERCEP      INTERCEP      SLOPE         SLOPE_SE
+              ________      ________      ________      ________
+ INTERCEP    3098.211
+ INTERCEP      -2.055         0.705
+ SLOPE       -122.277         0.142        51.738
+ SLOPE_SE      -2.006         0.254         0.067         0.393
+
+
+           Correlations
+              INTERCEP      INTERCEP      SLOPE         SLOPE_SE
+              ________      ________      ________      ________
+ INTERCEP       1.000
+ INTERCEP      -0.044         1.000
+ SLOPE         -0.305         0.024         1.000
+ SLOPE_SE      -0.057         0.483         0.015         1.000
+
+
+PLOT INFORMATION
+
+The following plots are available:
+
+  Histograms (sample values, estimated factor scores, estimated values, residuals)
+  Scatterplots (sample values, estimated factor scores, estimated values, residuals)
+  Sample means
+  Estimated means
+  Sample and estimated means
+  Adjusted estimated means
+  Latent variable distribution plots
+  Observed individual values
+  Estimated individual values
+
+DIAGRAM INFORMATION
+
+  Use View Diagram under the Diagram menu in the Mplus Editor to view the diagram.
+  If running Mplus from the Mplus Diagrammer, the diagram opens automatically.
+
+  Diagram output
+    c:\users\nchaku\documents\github\pubertybrain\full_model\fullmodel_m.dgm
+
+     Beginning Time:  16:35:04
+        Ending Time:  16:35:04
+       Elapsed Time:  00:00:00
 
 
 
@@ -723,4 +783,4 @@ Fax: (310) 391-8971
 Web: www.StatModel.com
 Support: Support@StatModel.com
 
-Copyright (c) 1998-2022 Muthen & Muthen
+Copyright (c) 1998-2024 Muthen & Muthen
