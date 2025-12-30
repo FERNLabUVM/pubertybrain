@@ -1,14 +1,13 @@
 clear all
 set more off
 capture log close
-cd "Z:\Projects\Data\ABCD\Syntax\Puberty\PubertyItems"
-cd "/Volumes/bl-pbs-chakulab/Projects/Data/ABCD/Syntax/Puberty/6.0"
+cd "C:\Users\nchaku\Documents\GitHub\pubertybrain\Puberty_timing_tempo_models"
 log using "PubertyCleaning.log", replace
 
 ***************************************************************************
-* Created by NC on 5/13/2024
+* Created by NC on 12/30/25
 *
-* Last revised by NC on 8/18/2025
+* Last revised by NC on 12/30/25
 * 
 * Function:
 * This do file will be to code core variables for the ABCD puberty papers
@@ -24,30 +23,30 @@ log using "PubertyCleaning.log", replace
 * Updated Dataset:
 * 
 * Data Notes:
-*
-* 
+* 12/30/25: Removed folks who were missing more than 2 items on the PDS. 
+*  
 ***************************************************************************
 * IMPORT ALL DATA AND SAVE AS STATA FILE
 ***************************************************************************
 
 ***Parent PDS***
 clear
-import delimited "RawData\ph_p_pds.tsv", delimiter("\t") clear
+import delimited "Raw data\ph_p_pds.tsv", delimiter("\t") clear
 save "Working data\ph_p_pds.dta", replace
 
 ***Youth PDS***
 clear
-import delimited "RawData\ph_y_pds.tsv", delimiter("\t") clear
+import delimited "Raw data\ph_y_pds.tsv", delimiter("\t") clear
 save "Working data\ph_y_pds.dta", replace
 
 ***age***
 clear
-import delimited "RawData\ab_p_demo.tsv", delimiter("\t") clear
+import delimited "Raw data\ab_p_demo.tsv", delimiter("\t") clear
 save "Working data\ab_p_demo.dta", replace
 
 ***sex***
 clear
-import delimited "RawData\ab_g_stc.tsv", delimiter("\t") clear
+import delimited "Raw data\ab_g_stc.tsv", delimiter("\t") clear
 save "Working data\ab_g_stc.dta", replace
 
 ***************************************************************************
@@ -78,9 +77,13 @@ replace year = 6 if session_id == "ses-06A"
 tab1 session_id year, m
 drop session_id
 
-keep ID year ab_p_demo_age
+keep ID year ab_p_demo_age ab_p_demo_dtt
 rename ab_p_demo_age age
-order ID year age
+rename ab_p_demo_dtt intdatefromage
+
+order ID year age intdatefromage
+
+drop intdatefromage
 
 save "Working data\demosage.dta", replace
 
@@ -120,9 +123,10 @@ save "Working data\demossex.dta", replace
 clear
 use "Working data\ph_p_pds.dta"
 
-keep participant_id session_id ph_p_pds_age ph_p_pds_001 ph_p_pds_002 ph_p_pds_003 ph_p_pds__f_001 ph_p_pds__f_002 ph_p_pds__m_001 ph_p_pds__m_002
+keep participant_id session_id ph_p_pds_dtt ph_p_pds_age ph_p_pds_001 ph_p_pds_002 ph_p_pds_003 ph_p_pds__f_001 ph_p_pds__f_002 ph_p_pds__m_001 ph_p_pds__m_002
 
 rename participant_id ID /**rename for readability*/
+rename ph_p_pds_dtt DATE
 
 tab session_id, m
 codebook session_id
@@ -179,7 +183,6 @@ foreach v of varlist ppds* {
     }
 }
 
-
 tab1 ppds*, m
 
 ***recode menarche correctly***
@@ -191,18 +194,18 @@ label values ppds* pds_labels
 
 tab1 ppds*, m
 
-order year pubage ppds1 ppds2 ppds3 ppdsf4 ppdsf5 ppdsm5 ppdsm4 
+order ID DATE year pubage ppds1 ppds2 ppds3 ppdsf4 ppdsf5 ppdsm5 ppdsm4 
 
 ***merge in sex***
 merge m:1 ID using "Working data\demossex.dta", gen(mergesex)
 tab mergesex, m
-order ID FAMID male year pubage ppds1 ppds2 ppds3 ppdsf4 ppdsf5 ppdsm5 ppdsm4
-list ID FAMID male year pubage ppds1 ppds2 ppds3 ppdsf4 ppdsf5 ppdsm5 ppdsm4 if mergesex==2
+order ID FAMID DATE male year pubage ppds1 ppds2 ppds3 ppdsf4 ppdsf5 ppdsm5 ppdsm4
+list ID FAMID DATE male year pubage ppds1 ppds2 ppds3 ppdsf4 ppdsf5 ppdsm5 ppdsm4 if mergesex==2
 
 ***merge age***
 merge 1:1 ID year using "Working data\demosage.dta", gen(mergeage)
-order ID FAMID male year age pubage ppds1 ppds2 ppds3 ppdsf4 ppdsf5 ppdsm5 ppdsm4
-list ID FAMID male year age pubage ppds1 ppds2 ppds3 ppdsf4 ppdsf5 ppdsm5 ppdsm4 if mergeage==2
+order ID FAMID DATE male year age pubage ppds1 ppds2 ppds3 ppdsf4 ppdsf5 ppdsm5 ppdsm4
+list ID FAMID DATE male year age pubage ppds1 ppds2 ppds3 ppdsf4 ppdsf5 ppdsm5 ppdsm4 if mergeage==2
 
 ***organize data***
 drop age mergesex mergeage
@@ -211,39 +214,48 @@ rename pubage age
 tab male, m
 
 drop if male ==.
+drop if year==. 
 
-***create overall status, adrenarche, gonadarche***
-egen pfPDSm=rowmean(ppds1 ppds2 ppds3 ppdsf4 ppdsf5) if male == 0
-egen pmPDSm=rowmean(ppds1 ppds2 ppds3 ppdsm4 ppdsm5) if male == 1
+order ID FAMID DATE male year age ppds1 ppds2 ppds3 ppdsf4 ppdsf5 ppdsm5 ppdsm4
 
-egen pfADRNDLm=rowmean(ppds2 ppds3) if male == 0
-egen pmADRNDLm=rowmean(ppds2 ppds3) if male == 1
-
-egen pfGNDLm=rowmean(ppdsf4 ppdsf5) if male == 0
-egen pmGNDLm=rowmean(ppdsm4 ppdsm5) if male == 1
-
-***save out all parent puberty estimates***
-save "parentpuberty_long250818.dta", replace
+***save out initial parent puberty estimates***
+save "Working data\parentpuberty_long251230.dta", replace
 
 ***save out all parent puberty estimates for girls***
 clear 
-use "parentpuberty_long250818.dta"
+use "Working data\parentpuberty_long251230.dta"
 
 drop if male == 1
-drop ppdsm5 ppdsm4 pmPDSm pmADRNDLm pmGNDLm
-sort ID year
+drop ppdsm4 ppdsm5 
+sort ID year FAMID 
 
-save "parentpubertygirls_long250818.dta", replace
+***create overall status***
+egen pfPDSm=rowmean(ppds1 ppds2 ppds3 ppdsf4 ppdsf5)
+egen misspub = rowmiss(ppds1 ppds2 ppds3 ppdsf4 ppdsf5)
+tab1 misspub, m
+replace pfPDSm=    . if misspub==3 | misspub==4 | misspub==5
 
-***save out all parent puberty estimates for girls***
+drop misspub
+
+save "Working data\parentpubertygirls_long251230.dta", replace
+
+***save out all parent puberty estimates for boys***
 clear 
-use "parentpuberty_long250818.dta"
+use "Working data\parentpuberty_long251230.dta"
 
 drop if male == 0
-drop ppdsf4 ppdsf5 pfPDSm pfADRNDLm pfGNDLm
+drop ppdsf4 ppdsf5
 sort ID year
 
-save "parentpubertyboys_long250818.dta", replace
+***create overall status***
+egen pmPDSm=rowmean(ppds1 ppds2 ppds3 ppdsm4 ppdsm5)
+egen misspub = rowmiss(ppds1 ppds2 ppds3 ppdsm4 ppdsm5)
+tab1 misspub, m
+replace pmPDSm=    . if misspub==3 | misspub==4 | misspub==5
+
+drop misspub
+
+save "Working data\parentpubertyboys_long251230.dta", replace
 
 *
 * Clean youth data below
@@ -253,9 +265,10 @@ save "parentpubertyboys_long250818.dta", replace
 clear
 use "Working data\ph_y_pds.dta"
 
-keep participant_id session_id ph_y_pds_age ph_y_pds_001 ph_y_pds_002 ph_y_pds_003 ph_y_pds__f_001 ph_y_pds__f_002 ph_y_pds__m_001 ph_y_pds__m_002
+keep participant_id session_id ph_y_pds_dtt ph_y_pds_age ph_y_pds_001 ph_y_pds_002 ph_y_pds_003 ph_y_pds__f_001 ph_y_pds__f_002 ph_y_pds__m_001 ph_y_pds__m_002
 
 rename participant_id ID /**rename for readability*/
+rename ph_y_pds_dtt DATE
 
 tab session_id, m
 codebook session_id
@@ -343,36 +356,56 @@ rename pubage age
 tab male, m
 
 drop if male ==.
+drop if year==.
 
-***create overall status, adrenarche, gonadarche***
-egen yfPDSm=rowmean(ypds1 ypds2 ypds3 ypdsf4 ypdsf5) if male == 0
-egen ymPDSm=rowmean(ypds1 ypds2 ypds3 ypdsm4 ypdsm5) if male == 1
+order ID FAMID DATE male year age ypds1 ypds2 ypds3 ypdsf4 ypdsf5 ypdsm4 ypdsm5 
 
-egen yfADRNDLm=rowmean(ypds2 ypds3) if male == 0
-egen ymADRNDLm=rowmean(ypds2 ypds3) if male == 1
-
-egen yfGNDLm=rowmean(ypdsf4 ypdsf5) if male == 0
-egen ymGNDLm=rowmean(ypdsm4 ypdsm5) if male == 1
-
-***save out all youth puberty estimates***
-save "youthpuberty_long250818.dta", replace
+***save out initial youth puberty estimates***
+save "Working data\youthpuberty_long251230.dta", replace
 
 ***save out all youth puberty estimates for girls***
 clear 
-use "youthpuberty_long250818.dta"
+use "Working data\youthpuberty_long251230.dta"
 
 drop if male == 1
-drop ypdsm5 ypdsm4 ymPDSm ymADRNDLm ymGNDLm
-sort ID year
+drop ypdsm4 ypdsm5 
+sort ID year FAMID 
 
-save "youthpubertygirls_long250818.dta", replace
+***create overall status***
+egen yfPDSm=rowmean(ypds1 ypds2 ypds3 ypdsf4 ypdsf5)
+egen misspub = rowmiss(ypds1 ypds2 ypds3 ypdsf4 ypdsf5)
+tab1 misspub, m
+replace yfPDSm=    . if misspub==3 | misspub==4 | misspub==5
 
-***save out all youth puberty estimates for girls***
+drop misspub
+
+save "Working data\youthpubertygirls_long251230.dta", replace
+
+***save out all youth puberty estimates for boys***
 clear 
-use "youthpuberty_long250818.dta"
+use "Working data\youthpuberty_long251230.dta"
 
 drop if male == 0
-drop ypdsf5 ypdsf4 yfPDSm yfADRNDLm yfGNDLm
+drop ypdsf4 ypdsf5
 sort ID year
 
-save "youthpubertyboys_long250818.dta", replace
+***create overall status***
+egen ymPDSm=rowmean(ypds1 ypds2 ypds3 ypdsm4 ypdsm5)
+egen misspub = rowmiss(ypds1 ypds2 ypds3 ypdsm4 ypdsm5)
+tab1 misspub, m
+replace ymPDSm=    . if misspub==3 | misspub==4 | misspub==5
+
+drop misspub
+
+save "Working data\youthpubertyboys_long251230.dta", replace
+
+
+
+
+
+
+
+
+
+
+

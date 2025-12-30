@@ -1,0 +1,227 @@
+-------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\nchaku\Documents\GitHub\pubertybrain\Puberty_timing_tempo_models\PubertyOrg.log
+  log type:  text
+ opened on:  30 Dec 2025, 11:14:52
+
+. 
+. ***************************************************************************
+. * ORGANIZE FINAL FILES FOR IMPORT
+. ***************************************************************************
+. 
+. *
+. * Clean girls log models
+. *
+. 
+. ***child***
+. ***PDS***
+. clear
+
+. use "Working data\girls_childPDS_logisticmodels_251230.dta"
+
+. summ p_a p_lambda
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+         p_a |      5,470    .5786892    .1340796  -.0170147    .948642
+    p_lambda |      5,470    12.21195    .9647618   9.311014   15.13782
+
+. rename p_lambda yfPDStiming
+
+. rename p_a yfPDStempo
+
+. order ID yfPDStiming yfPDStempo
+
+. save "Working data\yfPDS_251230.dta", replace
+(file Working data\yfPDS_251230.dta not found)
+file Working data\yfPDS_251230.dta saved
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD29a4_000002.tmp"
+
+. 
+. ***parent***
+. ***PDS***
+. clear
+
+. use "Working data\girls_parentPDS_logisticmodels_251230.dta"
+
+. summ p_a p_lambda
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+         p_a |      5,486    .5478074    .1495698   -.160673   .9838472
+    p_lambda |      5,486    11.92854    1.100897   8.470568   15.37158
+
+. rename p_lambda pfPDStiming
+
+. rename p_a pfPDStempo
+
+. order ID pfPDStiming pfPDStempo
+
+. save "Working data\pfPDS_251230.dta", replace
+(file Working data\pfPDS_251230.dta not found)
+file Working data\pfPDS_251230.dta saved
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD29a4_000003.tmp"
+
+. 
+. ***merge within gender***
+. clear
+
+. use "Working data\yfPDS_251230".dta
+invalid '.dta' 
+r(198);
+
+end of do-file
+
+r(198);
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD29a4_000004.tmp"
+
+. 
+. ***merge within gender***
+. clear
+
+. use "Working data\yfPDS_251230.dta"
+
+. merge 1:1 ID using "Working data\pfPDS_251230.dta", gen(mpfPDS)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                            48
+        from master                        16  (mpfPDS==1)
+        from using                         32  (mpfPDS==2)
+
+    Matched                             5,454  (mpfPDS==3)
+    -----------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD29a4_000005.tmp"
+
+. save "Final data\fPDS_251230.dta", replace
+(file Final data\fPDS_251230.dta not found)
+file Final data\fPDS_251230.dta saved
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD29a4_000006.tmp"
+
+. 
+. *
+. * Clean boy's log model!
+. *
+. 
+. ***child***
+. ***PDS***
+. clear
+
+. use "Working data\boys_childPDS_logisticmodels_251230.dta"
+
+. summ p_a p_lambda
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+         p_a |      6,024    .3858667     .096863  -.0269149   .6845728
+    p_lambda |      6,024    14.02491    1.036901   10.62326   17.98074
+
+. rename p_lambda ymPDStiming
+
+. rename p_a ymPDStempo
+
+. order ID ymPDStiming ymPDStempo
+
+. save "Working data\ymPDS_251230.dta", replace
+(file Working data\ymPDS_251230.dta not found)
+file Working data\ymPDS_251230.dta saved
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD29a4_000007.tmp"
+
+. 
+. ***parent***
+. ***PDS***
+. clear
+
+. use "Working data\boys_parentPDS_logisticmodels_251230.dta"
+
+. summ p_a p_lambda
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+         p_a |      6,024    .4716762    .1223303  -.3119603   .8396984
+    p_lambda |      6,024    14.01258     1.05301    9.82162   18.22447
+
+. rename p_lambda pmPDStiming
+
+. rename p_a pmPDStempo
+
+. order ID pmPDStiming pmPDStempo
+
+. save "Working data\pmPDS_251230.dta", replace
+(file Working data\pmPDS_251230.dta not found)
+file Working data\pmPDS_251230.dta saved
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD29a4_000008.tmp"
+
+. ***merge within gender***
+. clear
+
+. use "Working data\ymPDS_251230.dta"
+
+. merge 1:1 ID using "Working data\pmPDS_251230.dta", gen(mpmPDS)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                            26
+        from master                        13  (mpmPDS==1)
+        from using                         13  (mpmPDS==2)
+
+    Matched                             6,011  (mpmPDS==3)
+    -----------------------------------------
+
+. 
+. save "Final data\mPDS_251230.dta", replace
+(file Final data\mPDS_251230.dta not found)
+file Final data\mPDS_251230.dta saved
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD29a4_000009.tmp"
+
+. 
+. *
+. *Merge estimates
+. *
+. clear
+
+. use "Final data\fPDS_251230.dta"
+
+. append using "Final data\mPDS_251230.dta"
+(label _merge already defined)
+
+. 
+. save "Final data\PDS_251230.dta", replace
+(file Final data\PDS_251230.dta not found)
+file Final data\PDS_251230.dta saved
+
+. 
+end of do-file
+
+. clear
+
+. exit

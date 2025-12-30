@@ -1,0 +1,257 @@
+rm(list=ls())
+sessionInfo()
+
+#open libraries
+##install.packages("sitar")
+library(haven)
+library(dplyr)
+library(tidyr)
+library(tibble)
+library(ggplot2)
+library(patchwork)
+library(stringr)
+library(lubridate)
+
+#set working directory
+setwd("C:/Users/nchaku/Documents/GitHub/pubertybrain/Puberty_timing_tempo_models")
+
+#Open all raw data from CleaningPubertyItems
+dfygirls <- read_dta("Working data/youthpubertygirls_long251230.dta")
+dfyboys  <- read_dta("Working data/youthpubertyboys_long251230.dta")
+dfpgirls <- read_dta("Working data/parentpubertygirls_long251230.dta")
+dfpboys  <- read_dta("Working data/parentpubertyboys_long251230.dta")
+
+##12/30/25: For DCN RR, Drop anyone who doesn't have at least two PDS values. 
+##Save out and run logistic models. Note that we are not removing siblings/twins from analyses
+
+#
+#youth-reported girl's puberty
+#
+
+names(dfygirls)
+head(dfygirls)
+
+#Create clean datasets for PDS
+dfygirlsPDSclean <- dfygirls %>%
+  select(ID, FAMID, DATE, year, age, yfPDSm) %>%
+  mutate(
+    ID     = as.factor(ID),
+    DATE   = ymd_hms(DATE, quiet = TRUE),
+    age    = as.numeric(age),
+    yfPDSm = as.numeric(yfPDSm)
+  ) %>%
+  arrange(ID, age) %>%
+  group_by(ID) %>%
+  filter(sum(!is.na(yfPDSm)) >= 2) %>%   # keep IDs with at least two PDS values
+  ungroup()
+
+#Confirm that you've removed IDs that don't have at least two PDS values
+dfygirlsPDSclean %>%
+  group_by(ID) %>%
+  summarise(n_nonmiss = sum(!is.na(yfPDSm))) %>%
+  filter(n_nonmiss < 2)  #should return zero rows
+
+#Count of IDs retained:
+dfygirlsPDSclean %>% 
+  summarize(n_IDs = n_distinct(ID))
+
+# A tibble: 1 × 1
+#5470
+
+#Some really quick plotting
+p1 <- ggplot(dfygirlsPDSclean, aes(x = age, y = yfPDSm, group = ID)) +
+  geom_line(alpha = 0.15,  linewidth = 0.2, na.rm = TRUE) +
+  geom_point(alpha = 0.12, 
+             position = position_jitter(width = 0.03, height = 0), na.rm = TRUE) +
+  scale_x_continuous(breaks = 9:17, limits = c(9, 17), expand = c(0, 0)) +
+  scale_y_continuous(breaks = 1:4, limits = c(1, 4)) +
+  labs(x = "Age", y = "Pubertal Development Scale") +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(linewidth = 0.2)
+  )
+
+p1
+
+#
+#youth-reported boy's puberty
+#
+
+names(dfyboys)
+head(dfyboys)
+
+#Create clean datasets for PDS
+dfyboysPDSclean <- dfyboys %>%
+  select(ID, FAMID, DATE, year, age, ymPDSm) %>%
+  mutate(
+    ID     = as.factor(ID),
+    DATE   = ymd_hms(DATE, quiet = TRUE),
+    age    = as.numeric(age),
+    ymPDSm = as.numeric(ymPDSm)
+  ) %>%
+  arrange(ID, age) %>%
+  group_by(ID) %>%
+  filter(sum(!is.na(ymPDSm)) >= 2) %>%   # keep IDs with at least two PDS values
+  ungroup()
+
+#Confirm that you've removed IDs that don't have at least two PDS values
+dfyboysPDSclean %>%
+  group_by(ID) %>%
+  summarise(n_nonmiss = sum(!is.na(ymPDSm))) %>%
+  filter(n_nonmiss < 2)  #should return zero rows
+
+#Count of IDs retained:
+dfyboysPDSclean %>% 
+  summarize(n_IDs = n_distinct(ID))
+
+# A tibble: 1 × 1
+#6024
+
+head(dfyboysPDSclean)
+
+#Some really quick plotting
+p2 <- ggplot(dfyboysPDSclean, aes(x = age, y = ymPDSm, group = ID)) +
+  geom_line(alpha = 0.15,  linewidth = 0.2, na.rm = TRUE) +
+  geom_point(alpha = 0.12, 
+             position = position_jitter(width = 0.03, height = 0), na.rm = TRUE) +
+  scale_x_continuous(breaks = 9:17, limits = c(9, 17), expand = c(0, 0)) +
+  scale_y_continuous(breaks = 1:4, limits = c(1, 4)) +
+  labs(x = "Age", y = "Pubertal Development Scale") +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(linewidth = 0.2)
+  )
+
+p2
+
+#
+#parent-reported girl's puberty
+#
+
+names(dfpgirls)
+head( dfpgirls)
+
+#Create clean datasets for PDS
+dfpgirlsPDSclean <- dfpgirls %>%
+  select(ID, FAMID, DATE, year, age, pfPDSm) %>%
+  mutate(
+    ID     = as.factor(ID),
+    DATE   = ymd_hms(DATE, quiet = TRUE),
+    age    = as.numeric(age),
+    pfPDSm = as.numeric(pfPDSm)
+  ) %>%
+  arrange(ID, age) %>%
+  group_by(ID) %>%
+  filter(sum(!is.na(pfPDSm)) >= 2) %>%   # keep IDs with at least two PDS values
+  ungroup()
+
+#Confirm that you've removed IDs that don't have at least two PDS values
+dfpgirlsPDSclean %>%
+  group_by(ID) %>%
+  summarise(n_nonmiss = sum(!is.na(pfPDSm))) %>%
+  filter(n_nonmiss < 2)  #should return zero rows
+
+#Count of IDs retained:
+dfpgirlsPDSclean %>% 
+  summarize(n_IDs = n_distinct(ID))
+
+# A tibble: 1 × 1
+#5486
+
+head(dfpgirlsPDSclean)
+
+#Some really quick plotting
+p3 <- ggplot(dfpgirlsPDSclean, aes(x = age, y = pfPDSm, group = ID)) +
+  geom_line(alpha = 0.15,  linewidth = 0.2, na.rm = TRUE) +
+  geom_point(alpha = 0.12, 
+             position = position_jitter(width = 0.03, height = 0), na.rm = TRUE) +
+  scale_x_continuous(breaks = 9:17, limits = c(9, 17), expand = c(0, 0)) +
+  scale_y_continuous(breaks = 1:4, limits = c(1, 4)) +
+  labs(x = "Age", y = "Pubertal Development Scale") +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(linewidth = 0.2)
+  )
+
+p3
+
+#
+#parent-reported boy's puberty
+#
+
+names(dfpboys)
+head(dfpboys)
+
+#Create clean datasets for PDS
+dfpboysPDSclean <- dfpboys %>%
+  select(ID, FAMID, DATE, year, age, pmPDSm) %>%
+  mutate(
+    ID     = as.factor(ID),
+    DATE   = ymd_hms(DATE, quiet = TRUE),
+    age    = as.numeric(age),
+    pmPDSm = as.numeric(pmPDSm)
+  ) %>%
+  arrange(ID, age) %>%
+  group_by(ID) %>%
+  filter(sum(!is.na(pmPDSm)) >= 2) %>%   # keep IDs with at least two PDS values
+  ungroup()
+
+#Confirm that you've removed IDs that don't have at least two PDS values
+dfpboysPDSclean %>%
+  group_by(ID) %>%
+  summarise(n_nonmiss = sum(!is.na(pmPDSm))) %>%
+  filter(n_nonmiss < 2)  #should return zero rows
+
+#Count of IDs retained:
+dfpboysPDSclean %>% 
+  summarize(n_IDs = n_distinct(ID))
+
+# A tibble: 1 × 1
+#6024
+
+head(dfpboysPDSclean)
+
+#Some really quick plotting
+p4 <- ggplot(dfpboysPDSclean, aes(x = age, y = pmPDSm, group = ID)) +
+  geom_line(alpha = 0.15,  linewidth = 0.2, na.rm = TRUE) +
+  geom_point(alpha = 0.12, 
+             position = position_jitter(width = 0.03, height = 0), na.rm = TRUE) +
+  scale_x_continuous(breaks = 9:17, limits = c(9, 17), expand = c(0, 0)) +
+  scale_y_continuous(breaks = 1:4, limits = c(1, 4)) +
+  labs(x = "Age", y = "Pubertal Development Scale") +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(linewidth = 0.2)
+  )
+
+p4
+
+#create some graphs
+library(patchwork)
+
+(p1 + p2) /
+(p3 + p4) + 
+  plot_annotation(
+    tag_levels = "A")
+
+#Write to stata
+write_dta(dfygirlsPDSclean, "Working data/ygirlsPDSclean_251230.dta")
+write_dta(dfpgirlsPDSclean, "Working data/pgirlsPDSclean_251230.dta")
+write_dta(dfyboysPDSclean,  "Working data/yboysPDSclean_251230.dta")
+write_dta(dfpboysPDSclean,  "Working data/pboysPDSclean_251230.dta")
+
+#Save in R as well
+save(dfygirlsPDSclean, file = "Working data/ygirlsPDSclean_251230.RData")
+save(dfpgirlsPDSclean, file = "Working data/pgirlsPDSclean_251230.RData")
+save(dfyboysPDSclean,  file = "Working data/yboysPDSclean_251230.RData")
+save(dfpboysPDSclean,  file = "Working data/pboysPDSclean_251230.RData")
+
+
