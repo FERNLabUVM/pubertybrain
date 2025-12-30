@@ -139,3 +139,6 @@ NLE5 <- read_csv(paste(path, 'mental-health/mh_y_le.csv', sep='/'), col_names=TR
 table(NLE5$ple_y_ss_total_bad)
 
 save.image(file = "/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/pubertybrain/my_R_environment.RData")
+
+
+THIS IS TEST STUFF THAT IM JUST WRITTING. 
