@@ -1,22 +1,28 @@
 rm(list=ls())
 sessionInfo()
 
+####setup####
+
 #open libraries
-##install.packages("sitar")
-library(haven)
-library(sitar)
-library(dplyr)
-library(tidyr)
-library(purrr)
-library(tibble)
-library(sitar)
+require("haven")
+require(sitar)
+require(dplyr)
+require(tidyr)
+require(purrr)
+require(tibble)
+require(sitar)
 
 #set working directory
-#MAC:
+
+#Natasha MAC:
 #setwd("/Volumes/projects/iu/bl-pbs-chakulab/Projects/Data/ABCD/Syntax/Puberty/6.0/")
+#Alexis MAC
+setwd("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/pubertybrain/")
 
 #PC:
-setwd("Z:/Projects/Data/ABCD/Syntax/Puberty/PubertyGrowthModels")
+#setwd("Z:/Projects/Data/ABCD/Syntax/Puberty/PubertyGrowthModels")
+
+#####merging puberty, brain, ELA, and working memory data files######
 
 #Open data
 dfpub <- read_dta("allpub.dta")
@@ -80,8 +86,9 @@ write.table(dfmerged_mplus,'/Users/ab3377/Library/CloudStorage/OneDrive-Universi
 
 colnames(dfmerged_mplus)
 
-
-#########Negative life events variable#################
+#########Old negative life events variable#################
+##note: did not end up using this variable due to missingness in 6.0 release.
+##ELA score derived from Breslin et al was used in final models
 
 NLE <- read_tsv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/ABCD_6.0/rawdata/phenotype/mh_y_ple.tsv") %>%
   filter(session_id == "ses-01A")
@@ -140,5 +147,3 @@ table(NLE5$ple_y_ss_total_bad)
 
 save.image(file = "/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/pubertybrain/my_R_environment.RData")
 
-
-THIS IS TEST STUFF THAT IM JUST WRITTING. 
