@@ -22,41 +22,41 @@ setwd("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/
 #PC:
 #setwd("Z:/Projects/Data/ABCD/Syntax/Puberty/PubertyGrowthModels")
 
-#####merging puberty, brain, ELA, and working memory data files######
+####merging puberty, brain, ELA, and working memory data files#####
 
 #Open data
-dfpub <- read_dta("allpub.dta")
-dfbrain <- read.csv("~/GitHub/pubertybrain/gmv_mplus.csv")
+dfpub_male <- read_dta("Puberty_timing_tempo_models/Final data/mPDS_251230.dta")
+dfpub_female <- read_dta("Puberty_timing_tempo_models/Final data/fPDS_251230.dta")
+dfbrain <- read.csv("GMV_timing_tempo_models/gmv_mplus.csv")
+wmem <- read_dta("Working_memory/WRKMEM_251230.dta")
 
-#many-to-one join. 
-dfmerged <- dfbrain %>%
-  left_join(dfpub, by = "ID")
+#merge male and female puberty data
 
-#Note that if an ID was present in dfpuberty BUT not in dfbrain, it was dropped. 
-#I believe this is what we decided.
-lostIDs <- setdiff(dfpub$ID, dfbrain$ID)
+dfpub <- bind_rows(dfpub_female, dfpub_male)
 
-length(lostIDs)   #count
-head(lostIDs)     #peek at first few
+unique(dfpub$ID[duplicated(dfpub$ID)])
 
-#dropped 5081 participants
+#transform wmem to wide format
 
-names(dfmerged)
+wmem <- wmem %>%
+  filter(year %in% c(1, 4)) %>%
+  pivot_wider(
+    id_cols = ID,
+    names_from = year,
+    values_from = WRKMEM
+  ) %>%
+  rename(
+    wmb = `1`,
+    wm6 = `4`)
 
-dfmerged <- dfmerged %>%
-  mutate(across(everything(), ~ replace(., is.na(.), -999)))
+sum(!is.na(wmem$wm6))
+# n=4888 who have year 6 data (others missing or not included in this data release)
 
-write.csv(dfmerged, "~/GitHub/pubertybrain/dfmerged.csv", row.names = TRUE)
-
-#######merge in adversity data##########
-
-dfmerged <- read.csv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/pubertybrain/dfmerged.csv") %>% 
-  select(-starts_with("X"))
-                    
+#######prep adversity data##########
 
 ######ELA plus composite (from 5.1 data release)###########
 
-ELA <- read.csv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/ela_plus_abcd.csv") %>%
+ELA <- read.csv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/pubertybrain/ela_plus_abcd.csv") %>%
   filter(eventname == "baseline_year_1_arm_1")
 
 hist(ELA$ela_plus)
@@ -70,13 +70,28 @@ ELA <- ELA %>%
   select(ID, everything()) %>%
   select(-starts_with("X"))
 
-#Merge datasets on cleaned IDs
-dfmerged <- ELA %>%
-  inner_join(dfmerged, by = "ID")
+#subset ELA data
+ELA <- ELA %>%
+  select(ID, ela_plus)
+
+####merge all####
+
+dfmerged <- dfbrain %>%
+  left_join(dfpub, by = "ID") %>%
+  left_join(wmem, by = "ID") %>%
+  left_join(ELA, by = "ID")
+
+#Note that if an ID was present in a df but NOT in dfbrain, it was dropped. 
+#because if they are not in dfbrain then they were not included in the 6.0 release (or they are missing ALL imaging data)
+
+#final n=5041
+
+write.csv(dfmerged, "dfmerged.csv", row.names = TRUE)
+
+#format for mplus
 
 dfmerged_mplus <- dfmerged %>%
-  select(-(`abuse_phy`:`eventname`)) %>%
-  select(-('ID':'src_subject_id')) %>%
+  select(-ID,-mpfPDS,-mpmPDS) %>%
   select(numeric_id, everything())
 
 dfmerged_mplus <- dfmerged_mplus %>%
