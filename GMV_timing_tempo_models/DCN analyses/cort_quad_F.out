@@ -1,0 +1,568 @@
+Mplus VERSION 8.8 (Mac)
+MUTHEN & MUTHEN
+01/07/2026   8:42 AM
+
+INPUT INSTRUCTIONS
+
+  TITLE:	GMV growth model- QUADRATIC - FEMALE
+
+  DATA:	FILE IS dfmerged_mplus.dat;
+
+  DEFINE:
+    ! Rescale large variables to avoid variance > 1,000,000
+    ! r indicates rescaled
+    rT1_cort = cort_vol_1 / 1000;
+    rT2_cort = cort_vol_2 / 1000;
+    rT3_cort = cort_vol_3 / 1000;
+    rT4_cort = cort_vol_4 / 1000;
+
+  VARIABLE:	
+
+  NAMES = numeric_id sex age_1 age_2 age_3 age_4
+  subcort_vol_1 subcort_vol_2 subcort_vol_3 subcort_vol_4
+  cort_vol_1 cort_vol_2 cort_vol_3 cort_vol_4
+  fam_ID
+  T1_totalGMV T2_totalGMV T3_totalGMV T4_totalGMV
+  yfPDStiming yfPDStempo pfPDStiming pfPDStempo
+  ymPDStiming ymPDStempo pmPDStiming pmPDStempo
+  wmb wm6 ela_plus;
+
+  MISSING = ALL (-999);
+  USEVAR = rT1_cort rT2_cort rT3_cort rT4_cort;
+  SUBPOPULATION = (sex NE 1);
+  CLUSTER = fam_ID;
+
+  ANALYSIS:
+
+  TYPE = COMPLEX;
+  ESTIMATOR = MLR;
+  	
+  MODEL:	intercept by rT1_cort-rT4_cort@1;
+  	intercept;
+  	[intercept];
+  	slope BY rT1_cort@0
+  		rT2_cort@1
+  		rT3_cort@2
+  		rT4_cort@3;
+  	slope;
+  	[slope];
+  	
+  	quad BY rT1_cort@0
+  	        rT2_cort@1
+  	        rT3_cort@4
+  	        rT4_cort@9;
+  	quad@0; ! negative variance, fix to 0, npd matrix
+  	[quad];
+  	
+  	intercept WITH slope;
+  	intercept WITH quad@0; ! remove covariances with quad, npd matrix
+  	slope WITH quad@0;
+  	
+  	rT1_cort-rT4_cort (theta); !theta forces variances to be equal over time
+  	[rT1_cort-rT4_cort@0];
+
+  OUTPUT: SAMPSTAT STANDARDIZED TECH4;
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+GMV growth model- QUADRATIC - FEMALE
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                        2397
+
+Number of dependent variables                                    4
+Number of independent variables                                  0
+Number of continuous latent variables                            3
+
+Observed dependent variables
+
+  Continuous
+   RT1_CORT    RT2_CORT    RT3_CORT    RT4_CORT
+
+Continuous latent variables
+   INTERCEP    SLOPE       QUAD
+
+Variables with special functions
+
+  Cluster variable      FAM_ID
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+
+Input data file(s)
+  dfmerged_mplus.dat
+
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            15
+     Number of clusters                       2064
+
+
+
+SAMPLE STATISTICS
+
+
+     ESTIMATED SAMPLE STATISTICS
+
+
+           Means
+              RT1_CORT      RT2_CORT      RT3_CORT      RT4_CORT
+              ________      ________      ________      ________
+              576.537       564.159       538.309       520.978
+
+
+           Covariances
+              RT1_CORT      RT2_CORT      RT3_CORT      RT4_CORT
+              ________      ________      ________      ________
+ RT1_CORT    2303.773
+ RT2_CORT    2222.880      2371.541
+ RT3_CORT    2178.393      2241.583      2390.013
+ RT4_CORT    2065.535      2104.528      2160.197      2122.526
+
+
+           Correlations
+              RT1_CORT      RT2_CORT      RT3_CORT      RT4_CORT
+              ________      ________      ________      ________
+ RT1_CORT       1.000
+ RT2_CORT       0.951         1.000
+ RT3_CORT       0.928         0.942         1.000
+ RT4_CORT       0.934         0.938         0.959         1.000
+
+
+     MAXIMUM LOG-LIKELIHOOD VALUE FOR THE UNRESTRICTED (H1) MODEL IS -34684.060
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     RT1_CORT            576.678       0.181     433.222    0.04%     537.170    563.547    575.170
+            2378.000    2284.353       0.233     777.738    0.04%     587.167    616.420
+     RT2_CORT            564.370       0.128     391.164    0.05%     523.856    550.353    563.330
+            1994.000    2403.425       0.186     782.661    0.05%     574.930    606.589
+     RT3_CORT            539.553       0.238     401.418    0.07%     499.075    524.990    537.567
+            1467.000    2333.347       0.192     753.645    0.07%     550.129    581.144
+     RT4_CORT            521.796       0.168     350.881    0.05%     482.799    508.318    519.777
+            1940.000    2150.510       0.197     731.393    0.05%     532.538    562.007
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                        7
+
+Loglikelihood
+
+          H0 Value                      -34924.710
+          H0 Scaling Correction Factor      1.6363
+            for MLR
+          H1 Value                      -34684.060
+          H1 Scaling Correction Factor      1.8380
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                   69863.419
+          Bayesian (BIC)                 69903.893
+          Sample-Size Adjusted BIC       69881.652
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                            235.977*
+          Degrees of Freedom                     7
+          P-Value                           0.0000
+          Scaling Correction Factor         2.0396
+            for MLR
+
+*   The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV cannot be used
+    for chi-square difference testing in the regular way.  MLM, MLR and WLSM
+    chi-square difference testing is described on the Mplus website.  MLMV, WLSMV,
+    and ULSMV difference testing is done using the DIFFTEST option.
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.117
+          90 Percent C.I.                    0.104  0.130
+          Probability RMSEA <= .05           0.000
+
+CFI/TLI
+
+          CFI                                0.952
+          TLI                                0.959
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                           4787.101
+          Degrees of Freedom                     6
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.144
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_CORT           1.000      0.000    999.000    999.000
+    RT2_CORT           1.000      0.000    999.000    999.000
+    RT3_CORT           1.000      0.000    999.000    999.000
+    RT4_CORT           1.000      0.000    999.000    999.000
+
+ SLOPE    BY
+    RT1_CORT           0.000      0.000    999.000    999.000
+    RT2_CORT           1.000      0.000    999.000    999.000
+    RT3_CORT           2.000      0.000    999.000    999.000
+    RT4_CORT           3.000      0.000    999.000    999.000
+
+ QUAD     BY
+    RT1_CORT           0.000      0.000    999.000    999.000
+    RT2_CORT           1.000      0.000    999.000    999.000
+    RT3_CORT           4.000      0.000    999.000    999.000
+    RT4_CORT           9.000      0.000    999.000    999.000
+
+ INTERCEP WITH
+    SLOPE            -36.735      6.739     -5.451      0.000
+    QUAD               0.000      0.000    999.000    999.000
+
+ SLOPE    WITH
+    QUAD               0.000      0.000    999.000    999.000
+
+ Means
+    INTERCEPT        577.240      1.071    538.911      0.000
+    SLOPE            -14.119      0.438    -32.227      0.000
+    QUAD              -1.654      0.137    -12.112      0.000
+
+ Intercepts
+    RT1_CORT           0.000      0.000    999.000    999.000
+    RT2_CORT           0.000      0.000    999.000    999.000
+    RT3_CORT           0.000      0.000    999.000    999.000
+    RT4_CORT           0.000      0.000    999.000    999.000
+
+ Variances
+    INTERCEPT       2240.981     76.680     29.225      0.000
+    SLOPE              8.458      1.645      5.140      0.000
+    QUAD               0.000      0.000    999.000    999.000
+
+ Residual Variances
+    RT1_CORT         126.219      6.549     19.272      0.000
+    RT2_CORT         126.219      6.549     19.272      0.000
+    RT3_CORT         126.219      6.549     19.272      0.000
+    RT4_CORT         126.219      6.549     19.272      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.718E-04
+       (ratio of smallest to largest eigenvalue)
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_CORT           0.973      0.002    591.060      0.000
+    RT2_CORT           0.987      0.003    284.535      0.000
+    RT3_CORT           0.997      0.006    168.808      0.000
+    RT4_CORT           1.004      0.009    117.314      0.000
+
+ SLOPE    BY
+    RT1_CORT           0.000      0.000    999.000    999.000
+    RT2_CORT           0.061      0.006     10.091      0.000
+    RT3_CORT           0.123      0.012     10.096      0.000
+    RT4_CORT           0.185      0.018     10.172      0.000
+
+ QUAD     BY
+    RT1_CORT         999.000    999.000    999.000    999.000
+    RT2_CORT         999.000    999.000    999.000    999.000
+    RT3_CORT         999.000    999.000    999.000    999.000
+    RT4_CORT         999.000    999.000    999.000    999.000
+
+ INTERCEP WITH
+    SLOPE             -0.267      0.045     -5.934      0.000
+    QUAD             999.000    999.000    999.000    999.000
+
+ SLOPE    WITH
+    QUAD             999.000    999.000    999.000    999.000
+
+ Means
+    INTERCEPT         12.194      0.207     58.902      0.000
+    SLOPE             -4.855      0.528     -9.188      0.000
+    QUAD             999.000    999.000    999.000    999.000
+
+ Intercepts
+    RT1_CORT           0.000      0.000    999.000    999.000
+    RT2_CORT           0.000      0.000    999.000    999.000
+    RT3_CORT           0.000      0.000    999.000    999.000
+    RT4_CORT           0.000      0.000    999.000    999.000
+
+ Variances
+    INTERCEPT          1.000      0.000    999.000    999.000
+    SLOPE              1.000      0.000    999.000    999.000
+    QUAD             999.000    999.000    999.000    999.000
+
+ Residual Variances
+    RT1_CORT           0.053      0.003     16.645      0.000
+    RT2_CORT           0.055      0.003     16.980      0.000
+    RT3_CORT           0.056      0.003     16.998      0.000
+    RT4_CORT           0.057      0.003     16.666      0.000
+
+
+STDY Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_CORT           0.973      0.002    591.060      0.000
+    RT2_CORT           0.987      0.003    284.535      0.000
+    RT3_CORT           0.997      0.006    168.808      0.000
+    RT4_CORT           1.004      0.009    117.314      0.000
+
+ SLOPE    BY
+    RT1_CORT           0.000      0.000    999.000    999.000
+    RT2_CORT           0.061      0.006     10.091      0.000
+    RT3_CORT           0.123      0.012     10.096      0.000
+    RT4_CORT           0.185      0.018     10.172      0.000
+
+ QUAD     BY
+    RT1_CORT         999.000    999.000    999.000    999.000
+    RT2_CORT         999.000    999.000    999.000    999.000
+    RT3_CORT         999.000    999.000    999.000    999.000
+    RT4_CORT         999.000    999.000    999.000    999.000
+
+ INTERCEP WITH
+    SLOPE             -0.267      0.045     -5.934      0.000
+    QUAD             999.000    999.000    999.000    999.000
+
+ SLOPE    WITH
+    QUAD             999.000    999.000    999.000    999.000
+
+ Means
+    INTERCEPT         12.194      0.207     58.902      0.000
+    SLOPE             -4.855      0.528     -9.188      0.000
+    QUAD             999.000    999.000    999.000    999.000
+
+ Intercepts
+    RT1_CORT           0.000      0.000    999.000    999.000
+    RT2_CORT           0.000      0.000    999.000    999.000
+    RT3_CORT           0.000      0.000    999.000    999.000
+    RT4_CORT           0.000      0.000    999.000    999.000
+
+ Variances
+    INTERCEPT          1.000      0.000    999.000    999.000
+    SLOPE              1.000      0.000    999.000    999.000
+    QUAD             999.000    999.000    999.000    999.000
+
+ Residual Variances
+    RT1_CORT           0.053      0.003     16.645      0.000
+    RT2_CORT           0.055      0.003     16.980      0.000
+    RT3_CORT           0.056      0.003     16.998      0.000
+    RT4_CORT           0.057      0.003     16.666      0.000
+
+
+STD Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_CORT          47.339      0.810     58.451      0.000
+    RT2_CORT          47.339      0.810     58.451      0.000
+    RT3_CORT          47.339      0.810     58.451      0.000
+    RT4_CORT          47.339      0.810     58.451      0.000
+
+ SLOPE    BY
+    RT1_CORT           0.000      0.000    999.000    999.000
+    RT2_CORT           2.908      0.283     10.281      0.000
+    RT3_CORT           5.816      0.566     10.281      0.000
+    RT4_CORT           8.725      0.849     10.281      0.000
+
+ QUAD     BY
+    RT1_CORT         999.000    999.000    999.000    999.000
+    RT2_CORT         999.000    999.000    999.000    999.000
+    RT3_CORT         999.000    999.000    999.000    999.000
+    RT4_CORT         999.000    999.000    999.000    999.000
+
+ INTERCEP WITH
+    SLOPE             -0.267      0.045     -5.934      0.000
+    QUAD             999.000    999.000    999.000    999.000
+
+ SLOPE    WITH
+    QUAD             999.000    999.000    999.000    999.000
+
+ Means
+    INTERCEPT         12.194      0.207     58.902      0.000
+    SLOPE             -4.855      0.528     -9.188      0.000
+    QUAD             999.000    999.000    999.000    999.000
+
+ Intercepts
+    RT1_CORT           0.000      0.000    999.000    999.000
+    RT2_CORT           0.000      0.000    999.000    999.000
+    RT3_CORT           0.000      0.000    999.000    999.000
+    RT4_CORT           0.000      0.000    999.000    999.000
+
+ Variances
+    INTERCEPT          1.000      0.000    999.000    999.000
+    SLOPE              1.000      0.000    999.000    999.000
+    QUAD             999.000    999.000    999.000    999.000
+
+ Residual Variances
+    RT1_CORT         126.219      6.549     19.272      0.000
+    RT2_CORT         126.219      6.549     19.272      0.000
+    RT3_CORT         126.219      6.549     19.272      0.000
+    RT4_CORT         126.219      6.549     19.272      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    RT1_CORT           0.947      0.003    295.530      0.000
+    RT2_CORT           0.945      0.003    292.722      0.000
+    RT3_CORT           0.944      0.003    286.564      0.000
+    RT4_CORT           0.943      0.003    276.841      0.000
+
+
+TECHNICAL 4 OUTPUT
+
+
+     ESTIMATES DERIVED FROM THE MODEL
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD
+              ________      ________      ________
+              577.240       -14.119        -1.654
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD
+              ________      ________      ________
+                1.071         0.438         0.137
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD
+              ________      ________      ________
+              538.911       -32.227       -12.112
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD
+              ________      ________      ________
+                0.000         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD
+              ________      ________      ________
+ INTERCEP    2240.981
+ SLOPE        -36.735         8.458
+ QUAD           0.000         0.000         0.000
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD
+              ________      ________      ________
+ INTERCEP      76.680
+ SLOPE          6.739         1.645
+ QUAD           0.000         0.000         0.000
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD
+              ________      ________      ________
+ INTERCEP      29.225
+ SLOPE         -5.451         5.140
+ QUAD           0.000         0.000         0.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD
+              ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.000         0.000
+ QUAD           1.000         1.000         1.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD
+              ________      ________      ________
+ INTERCEP       1.000
+ SLOPE         -0.267         1.000
+ QUAD         999.000       999.000       999.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD
+              ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.045         0.000
+ QUAD         999.000       999.000         0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD
+              ________      ________      ________
+ INTERCEP     999.000
+ SLOPE         -5.934       999.000
+ QUAD           1.000         1.000       999.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD
+              ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.000         0.000
+ QUAD           0.317         0.317         0.000
+
+
+     Beginning Time:  08:42:53
+        Ending Time:  08:42:53
+       Elapsed Time:  00:00:00
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2022 Muthen & Muthen
