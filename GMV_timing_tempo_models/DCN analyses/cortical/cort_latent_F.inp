@@ -46,4 +46,6 @@ MODEL:	intercept by rT1_cort-rT4_cort@1;
 	rT1_cort-rT4_cort (theta); !theta forces variances to be equal over time
 	[rT1_cort-rT4_cort@0];
 
+
+
 OUTPUT: SAMPSTAT STANDARDIZED TECH4;
