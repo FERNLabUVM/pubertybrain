@@ -1,0 +1,60 @@
+TITLE:	GMV growth model- QUAD - MALE
+
+DATA:	FILE IS dfmerged_mplus.dat;
+
+DEFINE:
+  ! Rescale large variables to avoid variance > 1,000,000
+  ! r indicates rescaled
+  rT1_scort = subcort_vol_1 / 1000;
+  rT2_scort = subcort_vol_2 / 1000;
+  rT3_scort = subcort_vol_3 / 1000;
+  rT4_scort = subcort_vol_4 / 1000;
+
+VARIABLE:	
+
+NAMES = numeric_id sex age_1 age_2 age_3 age_4
+subcort_vol_1 subcort_vol_2 subcort_vol_3 subcort_vol_4
+cort_vol_1 cort_vol_2 cort_vol_3 cort_vol_4
+fam_ID
+T1_totalGMV T2_totalGMV T3_totalGMV T4_totalGMV
+yfPDStiming yfPDStempo pfPDStiming pfPDStempo
+ymPDStiming ymPDStempo pmPDStiming pmPDStempo
+wmb wm6 ela_plus;
+        
+MISSING = ALL (-999);
+USEVAR = rT1_scort rT2_scort rT3_scort rT4_scort;
+SUBPOPULATION = (sex NE 2);
+CLUSTER = fam_ID;
+
+ANALYSIS:
+
+TYPE = COMPLEX;
+ESTIMATOR = MLR;
+	
+MODEL:	intercept by rT1_scort-rT4_scort@1;
+	intercept;
+	[intercept];
+	
+	slope BY rT1_scort@0
+		rT2_scort@1
+		rT3_scort@2
+		rT4_scort@3;
+	slope;
+	[slope];
+	
+	quad BY rT1_scort@0 
+	        rT2_scort@1
+	        rT3_scort@4 
+	        rT4_scort@9;
+	quad@0;
+	[quad];
+	
+	
+	intercept WITH slope;
+	intercept WITH quad@0;
+	slope WITH quad@0;
+	
+	rT1_scort-rT4_scort (theta); !theta forces variances to be equal over time
+	[rT1_scort-rT4_scort@0];
+
+OUTPUT: SAMPSTAT;
