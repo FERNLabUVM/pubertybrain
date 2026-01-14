@@ -15,70 +15,233 @@ library(patchwork)
 setwd("~/Documents/GitHub/pubertybrain")
 
 #read in file!
-df <- read.csv("dfmerged_mplus.csv")
+#df <- read.csv("dfmerged_mplus.csv")
+df <- read.table("Full_model/DCN_analyses/dfmerged_mplus.dat", header = FALSE)
+
+names(df)
+ncol(df)
+length(colnames(df))
+
+colnames(df) <- c(
+  "numeric_id",
+  "sex",
+  "age_1", "age_2", "age_3", "age_4",
+  "subcort_vol_1", "subcort_vol_2", "subcort_vol_3", "subcort_vol_4",
+  "cort_vol_1", "cort_vol_2", "cort_vol_3", "cort_vol_4",
+  "fam_ID",
+  "T1_totalGMV", "T2_totalGMV", "T3_totalGMV", "T4_totalGMV",
+  "yfPDStiming", "yfPDStempo", "pfPDStiming", "pfPDStempo",
+  "ymPDStiming", "ymPDStempo", "pmPDStiming", "pmPDStempo",
+  "wmb", "wm6", "ela_plus"
+)
+
 names(df)
 
 # Clean + label
-df_ela <- df %>%
+df <- df %>%
   mutate(across(where(is.numeric), ~ na_if(., -999))) %>%
-  filter(sex %in% c(1, 2), !is.na(ela_plus), ela_plus >= 0, ela_plus <= 10) %>%
+  mutate(ela_plus = as.numeric(as.character(ela_plus))) %>%
+  filter(sex %in% c(1, 2)) %>%
   mutate(sex = factor(sex, levels = c(1, 2), labels = c("Boys", "Girls")))
 
-# assumes df_ela already made as in your last step
-stats <- df_ela %>%
+stats <- df %>%
   group_by(sex) %>%
-  summarise(N = dplyr::n(),
-            mean = mean(ela_plus),
-            sd   = sd(ela_plus),
-            .groups = "drop")
+  summarise(
+    N_total      = n(),
+    N_nonmissing = sum(!is.na(ela_plus)),
+    mean = mean(ela_plus, na.rm = TRUE),
+    sd   = sd(ela_plus, na.rm = TRUE),
+    .groups = "drop"
+  )
 
-# find a nice y position inside each facet (max bin count by sex)
-counts_fac <- df_ela %>%
+stats
+
+#Make ELA plot
+counts_fac <- df %>%
+  filter(!is.na(ela_plus)) %>%
   count(sex, bin = cut(ela_plus, breaks = 0:10, right = FALSE, include.lowest = TRUE)) %>%
-  group_by(sex) %>% summarise(ymax = max(n), .groups = "drop")
+  group_by(sex) %>%
+  summarise(ymax = max(n, na.rm = TRUE), .groups = "drop")
 
 ann_fac <- stats %>%
   left_join(counts_fac, by = "sex") %>%
   mutate(
     x = 8.8,
-    y = ymax * 0.92,
+    y = ifelse(is.na(ymax), 1, ymax * 0.92),   # fallback if no counts
     label = sprintf("Mean = %.2f\nSD = %.2f", mean, sd)
   )
 
-p_hist_faceted +
-  geom_label(
-    data = ann_fac,
-    aes(x = x, y = y, label = label, fill = sex),
-    color = "white", label.size = 0, alpha = 0.90, show.legend = FALSE
-  )
-
-# global y max to place labels nicely
-counts_ov <- df_ela %>%
+counts_ov <- df %>%
+  filter(!is.na(ela_plus)) %>%
   count(sex, bin = cut(ela_plus, breaks = 0:10, right = FALSE, include.lowest = TRUE))
-ymax_global <- max(counts_ov$n)
+
+ymax_global <- if (nrow(counts_ov) == 0) 1 else max(counts_ov$n, na.rm = TRUE)
 
 ann_ov <- stats %>%
   mutate(
     x = 8.8,
-    y = ymax_global * c(0.92, 0.80)[as.integer(sex)],  # stagger Boys/Girls
+    # stagger Boys/Girls so labels don't overlap; adjust multiplier if needed
+    y = ymax_global * c(0.92, 0.80)[as.integer(sex)],
     label = sprintf("%s: Mean = %.2f, SD = %.2f", sex, mean, sd)
   )
 
-p_hist_overlay +
+p_hist_faceted <- ggplot(df %>% filter(!is.na(ela_plus)), aes(x = ela_plus)) +
+  geom_histogram(breaks = 0:10, closed = "left", color = "black", fill = "grey80") +
+  facet_wrap(~sex) +
+  labs(x = "Early-Life Adversity (ELA)", y = "Count") +
+  theme_minimal()
+
+p_hist_overlay <- ggplot(df %>% filter(!is.na(ela_plus)), aes(x = ela_plus, fill = sex)) +
+  geom_histogram(position = "identity", alpha = 0.45, breaks = 0:10, color = "black") +
+  labs(x = "Early-Life Adversity (ELA)", y = "Count") +
+  theme_minimal()
+
+p1 <- p_hist_faceted +
   geom_label(
-    data = ann_ov,
+    data = ann_fac,
+    inherit.aes = FALSE,
     aes(x = x, y = y, label = label, fill = sex),
-    color = "white", label.size = 0, alpha = 0.90
+    color = "white",
+    label.size = 0,
+    alpha = 0.90,
+    show.legend = FALSE
   )
 
+p1
+
+p2 <- p_hist_overlay +
+  geom_label(
+    data = ann_ov,
+    inherit.aes = FALSE,
+    aes(x = x, y = y, label = label, fill = sex),
+    color = "white",
+    label.size = 0,
+    alpha = 0.90,
+    show.legend = FALSE
+  )
+
+p2
+
+#Make cort and subcort trajectories
+names(df)
+
+df_long <- df %>%
+  select(
+    numeric_id, sex,
+    subcort_vol_1, subcort_vol_2,
+    subcort_vol_3, subcort_vol_4) %>%
+  mutate(sex = case_when(
+    sex %in% c(1, "1") ~ "Boys",
+    sex %in% c(2, "2") ~ "Girls",
+    TRUE ~ as.character(sex)
+  ),
+  sex = factor(sex, levels = c("Boys", "Girls")),
+  numeric_id = as.character(numeric_id)   # grouping id as character is handy for ggplot
+  ) %>%
+  pivot_longer(
+    cols = starts_with("subcort_vol_"),
+    names_to = "wave",
+    values_to = "subcort_vol",
+    values_drop_na = FALSE
+  ) %>%
+  # turn wave into an ordered factor representing time points
+  mutate(
+    wave_num = as.integer(str_extract(wave, "\\d+")),   # extracts 1,2,3,4
+    wave = factor(wave_num,
+                  levels = 1:4,
+                  labels = c("Baseline", "Year 2", "Year 4", "Year 6"),
+                  ordered = TRUE)
+  )
+
+p_traj <- ggplot(df_long, aes(x = wave, y = subcort_vol)) +
+  # individual subject lines (group by id)
+  geom_line(aes(group = numeric_id, color=sex), alpha = 0.06, size = 0.4) +
+  # mean trajectory per sex (calculated at each wave)
+  stat_summary(
+    aes(group = sex),
+    fun = mean, geom = "line",
+    size = 1.2, color = "black", inherit.aes = TRUE
+  ) +
+  stat_summary(
+    aes(group = sex, color = sex),
+    fun = mean, geom = "point",
+    size = 2
+  ) +
+  facet_wrap(~ sex) +
+  labs(
+    x = "Wave",
+    y = "Subcortical volume",
+    title = "Individual trajectories of subcortical volume by sex",
+    caption = "Thin faint lines = individuals; bold line + points = group mean"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")   # remove legend because facets already separate sex
+
+p_traj
+
+df_long <- df %>%
+  select(
+    numeric_id, sex,
+    cort_vol_1, cort_vol_2,
+    cort_vol_3, cort_vol_4) %>%
+  mutate(sex = case_when(
+    sex %in% c(1, "1") ~ "Boys",
+    sex %in% c(2, "2") ~ "Girls",
+    TRUE ~ as.character(sex)
+  ),
+  sex = factor(sex, levels = c("Boys", "Girls")),
+  numeric_id = as.character(numeric_id)   # grouping id as character is handy for ggplot
+  ) %>%
+  pivot_longer(
+    cols = starts_with("cort_vol_"),
+    names_to = "wave",
+    values_to = "cort_vol",
+    values_drop_na = FALSE
+  ) %>%
+  # turn wave into an ordered factor representing time points
+  mutate(
+    wave_num = as.integer(str_extract(wave, "\\d+")),   # extracts 1,2,3,4
+    wave = factor(wave_num,
+                  levels = 1:4,
+                  labels = c("Baseline", "Year 2", "Year 4", "Year 6"),
+                  ordered = TRUE)
+  )
+
+p_traj <- ggplot(df_long, aes(x = wave, y = cort_vol)) +
+  # individual subject lines (group by id)
+  geom_line(aes(group = numeric_id, color=sex), alpha = 0.06, size = 0.4) +
+  # mean trajectory per sex (calculated at each wave)
+  stat_summary(
+    aes(group = sex),
+    fun = mean, geom = "line",
+    size = 1.2, color = "black", inherit.aes = TRUE
+  ) +
+  stat_summary(
+    aes(group = sex, color = sex),
+    fun = mean, geom = "point",
+    size = 2
+  ) +
+  facet_wrap(~ sex) +
+  labs(
+    x = "Wave",
+    y = "Cortical volume",
+    title = "Individual trajectories of Cortical volume by sex",
+    caption = "Thin faint lines = individuals; bold line + points = group mean"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")   # remove legend because facets already separate sex
+
+p_traj
 # -----------------------------
 # 0) Data prep (boys only)
 # -----------------------------
+names(df)
 boys <- df %>%
   mutate(across(where(is.numeric), ~ na_if(., -999))) %>%
   filter(sex %in% c(1, "1")) %>%
-  select(numeric_id, btiming, btempo,
-         T1_totalGMV, T2_totalGMV, T3_totalGMV, T4_totalGMV)
+  select(numeric_id, ymPDStiming, ymPDStempo,
+         subcort_vol_1, subcort_vol_2, subcort_vol_3, subcort_vol_4,
+         cort_vol_1, cort_vol_2, cort_vol_3, cort_vol_4)
 
 gmv_long_b <- boys %>%
   pivot_longer(cols = starts_with("T"), names_to = "wave_gmv", values_to = "GMV") %>%
