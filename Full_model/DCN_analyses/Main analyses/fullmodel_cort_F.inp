@@ -28,8 +28,8 @@ wmb wm6 ela_plus;
 MISSING = ALL (-999);
 USEVAR = 
 ela_plus
-yfPDStiming yfPDStempo
-wmb wm6
+pfPDStiming pfPDStempo
+wm6
 rT1_cort rT2_cort rT3_cort rT4_cort;
 SUBPOPULATION = (sex NE 1);
 CLUSTER = fam_ID;
@@ -53,16 +53,16 @@ MODEL:	intercept by rT1_cort-rT4_cort@1;
 	[rT1_cort-rT4_cort@0];
 	
 ela_plus;
-wmb wm6;
-yfPDStiming yfPDStempo;
-yfPDStiming WITH yfPDStempo;
+wm6;
+pfPDStiming pfPDStempo;
+pfPDStiming WITH pfPDStempo;
 
-wm6 intercept slope yfPDStiming yfPDStempo ON ela_plus;
-wm6 ON wmb;
-wm6 ON yfPDStiming yfPDStempo slope intercept;
-intercept WITH yfPDStiming;
-slope WITH yfPDStempo;
-slope ON yfPDStiming;
+wm6 intercept slope pfPDStiming pfPDStempo ON ela_plus;
+
+wm6 ON pfPDStiming pfPDStempo slope intercept;
+intercept WITH pfPDStiming;
+slope WITH pfPDStempo;
+slope ON pfPDStiming;
 
 
 OUTPUT: SAMPSTAT STANDARDIZED TECH4;
