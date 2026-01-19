@@ -36,7 +36,7 @@ MODEL:	intercept by rT1_scort-rT4_scort@1;
 	[intercept];
 	
 	slope BY rT1_scort@0
-		rT2_scort*
+		rT2_scort@.4
 		rT3_scort*
 		rT4_scort@1;
 	slope;
