@@ -1,4 +1,4 @@
-TITLE:	full model - FEMALE
+TITLE:	full model - MALE
 
 DATA:
 FILE IS dfmerged_mplus.dat;
@@ -28,8 +28,8 @@ wmb wm6 ela_plus;
 MISSING = ALL (-999);
 USEVAR = 
 ela_plus
-ymPDStiming ymPDStempo
-wmb wm6
+pmPDStiming pmPDStempo
+wm6
 rT1_cort rT2_cort rT3_cort rT4_cort;
 SUBPOPULATION = (sex NE 2);
 CLUSTER = fam_ID;
@@ -54,16 +54,16 @@ MODEL:	intercept by rT1_cort-rT4_cort@1;
 	[rT1_cort-rT4_cort@0];
 	
 ela_plus;
-wmb wm6;
-ymPDStiming ymPDStempo;
-ymPDStiming WITH ymPDStempo;
+wm6;
+pmPDStiming pmPDStempo;
+pmPDStiming WITH pmPDStempo;
 
-wm6 intercept slope ymPDStiming ymPDStempo ON ela_plus;
-wm6 ON wmb;
-wm6 ON ymPDStiming ymPDStempo slope intercept;
-intercept WITH ymPDStiming;
-slope WITH ymPDStempo;
-slope ON ymPDStiming;
+wm6 intercept slope pmPDStiming pmPDStempo ON ela_plus;
+
+wm6 ON pmPDStiming pmPDStempo slope intercept;
+intercept WITH pmPDStiming;
+slope WITH pmPDStempo;
+slope ON pmPDStiming;
 
 
 OUTPUT: SAMPSTAT STANDARDIZED TECH4;
