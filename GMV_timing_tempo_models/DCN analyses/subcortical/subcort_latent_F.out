@@ -1,6 +1,6 @@
 Mplus VERSION 8.8 (Mac)
 MUTHEN & MUTHEN
-01/19/2026   9:58 AM
+01/26/2026   9:25 AM
 
 INPUT INSTRUCTIONS
 
@@ -36,15 +36,16 @@ INPUT INSTRUCTIONS
 
   TYPE = COMPLEX;
   ESTIMATOR = MLR;
+  ITERATIONS = 10000;
   	
   MODEL:	intercept by rT1_scort-rT4_scort@1;
   	intercept;
   	[intercept];
   	
   	slope BY rT1_scort@0
-  		rT2_scort@.4
-  		rT3_scort*
-  		rT4_scort@1;
+  		rT2_scort*
+  		rT3_scort@1
+  		rT4_scort@2;
   	slope;
   	[slope];
   	
@@ -54,7 +55,7 @@ INPUT INSTRUCTIONS
   	rT1_scort-rT4_scort (theta); !theta forces variances to be equal over time
   	[rT1_scort-rT4_scort@0];
 
-  OUTPUT: SAMPSTAT;
+  OUTPUT: SAMPSTAT STDYX;
 
 
 
@@ -90,7 +91,7 @@ Variables with special functions
 
 Estimator                                                      MLR
 Information matrix                                        OBSERVED
-Maximum number of iterations                                  1000
+Maximum number of iterations                                 10000
 Convergence criterion                                    0.500D-04
 Maximum number of steepest descent iterations                   20
 Maximum number of iterations for H1                           2000
@@ -160,123 +161,81 @@ UNIVARIATE SAMPLE STATISTICS
             1940.000      19.127       0.644      78.193    0.05%      59.027     61.578
 
 
-THE MODEL ESTIMATION TERMINATED NORMALLY
-
-     WARNING:  THE LATENT VARIABLE COVARIANCE MATRIX (PSI) IS NOT POSITIVE
-     DEFINITE.  THIS COULD INDICATE A NEGATIVE VARIANCE/RESIDUAL VARIANCE FOR A
-     LATENT VARIABLE, A CORRELATION GREATER OR EQUAL TO ONE BETWEEN TWO LATENT
-     VARIABLES, OR A LINEAR DEPENDENCY AMONG MORE THAN TWO LATENT VARIABLES.
-     CHECK THE TECH4 OUTPUT FOR MORE INFORMATION.
-     PROBLEM INVOLVING VARIABLE SLOPE.
-
-
-
-
-MODEL FIT INFORMATION
-
-Number of Free Parameters                        7
-
-Loglikelihood
-
-          H0 Value                      -15483.128
-          H0 Scaling Correction Factor      3.3022
-            for MLR
-          H1 Value                      -14975.025
-          H1 Scaling Correction Factor      2.6144
-            for MLR
-
-Information Criteria
-
-          Akaike (AIC)                   30980.257
-          Bayesian (BIC)                 31020.730
-          Sample-Size Adjusted BIC       30998.490
-            (n* = (n + 2) / 24)
-
-Chi-Square Test of Model Fit
-
-          Value                            527.434*
-          Degrees of Freedom                     7
-          P-Value                           0.0000
-          Scaling Correction Factor         1.9267
-            for MLR
-
-*   The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV cannot be used
-    for chi-square difference testing in the regular way.  MLM, MLR and WLSM
-    chi-square difference testing is described on the Mplus website.  MLMV, WLSMV,
-    and ULSMV difference testing is done using the DIFFTEST option.
-
-RMSEA (Root Mean Square Error Of Approximation)
-
-          Estimate                           0.176
-          90 Percent C.I.                    0.164  0.189
-          Probability RMSEA <= .05           0.000
-
-CFI/TLI
-
-          CFI                                0.845
-          TLI                                0.867
-
-Chi-Square Test of Model Fit for the Baseline Model
-
-          Value                           3366.535
-          Degrees of Freedom                     6
-          P-Value                           0.0000
-
-SRMR (Standardized Root Mean Square Residual)
-
-          Value                              0.149
+     NO CONVERGENCE.  NUMBER OF ITERATIONS EXCEEDED.
 
 
 
 MODEL RESULTS
 
-                                                    Two-Tailed
-                    Estimate       S.E.  Est./S.E.    P-Value
+                    Estimate
 
  INTERCEP BY
-    RT1_SCORT          1.000      0.000    999.000    999.000
-    RT2_SCORT          1.000      0.000    999.000    999.000
-    RT3_SCORT          1.000      0.000    999.000    999.000
-    RT4_SCORT          1.000      0.000    999.000    999.000
+    RT1_SCORT          1.000
+    RT2_SCORT          1.000
+    RT3_SCORT          1.000
+    RT4_SCORT          1.000
 
  SLOPE    BY
-    RT1_SCORT          0.000      0.000    999.000    999.000
-    RT2_SCORT          0.400      0.000    999.000    999.000
-    RT3_SCORT         -0.776      0.224     -3.463      0.001
-    RT4_SCORT          1.000      0.000    999.000    999.000
+    RT1_SCORT          0.000
+    RT2_SCORT        -10.097
+    RT3_SCORT          1.000
+    RT4_SCORT          2.000
 
  INTERCEP WITH
-    SLOPE              0.107      0.112      0.956      0.339
+    SLOPE              1.280
 
  Means
-    INTERCEPT         58.202      0.095    613.453      0.000
-    SLOPE             -0.133      0.020     -6.503      0.000
+    INTERCEPT         58.023
+    SLOPE             -0.061
 
  Intercepts
-    RT1_SCORT          0.000      0.000    999.000    999.000
-    RT2_SCORT          0.000      0.000    999.000    999.000
-    RT3_SCORT          0.000      0.000    999.000    999.000
-    RT4_SCORT          0.000      0.000    999.000    999.000
+    RT1_SCORT          0.000
+    RT2_SCORT          0.000
+    RT3_SCORT          0.000
+    RT4_SCORT          0.000
 
  Variances
-    INTERCEPT         17.546      0.616     28.505      0.000
-    SLOPE             -0.288      0.057     -5.026      0.000
+    INTERCEPT         49.703
+    SLOPE             -0.918
 
  Residual Variances
-    RT1_SCORT          1.033      0.039     26.280      0.000
-    RT2_SCORT          1.033      0.039     26.280      0.000
-    RT3_SCORT          1.033      0.039     26.280      0.000
-    RT4_SCORT          1.033      0.039     26.280      0.000
+    RT1_SCORT        101.762
+    RT2_SCORT        101.762
+    RT3_SCORT        101.762
+    RT4_SCORT        101.762
 
 
-QUALITY OF NUMERICAL RESULTS
+MODEL COMMAND WITH FINAL ESTIMATES USED AS STARTING VALUES
 
-     Condition Number for the Information Matrix              0.701E-03
-       (ratio of smallest to largest eigenvalue)
+     intercept BY rt1_scort@1;
+     intercept BY rt2_scort@1;
+     intercept BY rt3_scort@1;
+     intercept BY rt4_scort@1;
+     slope BY rt1_scort@0;
+     slope BY rt2_scort*-10.09684;
+     slope BY rt3_scort@1;
+     slope BY rt4_scort@2;
+
+     intercept WITH slope*1.28020;
+
+     [ rt1_scort@0 ];
+     [ rt2_scort@0 ];
+     [ rt3_scort@0 ];
+     [ rt4_scort@0 ];
+     [ intercept*58.02308 ];
+     [ slope*-0.06111 ];
+
+     rt1_scort*101.76210 (theta);
+     rt2_scort*101.76210 (theta);
+     rt3_scort*101.76210 (theta);
+     rt4_scort*101.76210 (theta);
+     intercept*49.70279;
+     slope*-0.91781;
 
 
-     Beginning Time:  09:58:10
-        Ending Time:  09:58:11
+
+     Beginning Time:  09:25:08
+        Ending Time:  09:25:09
        Elapsed Time:  00:00:01
 
 

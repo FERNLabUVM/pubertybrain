@@ -30,15 +30,16 @@ ANALYSIS:
 
 TYPE = COMPLEX;
 ESTIMATOR = MLR;
+ITERATIONS = 10000;
 	
 MODEL:	intercept by rT1_scort-rT4_scort@1;
 	intercept;
 	[intercept];
 	
 	slope BY rT1_scort@0
-		rT2_scort@.4
-		rT3_scort*
-		rT4_scort@1;
+		rT2_scort*
+		rT3_scort@1
+		rT4_scort@2;
 	slope;
 	[slope];
 	
@@ -48,4 +49,4 @@ MODEL:	intercept by rT1_scort-rT4_scort@1;
 	rT1_scort-rT4_scort (theta); !theta forces variances to be equal over time
 	[rT1_scort-rT4_scort@0];
 
-OUTPUT: SAMPSTAT;
+OUTPUT: SAMPSTAT STDYX;
