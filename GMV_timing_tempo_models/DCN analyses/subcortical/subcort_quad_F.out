@@ -1,6 +1,6 @@
 Mplus VERSION 8.8 (Mac)
 MUTHEN & MUTHEN
-01/26/2026  10:37 AM
+01/26/2026   2:44 PM
 
 INPUT INSTRUCTIONS
 
@@ -45,14 +45,14 @@ INPUT INSTRUCTIONS
   		rT2_scort@1
   		rT3_scort@2
   		rT4_scort@3;
-  	slope@0;
+  	slope@0; ! negative variance, fix to 0, npd matrix
   	[slope];
   	
   	quad BY rT1_scort@0
   	        rT2_scort@1
   	        rT3_scort@4
   	        rT4_scort@9;
-  	quad; ! negative variance, fix to 0, npd matrix
+  	quad;
   	[quad];
   	
   	
@@ -288,9 +288,9 @@ QUALITY OF NUMERICAL RESULTS
        (ratio of smallest to largest eigenvalue)
 
 
-     Beginning Time:  10:37:05
-        Ending Time:  10:37:05
-       Elapsed Time:  00:00:00
+     Beginning Time:  14:44:00
+        Ending Time:  14:44:01
+       Elapsed Time:  00:00:01
 
 
 
