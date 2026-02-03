@@ -1,8 +1,8 @@
--------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
       name:  <unnamed>
        log:  C:\Users\nchaku\Documents\GitHub\pubertybrain\Puberty_timing_tempo_models\PubertyOrg.log
   log type:  text
- opened on:  30 Dec 2025, 11:14:52
+ opened on:   3 Feb 2026, 14:54:36
 
 . 
 . ***************************************************************************
@@ -33,13 +33,7 @@
 . order ID yfPDStiming yfPDStempo
 
 . save "Working data\yfPDS_251230.dta", replace
-(file Working data\yfPDS_251230.dta not found)
 file Working data\yfPDS_251230.dta saved
-
-. 
-end of do-file
-
-. do "C:\Users\nchaku\AppData\Local\Temp\STD29a4_000002.tmp"
 
 . 
 . ***parent***
@@ -62,27 +56,7 @@ end of do-file
 . order ID pfPDStiming pfPDStempo
 
 . save "Working data\pfPDS_251230.dta", replace
-(file Working data\pfPDS_251230.dta not found)
 file Working data\pfPDS_251230.dta saved
-
-. 
-end of do-file
-
-. do "C:\Users\nchaku\AppData\Local\Temp\STD29a4_000003.tmp"
-
-. 
-. ***merge within gender***
-. clear
-
-. use "Working data\yfPDS_251230".dta
-invalid '.dta' 
-r(198);
-
-end of do-file
-
-r(198);
-
-. do "C:\Users\nchaku\AppData\Local\Temp\STD29a4_000004.tmp"
 
 . 
 . ***merge within gender***
@@ -102,18 +76,8 @@ r(198);
     -----------------------------------------
 
 . 
-end of do-file
-
-. do "C:\Users\nchaku\AppData\Local\Temp\STD29a4_000005.tmp"
-
 . save "Final data\fPDS_251230.dta", replace
-(file Final data\fPDS_251230.dta not found)
 file Final data\fPDS_251230.dta saved
-
-. 
-end of do-file
-
-. do "C:\Users\nchaku\AppData\Local\Temp\STD29a4_000006.tmp"
 
 . 
 . *
@@ -140,13 +104,7 @@ end of do-file
 . order ID ymPDStiming ymPDStempo
 
 . save "Working data\ymPDS_251230.dta", replace
-(file Working data\ymPDS_251230.dta not found)
 file Working data\ymPDS_251230.dta saved
-
-. 
-end of do-file
-
-. do "C:\Users\nchaku\AppData\Local\Temp\STD29a4_000007.tmp"
 
 . 
 . ***parent***
@@ -169,14 +127,9 @@ end of do-file
 . order ID pmPDStiming pmPDStempo
 
 . save "Working data\pmPDS_251230.dta", replace
-(file Working data\pmPDS_251230.dta not found)
 file Working data\pmPDS_251230.dta saved
 
 . 
-end of do-file
-
-. do "C:\Users\nchaku\AppData\Local\Temp\STD29a4_000008.tmp"
-
 . ***merge within gender***
 . clear
 
@@ -194,14 +147,13 @@ end of do-file
     -----------------------------------------
 
 . 
-. save "Final data\mPDS_251230.dta", replace
-(file Final data\mPDS_251230.dta not found)
-file Final data\mPDS_251230.dta saved
-
-. 
 end of do-file
 
-. do "C:\Users\nchaku\AppData\Local\Temp\STD29a4_000009.tmp"
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_000001.tmp"
+
+. 
+. save "Final data\mPDS_251230.dta", replace
+file Final data\mPDS_251230.dta saved
 
 . 
 . *
@@ -215,8 +167,954 @@ end of do-file
 (label _merge already defined)
 
 . 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_000002.tmp"
+
+. summ yfPDStiming yfPDStempo pfPDStiming pfPDStempo
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ yfPDStiming |      5,470    12.21195    .9647618   9.311014   15.13782
+  yfPDStempo |      5,470    .5786892    .1340796  -.0170147    .948642
+ pfPDStiming |      5,486    11.92854    1.100897   8.470568   15.37158
+  pfPDStempo |      5,486    .5478074    .1495698   -.160673   .9838472
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_000003.tmp"
+
+. gen yfPDStiming_trim = yfPDStiming 
+(6,069 missing values generated)
+
+. gen yfPDStempo_trim = yfPDStempo 
+(6,069 missing values generated)
+
+. gen pfPDStiming_trim = pfPDStiming 
+(6,053 missing values generated)
+
+. gen pfPDStempo_trim = pfPDStempo
+(6,053 missing values generated)
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_000004.tmp"
+
+. 
+. gen yfPDStiming_trim = yfPDStiming 
+variable yfPDStiming_trim already defined
+r(110);
+
+end of do-file
+
+r(110);
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_000005.tmp"
+
+. 
+. replace yfPDStiming_trim =. if (yfPDStiming > 12.21195 + 3*.9647618) | (yfPDStiming < 12.21195 - 3*.9647618)
+(2 real changes made, 2 to missing)
+
+. replace yfPDStempo_trim  =. if (yfPDStempo  > .5786892 + 3*.1340796) | (yfPDStempo  < .5786892 - 3*.1340796)
+(35 real changes made, 35 to missing)
+
+. replace pfPDStiming_trim =. if (pfPDStiming > 11.92854 + 3*1.100897) | (pfPDStiming < 11.92854 - 3*1.100897)
+(5 real changes made, 5 to missing)
+
+. replace pfPDStempo_trim  =. if (pfPDStempo  > .5478074 + 3*.1495698)   | (pfPDStempo  < .5478074 - 3*.1495698)
+(22 real changes made, 22 to missing)
+
+. list ID yfPDStiming if (yfPDStiming_trim==. & yfPDStiming !=.)
+
+       +----------------------------+
+       |           ID   yfPDStiming |
+       |----------------------------|
+ 1423. | sub-84PUG220   9.311014049 |
+ 4526. | sub-U9C9ZMKM   15.13782457 |
+       +----------------------------+
+
+. list ID yfPDStempo if (yfPDStempo_trim==. & yfPDStempo !=.)
+
+       +-----------------------------+
+       |           ID     yfPDStempo |
+       |-----------------------------|
+  101. | sub-0HJGCR32    .0875067018 |
+  163. | sub-0W0932W4   -.0170147165 |
+  231. | sub-16MGA6G5    .1024129089 |
+  357. | sub-1XAZP6R9    .1503224615 |
+  391. | sub-230CTHZE    .0275951037 |
+       |-----------------------------|
+  444. | sub-2DHY1CHU    .1296615023 |
+  631. | sub-3LA2YW3R    .1074801616 |
+ 1023. | sub-5T6VPW2C    .0569997717 |
+ 1494. | sub-8JDM12TD    .1744823755 |
+ 1763. | sub-A3G711KJ    .1040824163 |
+       |-----------------------------|
+ 1867. | sub-ARKPPU88    .1131886479 |
+ 1902. | sub-AZ3DJH9K    .0389854676 |
+ 2057. | sub-BVEY2KG3    .0679462233 |
+ 2306. | sub-D9L81NY5     .171995645 |
+ 2310. | sub-DAL9UY1P    .1088695238 |
+       |-----------------------------|
+ 2375. | sub-DTAY6VX0    .0804651646 |
+ 2457. | sub-E82EGZJB    .1441034589 |
+ 2520. | sub-ELUYAFWW    .0304541062 |
+ 2582. | sub-F0ZZ96XL    .1591755167 |
+ 2587. | sub-F1E6TJJ9    .1420189657 |
+       |-----------------------------|
+ 2823. | sub-GAYGT0LJ    .1525006309 |
+ 2845. | sub-GE3NT7ZK     .149924107 |
+ 2889. | sub-GNV5ZKU4    .1511179837 |
+ 3075. | sub-HXHGMVPP    .0915529681 |
+ 3192. | sub-JLYFJ1N7   -.0116107275 |
+       |-----------------------------|
+ 3455. | sub-L3J71BFM    .1750858981 |
+ 4000. | sub-P74XG4NJ    .1733255984 |
+ 4092. | sub-PUT0KYA5    .1259656708 |
+ 4195. | sub-RC6BE96Y    .1524311547 |
+ 4342. | sub-T7KRTJPP    .1477867632 |
+       |-----------------------------|
+ 4605. | sub-UP5T3PT9    .1234661957 |
+ 4680. | sub-V46NR3P6    .0027376734 |
+ 4819. | sub-W01ZL87U    .0895482437 |
+ 5309. | sub-Z1WNHT63    .1307887651 |
+ 5330. | sub-Z6950R7M    .0299546526 |
+       +-----------------------------+
+
+. 
+. summ yfPDStiming_trim yfPDStempo_trim pfPDStiming_trim pfPDStempo_trim
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+yfPDStimin~m |      5,468    12.21194    .9633279   9.509064   15.09036
+yfPDStempo~m |      5,435    .5817415    .1289092   .1791548    .948642
+pfPDStimin~m |      5,481    11.92671    1.096623   8.653002   15.17113
+pfPDStempo~m |      5,464    .5498951    .1461164   .1076567   .9838471
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_000006.tmp"
+
+. summ ymPDStiming ymPDStempo pmPDStiming pmPDStempo
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ ymPDStiming |      6,024    14.02491    1.036901   10.62326   17.98074
+  ymPDStempo |      6,024    .3858667     .096863  -.0269149   .6845728
+ pmPDStiming |      6,024    14.01258     1.05301    9.82162   18.22447
+  pmPDStempo |      6,024    .4716762    .1223303  -.3119603   .8396984
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_000007.tmp"
+
+. *    Variable |        Obs        Mean    Std. dev.       Min        Max
+. *-------------+---------------------------------------------------------
+. * ymPDStiming |      6,024    14.02491    1.036901   10.62326   17.98074
+. *  ymPDStempo |      6,024    .3858667     .096863  -.0269149   .6845728
+. * pmPDStiming |      6,024    14.01258     1.05301    9.82162   18.22447
+. *  pmPDStempo |      6,024    .4716762    .1223303  -.3119603   .8396984
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_000008.tmp"
+
+. 
+. gen ymPDStiming_trim = ymPDStiming 
+(5,515 missing values generated)
+
+. gen ymPDStempo_trim = ymPDStempo 
+(5,515 missing values generated)
+
+. gen pmPDStiming_trim = pmPDStiming 
+(5,515 missing values generated)
+
+. gen pmPDStempo_trim = pmPDStempo
+(5,515 missing values generated)
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_000009.tmp"
+
+. 
+. replace ymPDStiming_trim =. if (ymPDStiming > 14.02491 + 3*1.036901)  | (ymPDStiming < 14.02491 - 3*1.036901)
+(16 real changes made, 16 to missing)
+
+. replace ymPDStempo_trim  =. if (ymPDStempo  > .3858667  + 3*.096863) | (ymPDStempo  < .3858667  - 3*.096863)
+(34 real changes made, 34 to missing)
+
+. replace pmPDStiming_trim =. if (pmPDStiming > 14.01258 + 3*1.05301)  | (pmPDStiming < 14.01258 - 3*1.05301)
+(20 real changes made, 20 to missing)
+
+. replace pmPDStempo_trim  =. if (pmPDStempo  > .4716762 + 3*.1223303)  | (pmPDStempo  < .4716762 - 3*.1223303)
+(42 real changes made, 42 to missing)
+
+. list ymPDStiming if (ymPDStiming_trim==. & ymPDStiming !=.)
+
+       +-------------+
+       | ymPDStiming |
+       |-------------|
+ 6199. | 17.39440992 |
+ 6576. | 17.95634698 |
+ 6767. | 17.58793665 |
+ 7948. | 10.68886653 |
+ 7989. | 17.36869986 |
+       |-------------|
+ 8000. | 17.98074279 |
+ 8191. | 17.26703584 |
+ 8643. | 17.50814518 |
+ 8844. | 17.16165711 |
+ 9053. |  10.6232648 |
+       |-------------|
+ 9060. | 17.20403282 |
+10170. | 17.80256408 |
+10279. |  17.3894965 |
+10591. | 17.15612212 |
+10946. | 17.71062269 |
+       |-------------|
+11201. | 17.35076226 |
+       +-------------+
+
+. list ID ymPDStempo if (ymPDStempo_trim==. & ymPDStempo !=.)
+
+       +-----------------------------+
+       |           ID     ymPDStempo |
+       |-----------------------------|
+ 5571. | sub-09ZE6UUK    .0406344833 |
+ 5826. | sub-1NJK6BVY    .0690391219 |
+ 5831. | sub-1NZMD6UK    -.008450046 |
+ 5855. | sub-1TRH3MMU     .082842631 |
+ 5898. | sub-20CZ5PTX    .0843384666 |
+       |-----------------------------|
+ 6181. | sub-3GFD7GXB     .089746452 |
+ 6207. | sub-3NKZ8EZX    .0111974093 |
+ 6921. | sub-7J250229    .0628091386 |
+ 6965. | sub-7RPBV53C    .0622200579 |
+ 7154. | sub-8PVUD11K    .0640061302 |
+       |-----------------------------|
+ 7899. | sub-CU8K037T    .0454583632 |
+ 8216. | sub-EF2EVE42    .0607136638 |
+ 8263. | sub-ERNB4DT2    .0554697404 |
+ 8285. | sub-EVN5HV9V    .0897056296 |
+ 8443. | sub-FPDTRJ0D    .0680487497 |
+       |-----------------------------|
+ 8575. | sub-GCL0XR2C    .0868145625 |
+ 8764. | sub-H9X3BL3K    .6845727935 |
+ 8877. | sub-HYNT2P5E    .0637013778 |
+ 9073. | sub-JXMWYPZB    .0651827251 |
+ 9120. | sub-K5PEZ25W    .0342946646 |
+       |-----------------------------|
+ 9369. | sub-LE7RYTAY    .0801774868 |
+ 9432. | sub-LRAEA45M    .0640503967 |
+ 9633. | sub-MYKKZ4YM   -.0063314495 |
+ 9712. | sub-NC5V6UTJ    -.008849724 |
+ 9959. | sub-PN3M8KBK    .0839753322 |
+       |-----------------------------|
+10011. | sub-PZAWPXFB    .0666494226 |
+10087. | sub-RE21D0R9    .0122317961 |
+10360. | sub-TNE22YA5    .0210755094 |
+10735. | sub-VLDYPNLT   -.0269149024 |
+11126. | sub-XRHZDZE8    .0283221405 |
+       |-----------------------------|
+11229. | sub-Y6Y6PY7G    .0671265816 |
+11268. | sub-YEH878VD    .0520693002 |
+11316. | sub-YN5P4E5V    .0362677477 |
+11421. | sub-ZCNK7B3X    .0647880441 |
+       +-----------------------------+
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_00000a.tmp"
+
+. summ ymPDStiming_trim ymPDStempo_trim pmPDStiming_trim pmPDStempo_trim
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ymPDStimin~m |      6,008    14.01796    1.022776    10.9897   17.08998
+ymPDStempo~m |      5,990    .3876651    .0937656    .097022   .6701223
+pmPDStimin~m |      6,004    14.01017    1.034562    10.9055   17.15495
+pmPDStempo~m |      5,982    .4746132    .1169691   .1048081   .8335278
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_00000b.tmp"
+
+. 
+. gen yPDStiming=.
+(11,539 missing values generated)
+
+. replace yPDStiming=yfPDStiming_trim if male==0
+male not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_00000c.tmp"
+
+. drop yfPDStiming yfPDStempo pfPDStiming pfPDStempo mpfPDS ymPDStiming ymPDStempo pmPDStiming pmPDStempo mpmPDS
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_00000d.tmp"
+
+. clear
+
+. use "Final data\fPDS_251230.dta"
+
+. append using "Final data\mPDS_251230.dta"
+(label _merge already defined)
+
+. 
+. summ yfPDStiming yfPDStempo pfPDStiming pfPDStempo
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ yfPDStiming |      5,470    12.21195    .9647618   9.311014   15.13782
+  yfPDStempo |      5,470    .5786892    .1340796  -.0170147    .948642
+ pfPDStiming |      5,486    11.92854    1.100897   8.470568   15.37158
+  pfPDStempo |      5,486    .5478074    .1495698   -.160673   .9838472
+
+. 
+. *    Variable |        Obs        Mean    Std. dev.       Min        Max
+. *-------------+---------------------------------------------------------
+. * yfPDStiming |      5,470    12.21195    .9647618   9.311014   15.13782
+. *  yfPDStempo |      5,470    .5786892    .1340796  -.0170147    .948642
+. * pfPDStiming |      5,486    11.92854    1.100897   8.470568   15.37158
+. *  pfPDStempo |      5,486    .5478074    .1495698   -.160673   .9838472
+. 
+. gen yfPDStiming_trim = yfPDStiming 
+(6,069 missing values generated)
+
+. gen yfPDStempo_trim = yfPDStempo 
+(6,069 missing values generated)
+
+. gen pfPDStiming_trim = pfPDStiming 
+(6,053 missing values generated)
+
+. gen pfPDStempo_trim = pfPDStempo
+(6,053 missing values generated)
+
+. 
+. replace yfPDStiming_trim =. if (yfPDStiming > 12.21195 + 3*.9647618) | (yfPDStiming < 12.21195 - 3*.9647618)
+(2 real changes made, 2 to missing)
+
+. replace yfPDStempo_trim  =. if (yfPDStempo  > .5786892 + 3*.1340796) | (yfPDStempo  < .5786892 - 3*.1340796)
+(35 real changes made, 35 to missing)
+
+. replace pfPDStiming_trim =. if (pfPDStiming > 11.92854 + 3*1.100897) | (pfPDStiming < 11.92854 - 3*1.100897)
+(5 real changes made, 5 to missing)
+
+. replace pfPDStempo_trim  =. if (pfPDStempo  > .5478074 + 3*.1495698)   | (pfPDStempo  < .5478074 - 3*.1495698)
+(22 real changes made, 22 to missing)
+
+. list ID yfPDStiming if (yfPDStiming_trim==. & yfPDStiming !=.)
+
+       +----------------------------+
+       |           ID   yfPDStiming |
+       |----------------------------|
+ 1423. | sub-84PUG220   9.311014049 |
+ 4526. | sub-U9C9ZMKM   15.13782457 |
+       +----------------------------+
+
+. list ID yfPDStempo if (yfPDStempo_trim==. & yfPDStempo !=.)
+
+       +-----------------------------+
+       |           ID     yfPDStempo |
+       |-----------------------------|
+  101. | sub-0HJGCR32    .0875067018 |
+  163. | sub-0W0932W4   -.0170147165 |
+  231. | sub-16MGA6G5    .1024129089 |
+  357. | sub-1XAZP6R9    .1503224615 |
+  391. | sub-230CTHZE    .0275951037 |
+       |-----------------------------|
+  444. | sub-2DHY1CHU    .1296615023 |
+  631. | sub-3LA2YW3R    .1074801616 |
+ 1023. | sub-5T6VPW2C    .0569997717 |
+ 1494. | sub-8JDM12TD    .1744823755 |
+ 1763. | sub-A3G711KJ    .1040824163 |
+       |-----------------------------|
+ 1867. | sub-ARKPPU88    .1131886479 |
+ 1902. | sub-AZ3DJH9K    .0389854676 |
+ 2057. | sub-BVEY2KG3    .0679462233 |
+ 2306. | sub-D9L81NY5     .171995645 |
+ 2310. | sub-DAL9UY1P    .1088695238 |
+       |-----------------------------|
+ 2375. | sub-DTAY6VX0    .0804651646 |
+ 2457. | sub-E82EGZJB    .1441034589 |
+ 2520. | sub-ELUYAFWW    .0304541062 |
+ 2582. | sub-F0ZZ96XL    .1591755167 |
+ 2587. | sub-F1E6TJJ9    .1420189657 |
+       |-----------------------------|
+ 2823. | sub-GAYGT0LJ    .1525006309 |
+ 2845. | sub-GE3NT7ZK     .149924107 |
+ 2889. | sub-GNV5ZKU4    .1511179837 |
+ 3075. | sub-HXHGMVPP    .0915529681 |
+ 3192. | sub-JLYFJ1N7   -.0116107275 |
+       |-----------------------------|
+ 3455. | sub-L3J71BFM    .1750858981 |
+ 4000. | sub-P74XG4NJ    .1733255984 |
+ 4092. | sub-PUT0KYA5    .1259656708 |
+ 4195. | sub-RC6BE96Y    .1524311547 |
+ 4342. | sub-T7KRTJPP    .1477867632 |
+       |-----------------------------|
+ 4605. | sub-UP5T3PT9    .1234661957 |
+ 4680. | sub-V46NR3P6    .0027376734 |
+ 4819. | sub-W01ZL87U    .0895482437 |
+ 5309. | sub-Z1WNHT63    .1307887651 |
+ 5330. | sub-Z6950R7M    .0299546526 |
+       +-----------------------------+
+
+. 
+. summ yfPDStiming_trim yfPDStempo_trim pfPDStiming_trim pfPDStempo_trim
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+yfPDStimin~m |      5,468    12.21194    .9633279   9.509064   15.09036
+yfPDStempo~m |      5,435    .5817415    .1289092   .1791548    .948642
+pfPDStimin~m |      5,481    11.92671    1.096623   8.653002   15.17113
+pfPDStempo~m |      5,464    .5498951    .1461164   .1076567   .9838471
+
+. 
+. summ ymPDStiming ymPDStempo pmPDStiming pmPDStempo
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ ymPDStiming |      6,024    14.02491    1.036901   10.62326   17.98074
+  ymPDStempo |      6,024    .3858667     .096863  -.0269149   .6845728
+ pmPDStiming |      6,024    14.01258     1.05301    9.82162   18.22447
+  pmPDStempo |      6,024    .4716762    .1223303  -.3119603   .8396984
+
+. 
+. *    Variable |        Obs        Mean    Std. dev.       Min        Max
+. *-------------+---------------------------------------------------------
+. * ymPDStiming |      6,024    14.02491    1.036901   10.62326   17.98074
+. *  ymPDStempo |      6,024    .3858667     .096863  -.0269149   .6845728
+. * pmPDStiming |      6,024    14.01258     1.05301    9.82162   18.22447
+. *  pmPDStempo |      6,024    .4716762    .1223303  -.3119603   .8396984
+. 
+. gen ymPDStiming_trim = ymPDStiming 
+(5,515 missing values generated)
+
+. gen ymPDStempo_trim = ymPDStempo 
+(5,515 missing values generated)
+
+. gen pmPDStiming_trim = pmPDStiming 
+(5,515 missing values generated)
+
+. gen pmPDStempo_trim = pmPDStempo
+(5,515 missing values generated)
+
+. 
+. replace ymPDStiming_trim =. if (ymPDStiming > 14.02491 + 3*1.036901)  | (ymPDStiming < 14.02491 - 3*1.036901)
+(16 real changes made, 16 to missing)
+
+. replace ymPDStempo_trim  =. if (ymPDStempo  > .3858667  + 3*.096863) | (ymPDStempo  < .3858667  - 3*.096863)
+(34 real changes made, 34 to missing)
+
+. replace pmPDStiming_trim =. if (pmPDStiming > 14.01258 + 3*1.05301)  | (pmPDStiming < 14.01258 - 3*1.05301)
+(20 real changes made, 20 to missing)
+
+. replace pmPDStempo_trim  =. if (pmPDStempo  > .4716762 + 3*.1223303)  | (pmPDStempo  < .4716762 - 3*.1223303)
+(42 real changes made, 42 to missing)
+
+. list ymPDStiming if (ymPDStiming_trim==. & ymPDStiming !=.)
+
+       +-------------+
+       | ymPDStiming |
+       |-------------|
+ 6199. | 17.39440992 |
+ 6576. | 17.95634698 |
+ 6767. | 17.58793665 |
+ 7948. | 10.68886653 |
+ 7989. | 17.36869986 |
+       |-------------|
+ 8000. | 17.98074279 |
+ 8191. | 17.26703584 |
+ 8643. | 17.50814518 |
+ 8844. | 17.16165711 |
+ 9053. |  10.6232648 |
+       |-------------|
+ 9060. | 17.20403282 |
+10170. | 17.80256408 |
+10279. |  17.3894965 |
+10591. | 17.15612212 |
+10946. | 17.71062269 |
+       |-------------|
+11201. | 17.35076226 |
+       +-------------+
+
+. list ID ymPDStempo if (ymPDStempo_trim==. & ymPDStempo !=.)
+
+       +-----------------------------+
+       |           ID     ymPDStempo |
+       |-----------------------------|
+ 5571. | sub-09ZE6UUK    .0406344833 |
+ 5826. | sub-1NJK6BVY    .0690391219 |
+ 5831. | sub-1NZMD6UK    -.008450046 |
+ 5855. | sub-1TRH3MMU     .082842631 |
+ 5898. | sub-20CZ5PTX    .0843384666 |
+       |-----------------------------|
+ 6181. | sub-3GFD7GXB     .089746452 |
+ 6207. | sub-3NKZ8EZX    .0111974093 |
+ 6921. | sub-7J250229    .0628091386 |
+ 6965. | sub-7RPBV53C    .0622200579 |
+ 7154. | sub-8PVUD11K    .0640061302 |
+       |-----------------------------|
+ 7899. | sub-CU8K037T    .0454583632 |
+ 8216. | sub-EF2EVE42    .0607136638 |
+ 8263. | sub-ERNB4DT2    .0554697404 |
+ 8285. | sub-EVN5HV9V    .0897056296 |
+ 8443. | sub-FPDTRJ0D    .0680487497 |
+       |-----------------------------|
+ 8575. | sub-GCL0XR2C    .0868145625 |
+ 8764. | sub-H9X3BL3K    .6845727935 |
+ 8877. | sub-HYNT2P5E    .0637013778 |
+ 9073. | sub-JXMWYPZB    .0651827251 |
+ 9120. | sub-K5PEZ25W    .0342946646 |
+       |-----------------------------|
+ 9369. | sub-LE7RYTAY    .0801774868 |
+ 9432. | sub-LRAEA45M    .0640503967 |
+ 9633. | sub-MYKKZ4YM   -.0063314495 |
+ 9712. | sub-NC5V6UTJ    -.008849724 |
+ 9959. | sub-PN3M8KBK    .0839753322 |
+       |-----------------------------|
+10011. | sub-PZAWPXFB    .0666494226 |
+10087. | sub-RE21D0R9    .0122317961 |
+10360. | sub-TNE22YA5    .0210755094 |
+10735. | sub-VLDYPNLT   -.0269149024 |
+11126. | sub-XRHZDZE8    .0283221405 |
+       |-----------------------------|
+11229. | sub-Y6Y6PY7G    .0671265816 |
+11268. | sub-YEH878VD    .0520693002 |
+11316. | sub-YN5P4E5V    .0362677477 |
+11421. | sub-ZCNK7B3X    .0647880441 |
+       +-----------------------------+
+
+. 
+. summ ymPDStiming_trim ymPDStempo_trim pmPDStiming_trim pmPDStempo_trim
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ymPDStimin~m |      6,008    14.01796    1.022776    10.9897   17.08998
+ymPDStempo~m |      5,990    .3876651    .0937656    .097022   .6701223
+pmPDStimin~m |      6,004    14.01017    1.034562    10.9055   17.15495
+pmPDStempo~m |      5,982    .4746132    .1169691   .1048081   .8335278
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_00000e.tmp"
+
+. 
+. gen yPDStiming=.
+(11,539 missing values generated)
+
+. replace yPDStiming=yfPDStiming_trim if male==0
+male not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_00000f.tmp"
+
+. 
+. gen pPDStiming=.
+(11,539 missing values generated)
+
+. replace pPDStiming=pfPDStiming_trim if male==0
+male not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_00000g.tmp"
+
+. gen male = .
+(11,539 missing values generated)
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_00000h.tmp"
+
+. replace male=1 if ymPDStiming !=. | ymPDStempo !=. | pmPDStiming !=. | pmPDStempo !=.
+(6,037 real changes made)
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_00000i.tmp"
+
+. replace male=0 if yfPDStiming !=. | yfPDStempo !=. | pfPDStiming !=. | pfPDStempo !=.
+(5,502 real changes made)
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_00000j.tmp"
+
+. 
+. gen yPDStiming=.
+variable yPDStiming already defined
+r(110);
+
+end of do-file
+
+r(110);
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_00000k.tmp"
+
+. *
+. clear
+
+. use "Final data\fPDS_251230.dta"
+
+. append using "Final data\mPDS_251230.dta"
+(label _merge already defined)
+
+. 
+. summ yfPDStiming yfPDStempo pfPDStiming pfPDStempo
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ yfPDStiming |      5,470    12.21195    .9647618   9.311014   15.13782
+  yfPDStempo |      5,470    .5786892    .1340796  -.0170147    .948642
+ pfPDStiming |      5,486    11.92854    1.100897   8.470568   15.37158
+  pfPDStempo |      5,486    .5478074    .1495698   -.160673   .9838472
+
+. 
+. *    Variable |        Obs        Mean    Std. dev.       Min        Max
+. *-------------+---------------------------------------------------------
+. * yfPDStiming |      5,470    12.21195    .9647618   9.311014   15.13782
+. *  yfPDStempo |      5,470    .5786892    .1340796  -.0170147    .948642
+. * pfPDStiming |      5,486    11.92854    1.100897   8.470568   15.37158
+. *  pfPDStempo |      5,486    .5478074    .1495698   -.160673   .9838472
+. 
+. gen yfPDStiming_trim = yfPDStiming 
+(6,069 missing values generated)
+
+. gen yfPDStempo_trim = yfPDStempo 
+(6,069 missing values generated)
+
+. gen pfPDStiming_trim = pfPDStiming 
+(6,053 missing values generated)
+
+. gen pfPDStempo_trim = pfPDStempo
+(6,053 missing values generated)
+
+. 
+. replace yfPDStiming_trim =. if (yfPDStiming > 12.21195 + 3*.9647618) | (yfPDStiming < 12.21195 - 3*.9647618)
+(2 real changes made, 2 to missing)
+
+. replace yfPDStempo_trim  =. if (yfPDStempo  > .5786892 + 3*.1340796) | (yfPDStempo  < .5786892 - 3*.1340796)
+(35 real changes made, 35 to missing)
+
+. replace pfPDStiming_trim =. if (pfPDStiming > 11.92854 + 3*1.100897) | (pfPDStiming < 11.92854 - 3*1.100897)
+(5 real changes made, 5 to missing)
+
+. replace pfPDStempo_trim  =. if (pfPDStempo  > .5478074 + 3*.1495698)   | (pfPDStempo  < .5478074 - 3*.1495698)
+(22 real changes made, 22 to missing)
+
+. list ID yfPDStiming if (yfPDStiming_trim==. & yfPDStiming !=.)
+
+       +----------------------------+
+       |           ID   yfPDStiming |
+       |----------------------------|
+ 1423. | sub-84PUG220   9.311014049 |
+ 4526. | sub-U9C9ZMKM   15.13782457 |
+       +----------------------------+
+
+. list ID yfPDStempo if (yfPDStempo_trim==. & yfPDStempo !=.)
+
+       +-----------------------------+
+       |           ID     yfPDStempo |
+       |-----------------------------|
+  101. | sub-0HJGCR32    .0875067018 |
+  163. | sub-0W0932W4   -.0170147165 |
+  231. | sub-16MGA6G5    .1024129089 |
+  357. | sub-1XAZP6R9    .1503224615 |
+  391. | sub-230CTHZE    .0275951037 |
+       |-----------------------------|
+  444. | sub-2DHY1CHU    .1296615023 |
+  631. | sub-3LA2YW3R    .1074801616 |
+ 1023. | sub-5T6VPW2C    .0569997717 |
+ 1494. | sub-8JDM12TD    .1744823755 |
+ 1763. | sub-A3G711KJ    .1040824163 |
+       |-----------------------------|
+ 1867. | sub-ARKPPU88    .1131886479 |
+ 1902. | sub-AZ3DJH9K    .0389854676 |
+ 2057. | sub-BVEY2KG3    .0679462233 |
+ 2306. | sub-D9L81NY5     .171995645 |
+ 2310. | sub-DAL9UY1P    .1088695238 |
+       |-----------------------------|
+ 2375. | sub-DTAY6VX0    .0804651646 |
+ 2457. | sub-E82EGZJB    .1441034589 |
+ 2520. | sub-ELUYAFWW    .0304541062 |
+ 2582. | sub-F0ZZ96XL    .1591755167 |
+ 2587. | sub-F1E6TJJ9    .1420189657 |
+       |-----------------------------|
+ 2823. | sub-GAYGT0LJ    .1525006309 |
+ 2845. | sub-GE3NT7ZK     .149924107 |
+ 2889. | sub-GNV5ZKU4    .1511179837 |
+ 3075. | sub-HXHGMVPP    .0915529681 |
+ 3192. | sub-JLYFJ1N7   -.0116107275 |
+       |-----------------------------|
+ 3455. | sub-L3J71BFM    .1750858981 |
+ 4000. | sub-P74XG4NJ    .1733255984 |
+ 4092. | sub-PUT0KYA5    .1259656708 |
+ 4195. | sub-RC6BE96Y    .1524311547 |
+ 4342. | sub-T7KRTJPP    .1477867632 |
+       |-----------------------------|
+ 4605. | sub-UP5T3PT9    .1234661957 |
+ 4680. | sub-V46NR3P6    .0027376734 |
+ 4819. | sub-W01ZL87U    .0895482437 |
+ 5309. | sub-Z1WNHT63    .1307887651 |
+ 5330. | sub-Z6950R7M    .0299546526 |
+       +-----------------------------+
+
+. 
+. summ yfPDStiming_trim yfPDStempo_trim pfPDStiming_trim pfPDStempo_trim
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+yfPDStimin~m |      5,468    12.21194    .9633279   9.509064   15.09036
+yfPDStempo~m |      5,435    .5817415    .1289092   .1791548    .948642
+pfPDStimin~m |      5,481    11.92671    1.096623   8.653002   15.17113
+pfPDStempo~m |      5,464    .5498951    .1461164   .1076567   .9838471
+
+. 
+. summ ymPDStiming ymPDStempo pmPDStiming pmPDStempo
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ ymPDStiming |      6,024    14.02491    1.036901   10.62326   17.98074
+  ymPDStempo |      6,024    .3858667     .096863  -.0269149   .6845728
+ pmPDStiming |      6,024    14.01258     1.05301    9.82162   18.22447
+  pmPDStempo |      6,024    .4716762    .1223303  -.3119603   .8396984
+
+. 
+. *    Variable |        Obs        Mean    Std. dev.       Min        Max
+. *-------------+---------------------------------------------------------
+. * ymPDStiming |      6,024    14.02491    1.036901   10.62326   17.98074
+. *  ymPDStempo |      6,024    .3858667     .096863  -.0269149   .6845728
+. * pmPDStiming |      6,024    14.01258     1.05301    9.82162   18.22447
+. *  pmPDStempo |      6,024    .4716762    .1223303  -.3119603   .8396984
+. 
+. gen ymPDStiming_trim = ymPDStiming 
+(5,515 missing values generated)
+
+. gen ymPDStempo_trim = ymPDStempo 
+(5,515 missing values generated)
+
+. gen pmPDStiming_trim = pmPDStiming 
+(5,515 missing values generated)
+
+. gen pmPDStempo_trim = pmPDStempo
+(5,515 missing values generated)
+
+. 
+. replace ymPDStiming_trim =. if (ymPDStiming > 14.02491 + 3*1.036901)  | (ymPDStiming < 14.02491 - 3*1.036901)
+(16 real changes made, 16 to missing)
+
+. replace ymPDStempo_trim  =. if (ymPDStempo  > .3858667  + 3*.096863) | (ymPDStempo  < .3858667  - 3*.096863)
+(34 real changes made, 34 to missing)
+
+. replace pmPDStiming_trim =. if (pmPDStiming > 14.01258 + 3*1.05301)  | (pmPDStiming < 14.01258 - 3*1.05301)
+(20 real changes made, 20 to missing)
+
+. replace pmPDStempo_trim  =. if (pmPDStempo  > .4716762 + 3*.1223303)  | (pmPDStempo  < .4716762 - 3*.1223303)
+(42 real changes made, 42 to missing)
+
+. list ymPDStiming if (ymPDStiming_trim==. & ymPDStiming !=.)
+
+       +-------------+
+       | ymPDStiming |
+       |-------------|
+ 6199. | 17.39440992 |
+ 6576. | 17.95634698 |
+ 6767. | 17.58793665 |
+ 7948. | 10.68886653 |
+ 7989. | 17.36869986 |
+       |-------------|
+ 8000. | 17.98074279 |
+ 8191. | 17.26703584 |
+ 8643. | 17.50814518 |
+ 8844. | 17.16165711 |
+ 9053. |  10.6232648 |
+       |-------------|
+ 9060. | 17.20403282 |
+10170. | 17.80256408 |
+10279. |  17.3894965 |
+10591. | 17.15612212 |
+10946. | 17.71062269 |
+       |-------------|
+11201. | 17.35076226 |
+       +-------------+
+
+. list ID ymPDStempo if (ymPDStempo_trim==. & ymPDStempo !=.)
+
+       +-----------------------------+
+       |           ID     ymPDStempo |
+       |-----------------------------|
+ 5571. | sub-09ZE6UUK    .0406344833 |
+ 5826. | sub-1NJK6BVY    .0690391219 |
+ 5831. | sub-1NZMD6UK    -.008450046 |
+ 5855. | sub-1TRH3MMU     .082842631 |
+ 5898. | sub-20CZ5PTX    .0843384666 |
+       |-----------------------------|
+ 6181. | sub-3GFD7GXB     .089746452 |
+ 6207. | sub-3NKZ8EZX    .0111974093 |
+ 6921. | sub-7J250229    .0628091386 |
+ 6965. | sub-7RPBV53C    .0622200579 |
+ 7154. | sub-8PVUD11K    .0640061302 |
+       |-----------------------------|
+ 7899. | sub-CU8K037T    .0454583632 |
+ 8216. | sub-EF2EVE42    .0607136638 |
+ 8263. | sub-ERNB4DT2    .0554697404 |
+ 8285. | sub-EVN5HV9V    .0897056296 |
+ 8443. | sub-FPDTRJ0D    .0680487497 |
+       |-----------------------------|
+ 8575. | sub-GCL0XR2C    .0868145625 |
+ 8764. | sub-H9X3BL3K    .6845727935 |
+ 8877. | sub-HYNT2P5E    .0637013778 |
+ 9073. | sub-JXMWYPZB    .0651827251 |
+ 9120. | sub-K5PEZ25W    .0342946646 |
+       |-----------------------------|
+ 9369. | sub-LE7RYTAY    .0801774868 |
+ 9432. | sub-LRAEA45M    .0640503967 |
+ 9633. | sub-MYKKZ4YM   -.0063314495 |
+ 9712. | sub-NC5V6UTJ    -.008849724 |
+ 9959. | sub-PN3M8KBK    .0839753322 |
+       |-----------------------------|
+10011. | sub-PZAWPXFB    .0666494226 |
+10087. | sub-RE21D0R9    .0122317961 |
+10360. | sub-TNE22YA5    .0210755094 |
+10735. | sub-VLDYPNLT   -.0269149024 |
+11126. | sub-XRHZDZE8    .0283221405 |
+       |-----------------------------|
+11229. | sub-Y6Y6PY7G    .0671265816 |
+11268. | sub-YEH878VD    .0520693002 |
+11316. | sub-YN5P4E5V    .0362677477 |
+11421. | sub-ZCNK7B3X    .0647880441 |
+       +-----------------------------+
+
+. 
+. summ ymPDStiming_trim ymPDStempo_trim pmPDStiming_trim pmPDStempo_trim
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ymPDStimin~m |      6,008    14.01796    1.022776    10.9897   17.08998
+ymPDStempo~m |      5,990    .3876651    .0937656    .097022   .6701223
+pmPDStimin~m |      6,004    14.01017    1.034562    10.9055   17.15495
+pmPDStempo~m |      5,982    .4746132    .1169691   .1048081   .8335278
+
+. 
+. gen male = .  
+(11,539 missing values generated)
+
+. replace male=1 if ymPDStiming !=. | ymPDStempo !=. | pmPDStiming !=. | pmPDStempo !=.
+(6,037 real changes made)
+
+. replace male=0 if yfPDStiming !=. | yfPDStempo !=. | pfPDStiming !=. | pfPDStempo !=.
+(5,502 real changes made)
+
+. 
+. gen yPDStiming=.
+(11,539 missing values generated)
+
+. replace yPDStiming=yfPDStiming_trim if male==0
+(5,468 real changes made)
+
+. replace yPDStiming=ymPDStiming_trim if male==1
+(6,008 real changes made)
+
+. 
+. gen pPDStiming=.
+(11,539 missing values generated)
+
+. replace pPDStiming=pfPDStiming_trim if male==0
+(5,481 real changes made)
+
+. replace pPDStiming=pmPDStiming_trim if male==1
+(6,004 real changes made)
+
+. 
+. gen yPDStempo=.
+(11,539 missing values generated)
+
+. replace yPDStempo=yfPDStempo_trim if male==0
+(5,435 real changes made)
+
+. replace yPDStempo=ymPDStempo_trim if male==1
+(5,990 real changes made)
+
+. 
+. gen pPDStempo=.
+(11,539 missing values generated)
+
+. replace pPDStempo=pfPDStempo_trim if male==0
+(5,464 real changes made)
+
+. replace pPDStempo=pmPDStempo_trim if male==1
+(5,982 real changes made)
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_00000l.tmp"
+
+. 
+. drop yfPDStiming yfPDStempo pfPDStiming pfPDStempo mpfPDS ymPDStiming ymPDStempo pmPDStiming pmPDStempo mpmPDS
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_00000m.tmp"
+
+. rename yfPDStiming_trim yfPDStiming 
+
+. rename yfPDStempo_trim yfPDStempo 
+
+. rename pfPDStiming_trim pfPDStiming 
+
+. rename pfPDStempo_trim pfPDStempo
+
+. rename ymPDStiming_trim ymPDStiming
+
+. rename ymPDStempo_trim ymPDStempo 
+
+. rename pmPDStiming_trim pmPDStiming 
+
+. rename pmPDStempo_trim pmPDStempo
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_00000n.tmp"
+
+. order ID male yPDStiming pPDStiming yPDStempo pPDStempo yfPDStiming yfPDStempo pfPDStiming pfPDStempo ymPDStiming ymPDStempo pmPDSt
+> iming pmPDStempo
+
+. 
+end of do-file
+
+. do "C:\Users\nchaku\AppData\Local\Temp\STD8ddc_00000o.tmp"
+
 . save "Final data\PDS_251230.dta", replace
-(file Final data\PDS_251230.dta not found)
 file Final data\PDS_251230.dta saved
 
 . 

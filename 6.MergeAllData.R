@@ -14,27 +14,17 @@ require(sitar)
 
 #set working directory
 
-#Natasha MAC:
-#setwd("/Volumes/projects/iu/bl-pbs-chakulab/Projects/Data/ABCD/Syntax/Puberty/6.0/")
-#Alexis MAC
-setwd("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/pubertybrain/")
-
-#PC:
-#setwd("Z:/Projects/Data/ABCD/Syntax/Puberty/PubertyGrowthModels")
+#Natasha:
+setwd("C:/Users/nchaku/Documents/GitHub/pubertybrain")
+#Alexis:
+#setwd("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/pubertybrain/")
 
 ####merging puberty, brain, ELA, and working memory data files#####
 
 #Open data
-dfpub_male <- read_dta("Puberty_timing_tempo_models/Final data/mPDS_251230.dta")
-dfpub_female <- read_dta("Puberty_timing_tempo_models/Final data/fPDS_251230.dta")
+dfpub <- read_dta("Puberty_timing_tempo_models/Final data/PDS_251230.dta")
 dfbrain <- read.csv("GMV_timing_tempo_models/gmv_mplus.csv")
 wmem <- read_dta("Working_memory/WRKMEM_251230.dta")
-
-#merge male and female puberty data
-
-dfpub <- bind_rows(dfpub_female, dfpub_male)
-
-unique(dfpub$ID[duplicated(dfpub$ID)])
 
 #transform wmem to wide format
 
