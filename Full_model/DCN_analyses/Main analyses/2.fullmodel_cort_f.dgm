@@ -7,20 +7,21 @@ DATA:
 FILE IS dfmerged_mplus.dat;
 VARIABLE:
 NAMES =
-numeric_id sex age_1 age_2 age_3 age_4
+numeric_id sex
+age_1 age_2 age_3 age_4
 subcort_vol_1 subcort_vol_2 subcort_vol_3 subcort_vol_4
 cort_vol_1 cort_vol_2 cort_vol_3 cort_vol_4
 fam_ID
 T1_totalGMV T2_totalGMV T3_totalGMV T4_totalGMV
 yfPDStiming yfPDStempo pfPDStiming pfPDStempo
 ymPDStiming ymPDStempo pmPDStiming pmPDStempo
-wmb wm6 ela_plus;
+wmb wm6
+ela_plus;
 MISSING = ALL (-999);
 USEVAR =
-ela_plus
-pfPDStiming pfPDStempo
+pfPDStiming pfPDStempo ela_plus
 rT1_cort rT2_cort rT3_cort rT4_cort;
-SUBPOPULATION = (sex NE 1);
+USEOBS are sex EQ 2;
 CLUSTER = fam_ID;
 DEFINE:
   rT1_cort = cort_vol_1 / 1000;
@@ -31,35 +32,36 @@ ANALYSIS:
 TYPE = COMPLEX;
 ESTIMATOR = MLR;
 OUTPUT:
- SAMPSTAT STANDARDIZED TECH4;
+ SAMPSTAT STANDARDIZED TECH4 CINTERVAL;
 MODEL:
     intercept by rT1_cort-rT4_cort@1;
  intercept;
  [intercept];
- slope BY rT1_cort@0
+    slope BY rT1_cort@0
   rT2_cort*
   rT3_cort*
   rT4_cort@1;
- slope;
+    slope;
  [slope];
- intercept WITH slope;
+    intercept WITH slope;
  rT1_cort-rT4_cort (theta);
  [rT1_cort-rT4_cort@0];
+pfPDStiming;
+pfPDStempo;
 ela_plus;
-pfPDStiming pfPDStempo;
+intercept WITH pfPDStiming pfPDStempo;
+slope WITH pfPDStempo;
 pfPDStiming WITH pfPDStempo;
+slope ON pfPDStiming;
 intercept ON ela_plus;
 slope ON ela_plus;
 pfPDStiming ON ela_plus;
 pfPDStempo ON ela_plus;
-intercept WITH pfPDStiming pfPDStempo;
-slope WITH pfPDStempo;
-slope ON pfPDStiming;
 INPUT_END
-2
-2
-2
-2
+3
+3
+3
+3
 MLR
 1
 GENERAL
@@ -76,127 +78,127 @@ intercept
 rt1_cort rt2_cort rt3_cort rt4_cort
 slope
 rt1_cort rt2_cort rt3_cort rt4_cort
-1 1 intercept rt1_cort 1.000 0.000
-1 1 intercept rt2_cort 1.000 0.000
-1 1 intercept rt3_cort 1.000 0.000
-1 1 intercept rt4_cort 1.000 0.000
-1 1 slope rt1_cort 0.000 0.000
-1 1 slope rt2_cort 0.224 0.006
-1 1 slope rt3_cort 0.692 0.007
-1 1 slope rt4_cort 1.000 0.000
-1 1 ela_plus intercept -3.807 0.573
-1 1 ela_plus slope 0.017 0.222
-1 1 pfpdstiming slope 3.205 0.379
-1 1 ela_plus pfpdstiming -0.112 0.013
-1 1 ela_plus pfpdstempo -0.018 0.002
-2 1 pfpdstiming pfpdstempo 0.045 0.003
-2 1 intercept slope -143.012 19.258
-2 1 intercept pfpdstiming 5.481 1.054
-2 1 intercept pfpdstempo 0.927 0.150
-2 1 slope pfpdstempo -0.078 0.054
-4 1 pfpdstiming 1.160 0.034
-4 1 pfpdstempo 0.021 0.0006512243417
-4 1 rt1_cort 112.028 6.478
+1 1 intercept rt1_cort 1.000 0.000 1.000 1.000
+1 1 intercept rt2_cort 1.000 0.000 1.000 1.000
+1 1 intercept rt3_cort 1.000 0.000 1.000 1.000
+1 1 intercept rt4_cort 1.000 0.000 1.000 1.000
+1 1 slope rt1_cort 0.000 0.000 0.000 0.000
+1 1 slope rt2_cort 0.224 0.006 0.213 0.235
+1 1 slope rt3_cort 0.692 0.007 0.678 0.705
+1 1 slope rt4_cort 1.000 0.000 1.000 1.000
+1 1 pfpdstiming slope 3.205 0.379 2.463 3.947
+1 1 ela_plus slope 0.017 0.222 -0.418 0.452
+1 1 ela_plus intercept -3.807 0.573 -4.930 -2.683
+1 1 ela_plus pfpdstiming -0.112 0.013 -0.138 -0.087
+1 1 ela_plus pfpdstempo -0.018 0.002 -0.022 -0.014
+2 1 pfpdstiming pfpdstempo 0.045 0.003 0.038 0.052
+2 1 intercept slope -143.012 19.260 -180.762 -105.262
+2 1 intercept pfpdstiming 5.481 1.054 3.416 7.547
+2 1 intercept pfpdstempo 0.927 0.150 0.634 1.220
+2 1 slope pfpdstempo -0.078 0.054 -0.183 0.028
+4 1 pfpdstiming 1.160 0.034 1.093 1.227
+4 1 pfpdstempo 0.021 0.0006513050175 0.020 0.022
+4 1 rt1_cort 112.028 6.478 99.330 124.725
 94 1 rt1_cort theta
-4 1 rt2_cort 112.028 6.478
+4 1 rt2_cort 112.028 6.478 99.330 124.725
 94 1 rt2_cort theta
-4 1 rt3_cort 112.028 6.478
+4 1 rt3_cort 112.028 6.478 99.330 124.725
 94 1 rt3_cort theta
-4 1 rt4_cort 112.028 6.478
+4 1 rt4_cort 112.028 6.478 99.330 124.725
 94 1 rt4_cort theta
-4 1 intercept 2200.116 74.610
-4 1 slope 93.661 14.075
-5 1 ela_plus 3.263 0.132
-11 1 intercept rt1_cort 0.976 0.002
-11 1 intercept rt2_cort 0.986 0.003
-11 1 intercept rt3_cort 1.001 0.006
-11 1 intercept rt4_cort 1.005 0.008
-11 1 slope rt1_cort 0.000 0.0000000001000
-11 1 slope rt2_cort 0.048 0.003
-11 1 slope rt3_cort 0.150 0.011
-11 1 slope rt4_cort 0.218 0.015
-11 1 ela_plus intercept -0.145 0.022
-11 1 ela_plus slope 0.003 0.039
-11 1 pfpdstiming slope 0.341 0.043
-11 1 ela_plus pfpdstiming -0.185 0.021
-11 1 ela_plus pfpdstempo -0.218 0.022
-12 1 pfpdstiming pfpdstempo 0.289 0.021
-12 1 intercept slope -0.315 0.039
-12 1 intercept pfpdstiming 0.108 0.020
-12 1 intercept pfpdstempo 0.136 0.021
-12 1 slope pfpdstempo -0.055 0.038
-14 1 pfpdstiming 0.966 0.008
-14 1 pfpdstempo 0.952 0.010
-14 1 rt1_cort 0.047 0.003
+4 1 intercept 2200.116 74.619 2053.863 2346.369
+4 1 slope 93.661 14.077 66.070 121.252
+5 1 ela_plus 3.263 0.132 3.004 3.522
+11 1 intercept rt1_cort 0.976 0.002 0.973 0.979
+11 1 intercept rt2_cort 0.986 0.003 0.981 0.991
+11 1 intercept rt3_cort 1.001 0.006 0.990 1.013
+11 1 intercept rt4_cort 1.005 0.008 0.989 1.022
+11 1 slope rt1_cort 0.000 0.0000000001000 -.0000000001960 0.0000000001960
+11 1 slope rt2_cort 0.048 0.003 0.042 0.054
+11 1 slope rt3_cort 0.150 0.011 0.129 0.172
+11 1 slope rt4_cort 0.218 0.015 0.189 0.248
+11 1 pfpdstiming slope 0.341 0.043 0.256 0.426
+11 1 ela_plus slope 0.003 0.039 -0.073 0.079
+11 1 ela_plus intercept -0.145 0.022 -0.187 -0.103
+11 1 ela_plus pfpdstiming -0.185 0.021 -0.227 -0.143
+11 1 ela_plus pfpdstempo -0.218 0.022 -0.261 -0.175
+12 1 pfpdstiming pfpdstempo 0.289 0.021 0.248 0.330
+12 1 intercept slope -0.315 0.039 -0.392 -0.238
+12 1 intercept pfpdstiming 0.108 0.020 0.069 0.148
+12 1 intercept pfpdstempo 0.136 0.021 0.094 0.178
+12 1 slope pfpdstempo -0.055 0.038 -0.130 0.020
+14 1 pfpdstiming 0.966 0.008 0.950 0.981
+14 1 pfpdstempo 0.952 0.010 0.934 0.971
+14 1 rt1_cort 0.047 0.003 0.041 0.053
 94 1 rt1_cort theta
-14 1 rt2_cort 0.048 0.003
+14 1 rt2_cort 0.048 0.003 0.042 0.055
 94 1 rt2_cort theta
-14 1 rt3_cort 0.050 0.003
+14 1 rt3_cort 0.050 0.003 0.044 0.056
 94 1 rt3_cort theta
-14 1 rt4_cort 0.050 0.003
+14 1 rt4_cort 0.050 0.003 0.044 0.057
 94 1 rt4_cort theta
-14 1 intercept 0.979 0.006
-14 1 slope 0.884 0.030
-15 1 ela_plus 1.000 0.0000000001000
-21 1 intercept rt1_cort 0.976 0.002
-21 1 intercept rt2_cort 0.986 0.003
-21 1 intercept rt3_cort 1.001 0.006
-21 1 intercept rt4_cort 1.005 0.008
-21 1 slope rt1_cort 0.000 0.0000000001000
-21 1 slope rt2_cort 0.048 0.003
-21 1 slope rt3_cort 0.150 0.011
-21 1 slope rt4_cort 0.218 0.015
-21 1 ela_plus intercept -0.145 0.022
-21 1 ela_plus slope 0.003 0.039
-21 1 pfpdstiming slope 0.341 0.043
-21 1 ela_plus pfpdstiming -0.185 0.021
-21 1 ela_plus pfpdstempo -0.218 0.022
-22 1 pfpdstiming pfpdstempo 0.289 0.021
-22 1 intercept slope -0.315 0.039
-22 1 intercept pfpdstiming 0.108 0.020
-22 1 intercept pfpdstempo 0.136 0.021
-22 1 slope pfpdstempo -0.055 0.038
-24 1 pfpdstiming 0.966 0.008
-24 1 pfpdstempo 0.952 0.010
-24 1 rt1_cort 0.047 0.003
+14 1 intercept 0.979 0.006 0.967 0.991
+14 1 slope 0.884 0.030 0.826 0.942
+15 1 ela_plus 1.000 0.0000000001000 1.000 1.000
+21 1 intercept rt1_cort 0.976 0.002 0.973 0.979
+21 1 intercept rt2_cort 0.986 0.003 0.981 0.991
+21 1 intercept rt3_cort 1.001 0.006 0.990 1.013
+21 1 intercept rt4_cort 1.005 0.008 0.989 1.022
+21 1 slope rt1_cort 0.000 0.0000000001000 -.0000000001960 0.0000000001960
+21 1 slope rt2_cort 0.048 0.003 0.042 0.054
+21 1 slope rt3_cort 0.150 0.011 0.129 0.172
+21 1 slope rt4_cort 0.218 0.015 0.189 0.248
+21 1 pfpdstiming slope 0.341 0.043 0.256 0.426
+21 1 ela_plus slope 0.003 0.039 -0.073 0.079
+21 1 ela_plus intercept -0.145 0.022 -0.187 -0.103
+21 1 ela_plus pfpdstiming -0.185 0.021 -0.227 -0.143
+21 1 ela_plus pfpdstempo -0.218 0.022 -0.261 -0.175
+22 1 pfpdstiming pfpdstempo 0.289 0.021 0.248 0.330
+22 1 intercept slope -0.315 0.039 -0.392 -0.238
+22 1 intercept pfpdstiming 0.108 0.020 0.069 0.148
+22 1 intercept pfpdstempo 0.136 0.021 0.094 0.178
+22 1 slope pfpdstempo -0.055 0.038 -0.130 0.020
+24 1 pfpdstiming 0.966 0.008 0.950 0.981
+24 1 pfpdstempo 0.952 0.010 0.934 0.971
+24 1 rt1_cort 0.047 0.003 0.041 0.053
 94 1 rt1_cort theta
-24 1 rt2_cort 0.048 0.003
+24 1 rt2_cort 0.048 0.003 0.042 0.055
 94 1 rt2_cort theta
-24 1 rt3_cort 0.050 0.003
+24 1 rt3_cort 0.050 0.003 0.044 0.056
 94 1 rt3_cort theta
-24 1 rt4_cort 0.050 0.003
+24 1 rt4_cort 0.050 0.003 0.044 0.057
 94 1 rt4_cort theta
-24 1 intercept 0.979 0.006
-24 1 slope 0.884 0.030
-25 1 ela_plus 1.000 0.0000000001000
-31 1 intercept rt1_cort 47.407 0.802
-31 1 intercept rt2_cort 47.407 0.802
-31 1 intercept rt3_cort 47.407 0.802
-31 1 intercept rt4_cort 47.407 0.802
-31 1 slope rt1_cort 0.000 0.0000000001000
-31 1 slope rt2_cort 2.301 0.149
-31 1 slope rt3_cort 7.121 0.493
-31 1 slope rt4_cort 10.294 0.687
-31 1 ela_plus intercept -0.080 0.012
-31 1 ela_plus slope 0.002 0.022
-31 1 pfpdstiming slope 0.311 0.040
-31 1 ela_plus pfpdstiming -0.112 0.013
-31 1 ela_plus pfpdstempo -0.018 0.002
-32 1 pfpdstiming pfpdstempo 0.045 0.003
-32 1 intercept slope -0.315 0.039
-32 1 intercept pfpdstiming 0.117 0.022
-32 1 intercept pfpdstempo 0.020 0.003
-32 1 slope pfpdstempo -0.008 0.006
-34 1 pfpdstiming 1.160 0.034
-34 1 pfpdstempo 0.021 0.0006512243417
-34 1 rt1_cort 112.028 6.478
+24 1 intercept 0.979 0.006 0.967 0.991
+24 1 slope 0.884 0.030 0.826 0.942
+25 1 ela_plus 1.000 0.0000000001000 1.000 1.000
+31 1 intercept rt1_cort 47.407 0.802 45.835 48.978
+31 1 intercept rt2_cort 47.407 0.802 45.835 48.978
+31 1 intercept rt3_cort 47.407 0.802 45.835 48.978
+31 1 intercept rt4_cort 47.407 0.802 45.835 48.978
+31 1 slope rt1_cort 0.000 0.0000000001000 -.0000000001960 0.0000000001960
+31 1 slope rt2_cort 2.301 0.149 2.009 2.593
+31 1 slope rt3_cort 7.121 0.494 6.154 8.088
+31 1 slope rt4_cort 10.294 0.687 8.947 11.641
+31 1 pfpdstiming slope 0.311 0.040 0.233 0.389
+31 1 ela_plus slope 0.002 0.022 -0.041 0.044
+31 1 ela_plus intercept -0.080 0.012 -0.104 -0.057
+31 1 ela_plus pfpdstiming -0.112 0.013 -0.138 -0.087
+31 1 ela_plus pfpdstempo -0.018 0.002 -0.022 -0.014
+32 1 pfpdstiming pfpdstempo 0.045 0.003 0.038 0.052
+32 1 intercept slope -0.315 0.039 -0.392 -0.238
+32 1 intercept pfpdstiming 0.117 0.022 0.074 0.160
+32 1 intercept pfpdstempo 0.020 0.003 0.014 0.026
+32 1 slope pfpdstempo -0.008 0.006 -0.019 0.003
+34 1 pfpdstiming 1.160 0.034 1.093 1.227
+34 1 pfpdstempo 0.021 0.0006513050175 0.020 0.022
+34 1 rt1_cort 112.028 6.478 99.330 124.725
 94 1 rt1_cort theta
-34 1 rt2_cort 112.028 6.478
+34 1 rt2_cort 112.028 6.478 99.330 124.725
 94 1 rt2_cort theta
-34 1 rt3_cort 112.028 6.478
+34 1 rt3_cort 112.028 6.478 99.330 124.725
 94 1 rt3_cort theta
-34 1 rt4_cort 112.028 6.478
+34 1 rt4_cort 112.028 6.478 99.330 124.725
 94 1 rt4_cort theta
-34 1 intercept 0.979 0.006
-34 1 slope 0.884 0.030
-35 1 ela_plus 3.263 0.132
+34 1 intercept 0.979 0.006 0.967 0.991
+34 1 slope 0.884 0.030 0.826 0.942
+35 1 ela_plus 3.263 0.132 3.004 3.522

@@ -1,0 +1,689 @@
+Mplus VERSION 8.11
+MUTHEN & MUTHEN
+02/04/2026  12:56 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE:	full model - MALE
+
+  DATA:
+  FILE IS dfmerged_mplus.dat;
+
+  DEFINE:
+    ! Rescale large variables to avoid variance > 1,000,000
+    ! r indicates rescaled
+    rT1_scort = subcort_vol_1 / 1000;
+    rT2_scort = subcort_vol_2 / 1000;
+    rT3_scort = subcort_vol_3 / 1000;
+    rT4_scort = subcort_vol_4 / 1000;
+
+  VARIABLE:	
+  NAMES =
+  numeric_id sex
+  age_1 age_2 age_3 age_4
+  subcort_vol_1 subcort_vol_2 subcort_vol_3 subcort_vol_4
+  cort_vol_1 cort_vol_2 cort_vol_3 cort_vol_4
+  fam_ID
+  T1_totalGMV T2_totalGMV T3_totalGMV T4_totalGMV
+  yfPDStiming yfPDStempo pfPDStiming pfPDStempo
+  ymPDStiming ymPDStempo pmPDStiming pmPDStempo
+  wmb wm6
+  ela_plus;
+
+  MISSING = ALL (-999);
+
+  USEVAR =
+  pmPDStiming pmPDStempo
+  !ela_plus
+  !wm6
+  rT1_scort rT2_scort rT3_scort rT4_scort;
+
+  USEOBS are sex EQ 1;
+  CLUSTER = fam_ID;
+
+  ANALYSIS:
+
+  TYPE = COMPLEX;
+  ESTIMATOR = MLR;
+  ITERATIONS = 10000;
+  	
+  MODEL:	intercept by rT1_scort-rT4_scort@1;
+  	intercept;
+  	[intercept];
+  	slope BY rT1_scort@0
+  		rT2_scort*
+  		rT3_scort*
+  		rT4_scort@1;
+  	slope;
+  	[slope];
+  	intercept WITH slope;
+  	rT1_scort-rT4_scort (theta); !theta forces variances to be equal over time
+  	[rT1_scort-rT4_scort@0];
+  	
+  pmPDStiming;
+  pmPDStempo;
+  !ela_plus;
+  !wm6;
+
+  intercept WITH pmPDStiming pmPDStempo;
+  slope WITH pmPDStempo;
+  pmPDStiming WITH pmPDStempo;
+
+  slope ON pmPDStiming;
+  !intercept ON ela_plus;
+  !slope ON ela_plus;
+  !pmPDStiming ON ela_plus;
+  !pmPDStempo ON ela_plus;
+  !wm6 ON ela_plus;
+  !wm6 ON pmPDStiming pmPDStempo slope intercept;
+
+  !MODEL INDIRECT:
+  !wm6 ind intercept ela_plus;
+  !wm6 ind pmPDStempo ela_plus; !exploratory
+
+  OUTPUT: SAMPSTAT STANDARDIZED TECH4;
+
+  !PLOT:
+  !    TYPE = PLOT3;                       ! enables LOOP function plots
+  !    SERIES = rT1_TOTAL-rT4_TOTAL (*);   ! optional: shows observed/model means over waves
+
+
+
+
+
+
+*** WARNING in VARIABLE command
+  When a subpopulation is analyzed with TYPE=COMPLEX, standard errors
+  may be incorrect.  Use the SUBPOPULATION option instead of the
+  USEOBSERVATIONS option to obtain correct standard errors.
+*** WARNING in VARIABLE command
+  Note that only the first 8 characters of variable names are used in the output.
+  Shorten variable names to avoid any confusion.
+   2 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+full model - MALE
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                        2644
+
+Number of dependent variables                                    5
+Number of independent variables                                  1
+Number of continuous latent variables                            2
+
+Observed dependent variables
+
+  Continuous
+   PMPDSTEMPO  RT1_SCORT   RT2_SCORT   RT3_SCORT   RT4_SCORT
+
+Observed independent variables
+   PMPDSTIM
+
+Continuous latent variables
+   INTERCEP    SLOPE
+
+Variables with special functions
+
+  Cluster variable      FAM_ID
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Maximum number of iterations                                 10000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+
+Input data file(s)
+  dfmerged_mplus.dat
+
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            23
+     Number of clusters                       2324
+
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              PMPDSTEM      RT1_SCOR      RT2_SCOR      RT3_SCOR      RT4_SCOR
+              ________      ________      ________      ________      ________
+ PMPDSTEM       0.991
+ RT1_SCOR       0.986         0.995
+ RT2_SCOR       0.865         0.869         0.874
+ RT3_SCOR       0.626         0.630         0.567         0.632
+ RT4_SCOR       0.806         0.807         0.712         0.539         0.812
+ PMPDSTIM       0.988         0.992         0.871         0.630         0.809
+
+
+           Covariance Coverage
+              PMPDSTIM
+              ________
+ PMPDSTIM       0.997
+
+
+SAMPLE STATISTICS
+
+
+     ESTIMATED SAMPLE STATISTICS
+
+
+           Means
+              PMPDSTEM      RT1_SCOR      RT2_SCOR      RT3_SCOR      RT4_SCOR
+              ________      ________      ________      ________      ________
+                0.470        61.928        62.653        63.563        63.584
+
+
+           Means
+              PMPDSTIM
+              ________
+               14.061
+
+
+           Covariances
+              PMPDSTEM      RT1_SCOR      RT2_SCOR      RT3_SCOR      RT4_SCOR
+              ________      ________      ________      ________      ________
+ PMPDSTEM       0.015
+ RT1_SCOR       0.044        21.858
+ RT2_SCOR       0.039        21.926        23.103
+ RT3_SCOR       0.057        22.372        23.054        24.281
+ RT4_SCOR       0.059        22.355        23.001        23.820        24.651
+ PMPDSTIM       0.030         0.014        -0.144        -0.044         0.113
+
+
+           Covariances
+              PMPDSTIM
+              ________
+ PMPDSTIM       1.034
+
+
+           Correlations
+              PMPDSTEM      RT1_SCOR      RT2_SCOR      RT3_SCOR      RT4_SCOR
+              ________      ________      ________      ________      ________
+ PMPDSTEM       1.000
+ RT1_SCOR       0.077         1.000
+ RT2_SCOR       0.067         0.976         1.000
+ RT3_SCOR       0.096         0.971         0.973         1.000
+ RT4_SCOR       0.098         0.963         0.964         0.974         1.000
+ PMPDSTIM       0.248         0.003        -0.029        -0.009         0.022
+
+
+           Correlations
+              PMPDSTIM
+              ________
+ PMPDSTIM       1.000
+
+
+     MAXIMUM LOG-LIKELIHOOD VALUE FOR THE UNRESTRICTED (H1) MODEL IS -18732.785
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     PMPDSTEMPO            0.470      -0.267       0.105    0.04%       0.367      0.446      0.475
+            2620.000       0.015      -0.020       0.834    0.04%       0.507      0.571
+     RT1_SCORT            61.927       0.114      46.024    0.04%      58.118     60.718     61.882
+            2630.000      21.862       0.269      80.893    0.04%      63.033     65.770
+     RT2_SCORT            62.654       0.112      47.285    0.04%      58.643     61.413     62.603
+            2310.000      22.949       0.150      81.201    0.04%      63.781     66.713
+     RT3_SCORT            63.643       0.087      47.781    0.06%      59.631     62.309     63.673
+            1672.000      24.078       0.067      81.128    0.06%      64.774     67.674
+     RT4_SCORT            63.632       0.002      41.536    0.05%      59.597     62.535     63.740
+            2146.000      24.586       0.368      82.378    0.05%      64.841     67.653
+     PMPDSTIMING          14.062       0.208      10.905    0.04%      13.214     13.744     14.010
+            2637.000       1.034      -0.012      17.130    0.04%      14.250     14.910
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       17
+
+Loglikelihood
+
+          H0 Value                      -18851.229
+          H0 Scaling Correction Factor      1.8824
+            for MLR
+          H1 Value                      -18732.785
+          H1 Scaling Correction Factor      2.1489
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                   37736.458
+          Bayesian (BIC)                 37836.419
+          Sample-Size Adjusted BIC       37782.404
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                             91.045*
+          Degrees of Freedom                    10
+          P-Value                           0.0000
+          Scaling Correction Factor         2.6019
+            for MLR
+
+*   The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV cannot be used
+    for chi-square difference testing in the regular way.  MLM, MLR and WLSM
+    chi-square difference testing is described on the Mplus website.  MLMV, WLSMV,
+    and ULSMV difference testing is done using the DIFFTEST option.
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.055
+          90 Percent C.I.                    0.045  0.066
+          Probability RMSEA <= .05           0.184
+
+CFI/TLI
+
+          CFI                                0.987
+          TLI                                0.981
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                           6464.390
+          Degrees of Freedom                    15
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.018
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_SCORT          1.000      0.000    999.000    999.000
+    RT2_SCORT          1.000      0.000    999.000    999.000
+    RT3_SCORT          1.000      0.000    999.000    999.000
+    RT4_SCORT          1.000      0.000    999.000    999.000
+
+ SLOPE    BY
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.411      0.013     31.823      0.000
+    RT3_SCORT          0.960      0.016     58.286      0.000
+    RT4_SCORT          1.000      0.000    999.000    999.000
+
+ SLOPE    ON
+    PMPDSTIMIN         0.058      0.025      2.290      0.022
+
+ INTERCEP WITH
+    SLOPE              1.024      0.142      7.219      0.000
+    PMPDSTIMIN        -0.047      0.099     -0.474      0.636
+    PMPDSTEMPO         0.040      0.012      3.379      0.001
+
+ SLOPE    WITH
+    PMPDSTEMPO         0.014      0.003      4.703      0.000
+
+ PMPDSTIM WITH
+    PMPDSTEMPO         0.030      0.003     11.169      0.000
+
+ Means
+    PMPDSTEMPO         0.470      0.003    185.306      0.000
+    PMPDSTIMIN        14.061      0.022    653.679      0.000
+    INTERCEPT         61.940      0.099    625.290      0.000
+
+ Intercepts
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.000      0.000    999.000    999.000
+    RT3_SCORT          0.000      0.000    999.000    999.000
+    RT4_SCORT          0.000      0.000    999.000    999.000
+    SLOPE              0.853      0.361      2.365      0.018
+
+ Variances
+    PMPDSTEMPO         0.015      0.000     34.720      0.000
+    PMPDSTIMIN         1.034      0.030     33.957      0.000
+    INTERCEPT         21.395      0.691     30.967      0.000
+
+ Residual Variances
+    RT1_SCORT          0.607      0.046     13.119      0.000
+    RT2_SCORT          0.607      0.046     13.119      0.000
+    RT3_SCORT          0.607      0.046     13.119      0.000
+    RT4_SCORT          0.607      0.046     13.119      0.000
+    SLOPE              0.484      0.070      6.900      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.115E-05
+       (ratio of smallest to largest eigenvalue)
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_SCORT          0.986      0.001    862.979      0.000
+    RT2_SCORT          0.966      0.003    297.143      0.000
+    RT3_SCORT          0.936      0.006    156.741      0.000
+    RT4_SCORT          0.934      0.006    148.727      0.000
+
+ SLOPE    BY
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.060      0.004     14.068      0.000
+    RT3_SCORT          0.136      0.009     14.701      0.000
+    RT4_SCORT          0.141      0.010     13.927      0.000
+
+ SLOPE    ON
+    PMPDSTIMIN         0.085      0.037      2.306      0.021
+
+ INTERCEP WITH
+    SLOPE              0.318      0.050      6.330      0.000
+    PMPDSTIMIN        -0.010      0.021     -0.474      0.635
+    PMPDSTEMPO         0.071      0.021      3.410      0.001
+
+ SLOPE    WITH
+    PMPDSTEMPO         0.168      0.036      4.609      0.000
+
+ PMPDSTIM WITH
+    PMPDSTEMPO         0.248      0.022     11.429      0.000
+
+ Means
+    PMPDSTEMPO         3.889      0.063     61.267      0.000
+    PMPDSTIMIN        13.827      0.201     68.775      0.000
+    INTERCEPT         13.391      0.215     62.147      0.000
+
+ Intercepts
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.000      0.000    999.000    999.000
+    RT3_SCORT          0.000      0.000    999.000    999.000
+    RT4_SCORT          0.000      0.000    999.000    999.000
+    SLOPE              1.222      0.534      2.288      0.022
+
+ Variances
+    PMPDSTEMPO         1.000      0.000    999.000    999.000
+    PMPDSTIMIN         1.000      0.000    999.000    999.000
+    INTERCEPT          1.000      0.000    999.000    999.000
+
+ Residual Variances
+    RT1_SCORT          0.028      0.002     12.249      0.000
+    RT2_SCORT          0.026      0.002     12.553      0.000
+    RT3_SCORT          0.025      0.002     12.778      0.000
+    RT4_SCORT          0.025      0.002     12.819      0.000
+    SLOPE              0.993      0.006    159.067      0.000
+
+
+STDY Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_SCORT          0.986      0.001    862.979      0.000
+    RT2_SCORT          0.966      0.003    297.143      0.000
+    RT3_SCORT          0.936      0.006    156.741      0.000
+    RT4_SCORT          0.934      0.006    148.727      0.000
+
+ SLOPE    BY
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.060      0.004     14.068      0.000
+    RT3_SCORT          0.136      0.009     14.701      0.000
+    RT4_SCORT          0.141      0.010     13.927      0.000
+
+ SLOPE    ON
+    PMPDSTIMIN         0.085      0.037      2.306      0.021
+
+ INTERCEP WITH
+    SLOPE              0.318      0.050      6.330      0.000
+    PMPDSTIMIN        -0.010      0.021     -0.474      0.635
+    PMPDSTEMPO         0.071      0.021      3.410      0.001
+
+ SLOPE    WITH
+    PMPDSTEMPO         0.168      0.036      4.609      0.000
+
+ PMPDSTIM WITH
+    PMPDSTEMPO         0.248      0.022     11.429      0.000
+
+ Means
+    PMPDSTEMPO         3.889      0.063     61.267      0.000
+    PMPDSTIMIN        13.827      0.201     68.775      0.000
+    INTERCEPT         13.391      0.215     62.147      0.000
+
+ Intercepts
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.000      0.000    999.000    999.000
+    RT3_SCORT          0.000      0.000    999.000    999.000
+    RT4_SCORT          0.000      0.000    999.000    999.000
+    SLOPE              1.222      0.534      2.288      0.022
+
+ Variances
+    PMPDSTEMPO         1.000      0.000    999.000    999.000
+    PMPDSTIMIN         1.000      0.000    999.000    999.000
+    INTERCEPT          1.000      0.000    999.000    999.000
+
+ Residual Variances
+    RT1_SCORT          0.028      0.002     12.249      0.000
+    RT2_SCORT          0.026      0.002     12.553      0.000
+    RT3_SCORT          0.025      0.002     12.778      0.000
+    RT4_SCORT          0.025      0.002     12.819      0.000
+    SLOPE              0.993      0.006    159.067      0.000
+
+
+STD Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_SCORT          4.625      0.075     61.933      0.000
+    RT2_SCORT          4.625      0.075     61.933      0.000
+    RT3_SCORT          4.625      0.075     61.933      0.000
+    RT4_SCORT          4.625      0.075     61.933      0.000
+
+ SLOPE    BY
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.287      0.020     14.174      0.000
+    RT3_SCORT          0.670      0.046     14.705      0.000
+    RT4_SCORT          0.698      0.050     13.841      0.000
+
+ SLOPE    ON
+    PMPDSTIMIN         0.083      0.036      2.303      0.021
+
+ INTERCEP WITH
+    SLOPE              0.318      0.050      6.330      0.000
+    PMPDSTIMIN        -0.010      0.021     -0.474      0.635
+    PMPDSTEMPO         0.009      0.003      3.394      0.001
+
+ SLOPE    WITH
+    PMPDSTEMPO         0.020      0.004      4.581      0.000
+
+ PMPDSTIM WITH
+    PMPDSTEMPO         0.030      0.003     11.169      0.000
+
+ Means
+    PMPDSTEMPO         0.470      0.003    185.306      0.000
+    PMPDSTIMIN        14.061      0.022    653.679      0.000
+    INTERCEPT         13.391      0.215     62.147      0.000
+
+ Intercepts
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.000      0.000    999.000    999.000
+    RT3_SCORT          0.000      0.000    999.000    999.000
+    RT4_SCORT          0.000      0.000    999.000    999.000
+    SLOPE              1.222      0.534      2.288      0.022
+
+ Variances
+    PMPDSTEMPO         0.015      0.000     34.720      0.000
+    PMPDSTIMIN         1.034      0.030     33.957      0.000
+    INTERCEPT          1.000      0.000    999.000    999.000
+
+ Residual Variances
+    RT1_SCORT          0.607      0.046     13.119      0.000
+    RT2_SCORT          0.607      0.046     13.119      0.000
+    RT3_SCORT          0.607      0.046     13.119      0.000
+    RT4_SCORT          0.607      0.046     13.119      0.000
+    SLOPE              0.993      0.006    159.067      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    RT1_SCOR           0.972      0.002    431.490      0.000
+    RT2_SCOR           0.974      0.002    461.247      0.000
+    RT3_SCOR           0.975      0.002    500.844      0.000
+    RT4_SCOR           0.975      0.002    505.001      0.000
+
+     Latent                                         Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    SLOPE              0.007      0.006      1.153      0.249
+
+
+TECHNICAL 4 OUTPUT
+
+
+     ESTIMATES DERIVED FROM THE MODEL
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         PMPDSTEM      PMPDSTIM
+              ________      ________      ________      ________
+               61.940         1.672         0.470        14.061
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         PMPDSTEM      PMPDSTIM
+              ________      ________      ________      ________
+                0.099         0.027         0.003         0.022
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         PMPDSTEM      PMPDSTIM
+              ________      ________      ________      ________
+              625.290        61.082       185.306       653.679
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         PMPDSTEM      PMPDSTIM
+              ________      ________      ________      ________
+                0.000         0.000         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         PMPDSTEM      PMPDSTIM
+              ________      ________      ________      ________
+ INTERCEP      21.395
+ SLOPE          1.021         0.487
+ PMPDSTEM       0.040         0.016         0.015
+ PMPDSTIM      -0.047         0.060         0.030         1.034
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         PMPDSTEM      PMPDSTIM
+              ________      ________      ________      ________
+ INTERCEP       0.691
+ SLOPE          0.142         0.070
+ PMPDSTEM       0.012         0.003         0.000
+ PMPDSTIM       0.099         0.026         0.003         0.030
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         PMPDSTEM      PMPDSTIM
+              ________      ________      ________      ________
+ INTERCEP      30.967
+ SLOPE          7.186         6.921
+ PMPDSTEM       3.379         5.020        34.720
+ PMPDSTIM      -0.474         2.291        11.169        33.957
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         PMPDSTEM      PMPDSTIM
+              ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.000         0.000
+ PMPDSTEM       0.001         0.000         0.000
+ PMPDSTIM       0.636         0.022         0.000         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         PMPDSTEM      PMPDSTIM
+              ________      ________      ________      ________
+ INTERCEP       1.000
+ SLOPE          0.316         1.000
+ PMPDSTEM       0.071         0.188         1.000
+ PMPDSTIM      -0.010         0.085         0.248         1.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         PMPDSTEM      PMPDSTIM
+              ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.050         0.000
+ PMPDSTEM       0.021         0.038         0.000
+ PMPDSTIM       0.021         0.037         0.022         0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         PMPDSTEM      PMPDSTIM
+              ________      ________      ________      ________
+ INTERCEP     999.000
+ SLOPE          6.309       999.000
+ PMPDSTEM       3.410         4.946       999.000
+ PMPDSTIM      -0.474         2.306        11.429       999.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         PMPDSTEM      PMPDSTIM
+              ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.000         0.000
+ PMPDSTEM       0.001         0.000         0.000
+ PMPDSTIM       0.635         0.021         0.000         0.000
+
+
+DIAGRAM INFORMATION
+
+  Use View Diagram under the Diagram menu in the Mplus Editor to view the diagram.
+  If running Mplus from the Mplus Diagrammer, the diagram opens automatically.
+
+  Diagram output
+    c:\users\nchaku\documents\github\pubertybrain\full_model\dcn_analyses\main analyses\1.fullmodel_scort_m.dgm
+
+     Beginning Time:  12:56:08
+        Ending Time:  12:56:08
+       Elapsed Time:  00:00:00
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2024 Muthen & Muthen

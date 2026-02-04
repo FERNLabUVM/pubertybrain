@@ -1,4 +1,4 @@
-TITLE:	full model - FEMALE
+TITLE:	full model - MALE
 
 DATA:
 FILE IS dfmerged_mplus.dat;
@@ -23,53 +23,55 @@ yfPDStiming yfPDStempo pfPDStiming pfPDStempo
 ymPDStiming ymPDStempo pmPDStiming pmPDStempo
 wmb wm6 
 ela_plus;
-
+        
 MISSING = ALL (-999);
 
 USEVAR = 
-pfPDStiming pfPDStempo ela_plus
+pmPDStiming pmPDStempo
+ela_plus
+!wm6
 rT1_cort rT2_cort rT3_cort rT4_cort;
-!wm6;
 
-USEOBS are sex EQ 2;
+USEOBS are sex EQ 1;
 CLUSTER = fam_ID;
 
 ANALYSIS:
 TYPE = COMPLEX;
 ESTIMATOR = MLR;
 	
-MODEL:	
-    intercept by rT1_cort-rT4_cort@1;
+MODEL:	intercept by rT1_cort-rT4_cort@1;
 	intercept;
 	[intercept];
-	
-    slope BY rT1_cort@0
+	slope BY rT1_cort@0
 		rT2_cort*
 		rT3_cort*
 		rT4_cort@1;
-    slope;
+	slope;
 	[slope];
-	
-    intercept WITH slope;
+	intercept WITH slope;
 	rT1_cort-rT4_cort (theta); !theta forces variances to be equal over time
 	[rT1_cort-rT4_cort@0];
 	
-pfPDStiming; 
-pfPDStempo;
+pmPDStiming; 
+pmPDStempo;
 ela_plus;
 !wm6;
 
-intercept WITH pfPDStiming pfPDStempo;
-slope WITH pfPDStempo;
-pfPDStiming WITH pfPDStempo;
+intercept WITH pmPDStiming pmPDStempo;
+slope WITH pmPDStempo;
+pmPDStiming WITH pmPDStempo;
 
-slope ON pfPDStiming;
+slope ON pmPDStiming;
 intercept ON ela_plus;
 slope ON ela_plus;
-pfPDStiming ON ela_plus;
-pfPDStempo ON ela_plus;
+pmPDStiming ON ela_plus;
+pmPDStempo ON ela_plus;
 !wm6 ON ela_plus;
-!wm6 ON pfPDStiming pfPDStempo slope intercept;
+!wm6 ON pmPDStiming pmPDStempo slope intercept;
+
+!MODEL INDIRECT: 
+!wm6 ind intercept ela_plus;
+!wm6 ind pmPDStempo ela_plus; !exploratory
 
 OUTPUT: SAMPSTAT STANDARDIZED TECH4 CINTERVAL;
 

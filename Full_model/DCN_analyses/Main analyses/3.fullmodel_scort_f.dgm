@@ -1,0 +1,291 @@
+VERSION 1.1.0
+INPUT
+TITLE:
+ full model - FEMALE
+
+DATA:
+FILE IS dfmerged_mplus.dat;
+VARIABLE:
+NAMES =
+numeric_id sex
+age_1 age_2 age_3 age_4
+subcort_vol_1 subcort_vol_2 subcort_vol_3 subcort_vol_4
+cort_vol_1 cort_vol_2 cort_vol_3 cort_vol_4
+fam_ID
+T1_totalGMV T2_totalGMV T3_totalGMV T4_totalGMV
+yfPDStiming yfPDStempo pfPDStiming pfPDStempo
+ymPDStiming ymPDStempo pmPDStiming pmPDStempo
+wmb wm6
+ela_plus;
+MISSING = ALL (-999);
+USEVAR =
+pfPDStiming pfPDStempo
+ela_plus
+wm6
+rT1_scort rT2_scort rT3_scort rT4_scort;
+USEOBS are sex EQ 2;
+CLUSTER = fam_ID;
+DEFINE:
+  rT1_scort = subcort_vol_1 / 1000;
+  rT2_scort = subcort_vol_2 / 1000;
+  rT3_scort = subcort_vol_3 / 1000;
+  rT4_scort = subcort_vol_4 / 1000;
+ANALYSIS:
+TYPE = COMPLEX;
+ESTIMATOR = MLR;
+ITERATIONS = 10000;
+OUTPUT:
+ SAMPSTAT STANDARDIZED TECH4 CINTERVAL;
+MODEL:
+ intercept by rT1_scort-rT4_scort@1;
+ intercept;
+ [intercept];
+ slope BY rT1_scort@0
+  rT2_scort@1
+  rT3_scort@2
+  rT4_scort@3;
+ slope@0;
+ [slope];
+ quad BY rT1_scort@0
+         rT2_scort@1
+         rT3_scort@4
+         rT4_scort@9;
+ quad;
+ [quad];
+ intercept WITH slope@0;
+ intercept WITH quad;
+ slope WITH quad@0;
+ rT1_scort-rT4_scort (theta);
+ [rT1_scort-rT4_scort@0];
+pfPDStiming;
+pfPDStempo;
+ela_plus;
+wm6;
+intercept WITH pfPDStiming pfPDStempo;
+slope WITH pfPDStempo;
+quad WITH pfPDStempo;
+pfPDStiming WITH pfPDStempo;
+slope ON pfPDStiming;
+quad ON pfPDStiming;
+intercept ON ela_plus;
+slope ON ela_plus;
+quad ON ela_plus;
+pfPDStiming ON ela_plus;
+pfPDStempo ON ela_plus;
+wm6 ON ela_plus;
+wm6 ON pfPDStiming pfPDStempo slope intercept quad;
+INPUT_END
+3
+3
+3
+3
+MLR
+1
+GENERAL
+0
+8
+3
+0
+pfpdstiming pfpdstempo wm6 rt1_scort rt2_scort rt3_scort rt4_scort ela_plus intercept slope quad
+4
+1 1 3 -1 -1 -1 -1 0 1 2 2
+0
+3
+intercept
+rt1_scort rt2_scort rt3_scort rt4_scort
+slope
+rt1_scort rt2_scort rt3_scort rt4_scort
+quad
+rt1_scort rt2_scort rt3_scort rt4_scort
+1 1 intercept rt1_scort 1.000 0.000 1.000 1.000
+1 1 intercept rt2_scort 1.000 0.000 1.000 1.000
+1 1 intercept rt3_scort 1.000 0.000 1.000 1.000
+1 1 intercept rt4_scort 1.000 0.000 1.000 1.000
+1 1 slope rt1_scort 0.000 0.000 0.000 0.000
+1 1 slope rt2_scort 1.000 0.000 1.000 1.000
+1 1 slope rt3_scort 2.000 0.000 2.000 2.000
+1 1 slope rt4_scort 3.000 0.000 3.000 3.000
+1 1 quad rt1_scort 0.000 0.000 0.000 0.000
+1 1 quad rt2_scort 1.000 0.000 1.000 1.000
+1 1 quad rt3_scort 4.000 0.000 4.000 4.000
+1 1 quad rt4_scort 9.000 0.000 9.000 9.000
+1 1 pfpdstiming slope 0.207 0.028 0.152 0.261
+1 1 ela_plus slope -0.009 0.017 -0.041 0.024
+1 1 pfpdstiming quad -0.023 0.009 -0.039 -0.006
+1 1 ela_plus quad -0.002 0.005 -0.012 0.008
+1 1 ela_plus intercept -0.248 0.051 -0.348 -0.148
+1 1 ela_plus pfpdstiming -0.112 0.013 -0.138 -0.086
+1 1 ela_plus pfpdstempo -0.018 0.002 -0.022 -0.015
+1 1 ela_plus wm6 -0.176 0.047 -0.268 -0.084
+1 1 pfpdstiming wm6 -0.146 0.797 -1.709 1.416
+1 1 pfpdstempo wm6 0.708 4.691 -8.487 9.904
+1 1 slope wm6 1.809 4.777 -7.554 11.171
+1 1 intercept wm6 0.098 0.017 0.064 0.131
+1 1 quad wm6 1.676 1.635 -1.528 4.881
+2 1 pfpdstiming pfpdstempo 0.045 0.003 0.038 0.052
+2 1 intercept slope 0.000 0.000 0.000 0.000
+2 1 intercept quad 0.034 0.018 -.0001119412482 0.069
+2 1 intercept pfpdstiming 0.0002098846016 0.096 -0.187 0.188
+2 1 intercept pfpdstempo 0.027 0.014 0.0006136186421 0.054
+2 1 slope quad 0.000 0.000 0.000 0.000
+2 1 slope pfpdstempo 0.020 0.004 0.011 0.028
+2 1 quad pfpdstempo -0.006 0.001 -0.009 -0.003
+4 1 pfpdstiming 1.160 0.034 1.093 1.227
+4 1 pfpdstempo 0.021 0.0006509745144 0.020 0.022
+4 1 wm6 7.726 0.398 6.946 8.506
+4 1 rt1_scort 0.634 0.045 0.546 0.722
+94 1 rt1_scort theta
+4 1 rt2_scort 0.634 0.045 0.546 0.722
+94 1 rt2_scort theta
+4 1 rt3_scort 0.634 0.045 0.546 0.722
+94 1 rt3_scort theta
+4 1 rt4_scort 0.634 0.045 0.546 0.722
+94 1 rt4_scort theta
+4 1 intercept 17.109 0.605 15.923 18.295
+4 1 slope 0.000 0.000 0.000 0.000
+4 1 quad 0.006 0.001 0.004 0.009
+5 1 ela_plus 3.264 0.132 3.005 3.522
+11 1 intercept rt1_scort 0.982 0.001 0.979 0.985
+11 1 intercept rt2_scort 0.978 0.002 0.973 0.982
+11 1 intercept rt3_scort 0.966 0.004 0.957 0.975
+11 1 intercept rt4_scort 0.944 0.008 0.928 0.959
+11 1 slope rt1_scort 0.000 0.0000000001000 -.0000000001960 0.0000000001960
+11 1 slope rt2_scort 0.054 0.007 0.040 0.068
+11 1 slope rt3_scort 0.107 0.014 0.080 0.134
+11 1 slope rt4_scort 0.157 0.020 0.117 0.196
+11 1 quad rt1_scort 0.000 0.0000000001000 -.0000000001960 0.0000000001960
+11 1 quad rt2_scort 0.019 0.002 0.016 0.023
+11 1 quad rt3_scort 0.076 0.007 0.063 0.090
+11 1 quad rt4_scort 0.168 0.016 0.138 0.199
+11 1 pfpdstiming slope 0.985 0.033 0.921 1.050
+11 1 ela_plus slope -0.068 0.131 -0.325 0.190
+11 1 pfpdstiming quad -0.300 0.108 -0.512 -0.087
+11 1 ela_plus quad -0.041 0.114 -0.263 0.182
+11 1 ela_plus intercept -0.108 0.022 -0.151 -0.065
+11 1 ela_plus pfpdstiming -0.185 0.021 -0.226 -0.143
+11 1 ela_plus pfpdstempo -0.220 0.022 -0.263 -0.176
+11 1 ela_plus wm6 -0.111 0.029 -0.168 -0.053
+11 1 pfpdstiming wm6 -0.056 0.304 -0.653 0.541
+11 1 pfpdstempo wm6 0.037 0.244 -0.441 0.514
+11 1 slope wm6 0.145 0.383 -0.605 0.895
+11 1 intercept wm6 0.141 0.025 0.092 0.191
+11 1 quad wm6 0.048 0.046 -0.042 0.138
+12 1 pfpdstiming pfpdstempo 0.289 0.021 0.248 0.330
+12 1 intercept slope 999.000 999.000 999.000 999.000
+12 1 intercept quad 0.106 0.059 -0.010 0.221
+12 1 intercept pfpdstiming 0.0000471080712 0.021 -0.042 0.042
+12 1 intercept pfpdstempo 0.046 0.023 0.0009502656758 0.090
+12 1 slope quad 999.000 999.000 999.000 999.000
+12 1 slope pfpdstempo 999.000 999.000 999.000 999.000
+12 1 quad pfpdstempo -0.494 0.142 -0.773 -0.215
+14 1 pfpdstiming 0.966 0.008 0.950 0.981
+14 1 pfpdstempo 0.952 0.010 0.933 0.971
+14 1 wm6 0.939 0.030 0.880 0.997
+14 1 rt1_scort 0.035 0.003 0.030 0.041
+94 1 rt1_scort theta
+14 1 rt2_scort 0.035 0.003 0.030 0.040
+94 1 rt2_scort theta
+14 1 rt3_scort 0.034 0.003 0.029 0.039
+94 1 rt3_scort theta
+14 1 rt4_scort 0.033 0.003 0.028 0.038
+94 1 rt4_scort theta
+14 1 intercept 0.988 0.005 0.979 0.998
+14 1 slope 0.000 999.000 999.000 999.000
+14 1 quad 0.913 0.063 0.790 1.036
+15 1 ela_plus 1.000 0.0000000001000 1.000 1.000
+21 1 intercept rt1_scort 0.982 0.001 0.979 0.985
+21 1 intercept rt2_scort 0.978 0.002 0.973 0.982
+21 1 intercept rt3_scort 0.966 0.004 0.957 0.975
+21 1 intercept rt4_scort 0.944 0.008 0.928 0.959
+21 1 slope rt1_scort 0.000 0.0000000001000 -.0000000001960 0.0000000001960
+21 1 slope rt2_scort 0.054 0.007 0.040 0.068
+21 1 slope rt3_scort 0.107 0.014 0.080 0.134
+21 1 slope rt4_scort 0.157 0.020 0.117 0.196
+21 1 quad rt1_scort 0.000 0.0000000001000 -.0000000001960 0.0000000001960
+21 1 quad rt2_scort 0.019 0.002 0.016 0.023
+21 1 quad rt3_scort 0.076 0.007 0.063 0.090
+21 1 quad rt4_scort 0.168 0.016 0.138 0.199
+21 1 pfpdstiming slope 0.985 0.033 0.921 1.050
+21 1 ela_plus slope -0.068 0.131 -0.325 0.190
+21 1 pfpdstiming quad -0.300 0.108 -0.512 -0.087
+21 1 ela_plus quad -0.041 0.114 -0.263 0.182
+21 1 ela_plus intercept -0.108 0.022 -0.151 -0.065
+21 1 ela_plus pfpdstiming -0.185 0.021 -0.226 -0.143
+21 1 ela_plus pfpdstempo -0.220 0.022 -0.263 -0.176
+21 1 ela_plus wm6 -0.111 0.029 -0.168 -0.053
+21 1 pfpdstiming wm6 -0.056 0.304 -0.653 0.541
+21 1 pfpdstempo wm6 0.037 0.244 -0.441 0.514
+21 1 slope wm6 0.145 0.383 -0.605 0.895
+21 1 intercept wm6 0.141 0.025 0.092 0.191
+21 1 quad wm6 0.048 0.046 -0.042 0.138
+22 1 pfpdstiming pfpdstempo 0.289 0.021 0.248 0.330
+22 1 intercept slope 999.000 999.000 999.000 999.000
+22 1 intercept quad 0.106 0.059 -0.010 0.221
+22 1 intercept pfpdstiming 0.0000471080712 0.021 -0.042 0.042
+22 1 intercept pfpdstempo 0.046 0.023 0.0009502656758 0.090
+22 1 slope quad 999.000 999.000 999.000 999.000
+22 1 slope pfpdstempo 999.000 999.000 999.000 999.000
+22 1 quad pfpdstempo -0.494 0.142 -0.773 -0.215
+24 1 pfpdstiming 0.966 0.008 0.950 0.981
+24 1 pfpdstempo 0.952 0.010 0.933 0.971
+24 1 wm6 0.939 0.030 0.880 0.997
+24 1 rt1_scort 0.035 0.003 0.030 0.041
+94 1 rt1_scort theta
+24 1 rt2_scort 0.035 0.003 0.030 0.040
+94 1 rt2_scort theta
+24 1 rt3_scort 0.034 0.003 0.029 0.039
+94 1 rt3_scort theta
+24 1 rt4_scort 0.033 0.003 0.028 0.038
+94 1 rt4_scort theta
+24 1 intercept 0.988 0.005 0.979 0.998
+24 1 slope 999.000 999.000 999.000 999.000
+24 1 quad 0.913 0.063 0.790 1.036
+25 1 ela_plus 1.000 0.0000000001000 1.000 1.000
+31 1 intercept rt1_scort 4.161 0.074 4.016 4.305
+31 1 intercept rt2_scort 4.161 0.074 4.016 4.305
+31 1 intercept rt3_scort 4.161 0.074 4.016 4.305
+31 1 intercept rt4_scort 4.161 0.074 4.016 4.305
+31 1 slope rt1_scort 0.000 0.0000000001000 -.0000000001960 0.0000000001960
+31 1 slope rt2_scort 0.230 0.030 0.172 0.288
+31 1 slope rt3_scort 0.460 0.059 0.344 0.576
+31 1 slope rt4_scort 0.690 0.089 0.516 0.864
+31 1 quad rt1_scort 0.000 0.0000000001000 -.0000000001960 0.0000000001960
+31 1 quad rt2_scort 0.082 0.008 0.068 0.097
+31 1 quad rt3_scort 0.329 0.030 0.270 0.389
+31 1 quad rt4_scort 0.741 0.068 0.608 0.874
+31 1 pfpdstiming slope 0.899 0.033 0.835 0.963
+31 1 ela_plus slope -0.037 0.073 -0.180 0.105
+31 1 pfpdstiming quad -0.273 0.099 -0.467 -0.079
+31 1 ela_plus quad -0.023 0.063 -0.146 0.101
+31 1 ela_plus intercept -0.060 0.012 -0.083 -0.036
+31 1 ela_plus pfpdstiming -0.112 0.013 -0.138 -0.086
+31 1 ela_plus pfpdstempo -0.018 0.002 -0.022 -0.015
+31 1 ela_plus wm6 -0.176 0.047 -0.268 -0.084
+31 1 pfpdstiming wm6 -0.146 0.797 -1.709 1.416
+31 1 pfpdstempo wm6 0.708 4.691 -8.487 9.904
+31 1 slope wm6 0.416 1.099 -1.738 2.570
+31 1 intercept wm6 0.406 0.073 0.264 0.548
+31 1 quad wm6 0.138 0.132 -0.121 0.397
+32 1 pfpdstiming pfpdstempo 0.045 0.003 0.038 0.052
+32 1 intercept slope 999.000 999.000 999.000 999.000
+32 1 intercept quad 0.106 0.059 -0.010 0.221
+32 1 intercept pfpdstiming 0.0000507420300 0.023 -0.045 0.045
+32 1 intercept pfpdstempo 0.007 0.003 0.0001400769688 0.013
+32 1 slope quad 999.000 999.000 999.000 999.000
+32 1 slope pfpdstempo 999.000 999.000 999.000 999.000
+32 1 quad pfpdstempo -0.072 0.021 -0.113 -0.031
+34 1 pfpdstiming 1.160 0.034 1.093 1.227
+34 1 pfpdstempo 0.021 0.0006509745144 0.020 0.022
+34 1 wm6 7.726 0.398 6.946 8.506
+34 1 rt1_scort 0.634 0.045 0.546 0.722
+94 1 rt1_scort theta
+34 1 rt2_scort 0.634 0.045 0.546 0.722
+94 1 rt2_scort theta
+34 1 rt3_scort 0.634 0.045 0.546 0.722
+94 1 rt3_scort theta
+34 1 rt4_scort 0.634 0.045 0.546 0.722
+94 1 rt4_scort theta
+34 1 intercept 0.988 0.005 0.979 0.998
+34 1 slope 999.000 999.000 999.000 999.000
+34 1 quad 0.913 0.063 0.790 1.036
+35 1 ela_plus 3.264 0.132 3.005 3.522

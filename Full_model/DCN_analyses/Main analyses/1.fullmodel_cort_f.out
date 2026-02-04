@@ -1,6 +1,6 @@
 Mplus VERSION 8.11
 MUTHEN & MUTHEN
-02/04/2026   9:07 AM
+02/04/2026  12:39 PM
 
 INPUT INSTRUCTIONS
 
@@ -8,7 +8,6 @@ INPUT INSTRUCTIONS
 
   DATA:
   FILE IS dfmerged_mplus.dat;
-
 
   DEFINE:
     ! Rescale large variables to avoid variance > 1,000,000
@@ -19,29 +18,29 @@ INPUT INSTRUCTIONS
     rT4_cort = cort_vol_4 / 1000;
 
   VARIABLE:	
-
   NAMES =
-  numeric_id sex age_1 age_2 age_3 age_4
+  numeric_id sex
+  age_1 age_2 age_3 age_4
   subcort_vol_1 subcort_vol_2 subcort_vol_3 subcort_vol_4
   cort_vol_1 cort_vol_2 cort_vol_3 cort_vol_4
   fam_ID
   T1_totalGMV T2_totalGMV T3_totalGMV T4_totalGMV
   yfPDStiming yfPDStempo pfPDStiming pfPDStempo
   ymPDStiming ymPDStempo pmPDStiming pmPDStempo
-  wmb wm6 ela_plus;
-
+  wmb wm6
+  ela_plus;
 
   MISSING = ALL (-999);
+
   USEVAR =
+  pfPDStiming pfPDStempo rT1_cort rT2_cort rT3_cort rT4_cort;
   !ela_plus
-  pfPDStiming pfPDStempo
   !wm6
-  rT1_cort rT2_cort rT3_cort rT4_cort;
-  SUBPOPULATION = (sex NE 1);
+
+  USEOBS are sex EQ 2;
   CLUSTER = fam_ID;
 
   ANALYSIS:
-
   TYPE = COMPLEX;
   ESTIMATOR = MLR;
   	
@@ -49,30 +48,36 @@ INPUT INSTRUCTIONS
       intercept by rT1_cort-rT4_cort@1;
   	intercept;
   	[intercept];
-  	slope BY rT1_cort@0
+  	
+      slope BY rT1_cort@0
   		rT2_cort*
   		rT3_cort*
   		rT4_cort@1;
-  	slope;
+      slope;
   	[slope];
-  	intercept WITH slope;
+  	
+      intercept WITH slope;
   	rT1_cort-rT4_cort (theta); !theta forces variances to be equal over time
   	[rT1_cort-rT4_cort@0];
   	
+  pfPDStiming;
+  pfPDStempo;
   !ela_plus;
   !wm6;
-  pfPDStiming pfPDStempo;
-  pfPDStiming WITH pfPDStempo;
 
-  !wm6 intercept slope pfPDStiming pfPDStempo ON ela_plus;
-
-  !wm6 ON pfPDStiming pfPDStempo slope intercept;
   intercept WITH pfPDStiming pfPDStempo;
   slope WITH pfPDStempo;
+  pfPDStiming WITH pfPDStempo;
+
   slope ON pfPDStiming;
+  !intercept ON ela_plus
+  !slope ON ela_plus
+  !pfPDStiming ON ela_plus
+  !pfPDStempo ON ela_plus;
+  !wm6 ON ela_plus
+  !wm6 ON pfPDStiming pfPDStempo slope intercept;
 
-
-  OUTPUT: SAMPSTAT STANDARDIZED TECH4;
+  OUTPUT: SAMPSTAT STANDARDIZED TECH4 CINTERVAL;
 
   !PLOT:
   !    TYPE = PLOT3;                       ! enables LOOP function plots
@@ -84,9 +89,13 @@ INPUT INSTRUCTIONS
 
 
 *** WARNING in VARIABLE command
+  When a subpopulation is analyzed with TYPE=COMPLEX, standard errors
+  may be incorrect.  Use the SUBPOPULATION option instead of the
+  USEOBSERVATIONS option to obtain correct standard errors.
+*** WARNING in VARIABLE command
   Note that only the first 8 characters of variable names are used in the output.
   Shorten variable names to avoid any confusion.
-   1 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+   2 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
 
 
 
@@ -135,6 +144,31 @@ SUMMARY OF DATA
      Number of missing data patterns            24
      Number of clusters                       2064
 
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              PFPDSTEM      RT1_CORT      RT2_CORT      RT3_CORT      RT4_CORT
+              ________      ________      ________      ________      ________
+ PFPDSTEM       0.995
+ RT1_CORT       0.987         0.992
+ RT2_CORT       0.827         0.827         0.832
+ RT3_CORT       0.609         0.607         0.523         0.612
+ RT4_CORT       0.805         0.803         0.679         0.522         0.809
+ PFPDSTIM       0.993         0.990         0.830         0.611         0.809
+
+
+           Covariance Coverage
+              PFPDSTIM
+              ________
+ PFPDSTIM       0.998
 
 
 SAMPLE STATISTICS
@@ -225,10 +259,10 @@ Number of Free Parameters                       17
 Loglikelihood
 
           H0 Value                      -36989.918
-          H0 Scaling Correction Factor      1.4181
+          H0 Scaling Correction Factor      1.4184
             for MLR
           H1 Value                      -36849.087
-          H1 Scaling Correction Factor      1.5628
+          H1 Scaling Correction Factor      1.5632
             for MLR
 
 Information Criteria
@@ -240,10 +274,10 @@ Information Criteria
 
 Chi-Square Test of Model Fit
 
-          Value                            155.723*
+          Value                            155.684*
           Degrees of Freedom                    10
           P-Value                           0.0000
-          Scaling Correction Factor         1.8087
+          Scaling Correction Factor         1.8092
             for MLR
 
 *   The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV cannot be used
@@ -264,7 +298,7 @@ CFI/TLI
 
 Chi-Square Test of Model Fit for the Baseline Model
 
-          Value                           7169.943
+          Value                           7168.166
           Degrees of Freedom                    15
           P-Value                           0.0000
 
@@ -287,47 +321,47 @@ MODEL RESULTS
 
  SLOPE    BY
     RT1_CORT           0.000      0.000    999.000    999.000
-    RT2_CORT           0.224      0.006     39.868      0.000
-    RT3_CORT           0.692      0.007    100.356      0.000
+    RT2_CORT           0.224      0.006     39.863      0.000
+    RT3_CORT           0.692      0.007    100.344      0.000
     RT4_CORT           1.000      0.000    999.000    999.000
 
  SLOPE    ON
-    PFPDSTIMIN         3.199      0.376      8.506      0.000
+    PFPDSTIMIN         3.199      0.376      8.505      0.000
 
  INTERCEP WITH
-    SLOPE           -143.011     19.406     -7.369      0.000
-    PFPDSTIMIN         6.869      1.086      6.324      0.000
-    PFPDSTEMPO         1.149      0.156      7.380      0.000
+    SLOPE           -143.011     19.409     -7.368      0.000
+    PFPDSTIMIN         6.869      1.086      6.323      0.000
+    PFPDSTEMPO         1.149      0.156      7.379      0.000
 
  SLOPE    WITH
-    PFPDSTEMPO        -0.079      0.054     -1.458      0.145
+    PFPDSTEMPO        -0.079      0.054     -1.457      0.145
 
  PFPDSTIM WITH
-    PFPDSTEMPO         0.052      0.004     14.791      0.000
+    PFPDSTEMPO         0.052      0.004     14.789      0.000
 
  Means
-    PFPDSTEMPO         0.552      0.003    166.255      0.000
-    PFPDSTIMIN        12.020      0.024    493.578      0.000
-    INTERCEPT        576.579      1.073    537.356      0.000
+    PFPDSTEMPO         0.552      0.003    166.234      0.000
+    PFPDSTIMIN        12.020      0.024    493.517      0.000
+    INTERCEPT        576.579      1.073    537.290      0.000
 
  Intercepts
     RT1_CORT           0.000      0.000    999.000    999.000
     RT2_CORT           0.000      0.000    999.000    999.000
     RT3_CORT           0.000      0.000    999.000    999.000
     RT4_CORT           0.000      0.000    999.000    999.000
-    SLOPE            -93.950      4.512    -20.824      0.000
+    SLOPE            -93.950      4.512    -20.822      0.000
 
  Variances
-    PFPDSTEMPO         0.022      0.001     33.422      0.000
-    PFPDSTIMIN         1.201      0.035     34.497      0.000
-    INTERCEPT       2247.401     76.020     29.563      0.000
+    PFPDSTEMPO         0.022      0.001     33.418      0.000
+    PFPDSTIMIN         1.201      0.035     34.493      0.000
+    INTERCEPT       2247.401     76.029     29.560      0.000
 
  Residual Variances
-    RT1_CORT         112.028      6.480     17.289      0.000
-    RT2_CORT         112.028      6.480     17.289      0.000
-    RT3_CORT         112.028      6.480     17.289      0.000
-    RT4_CORT         112.028      6.480     17.289      0.000
-    SLOPE             93.622     14.083      6.648      0.000
+    RT1_CORT         112.028      6.480     17.287      0.000
+    RT2_CORT         112.028      6.480     17.287      0.000
+    RT3_CORT         112.028      6.480     17.287      0.000
+    RT4_CORT         112.028      6.480     17.287      0.000
+    SLOPE             93.622     14.084      6.647      0.000
 
 
 QUALITY OF NUMERICAL RESULTS
@@ -345,42 +379,42 @@ STDYX Standardization
                     Estimate       S.E.  Est./S.E.    P-Value
 
  INTERCEP BY
-    RT1_CORT           0.976      0.002    623.069      0.000
-    RT2_CORT           0.986      0.003    387.575      0.000
-    RT3_CORT           1.001      0.006    169.249      0.000
-    RT4_CORT           1.005      0.008    120.171      0.000
+    RT1_CORT           0.976      0.002    622.992      0.000
+    RT2_CORT           0.986      0.003    387.527      0.000
+    RT3_CORT           1.001      0.006    169.228      0.000
+    RT4_CORT           1.005      0.008    120.156      0.000
 
  SLOPE    BY
     RT1_CORT           0.000      0.000    999.000    999.000
-    RT2_CORT           0.048      0.003     14.840      0.000
-    RT3_CORT           0.150      0.011     13.904      0.000
-    RT4_CORT           0.218      0.015     14.594      0.000
+    RT2_CORT           0.048      0.003     14.838      0.000
+    RT3_CORT           0.150      0.011     13.902      0.000
+    RT4_CORT           0.218      0.015     14.592      0.000
 
  SLOPE    ON
-    PFPDSTIMIN         0.341      0.043      7.861      0.000
+    PFPDSTIMIN         0.341      0.043      7.860      0.000
 
  INTERCEP WITH
-    SLOPE             -0.312      0.039     -7.993      0.000
-    PFPDSTIMIN         0.132      0.020      6.566      0.000
-    PFPDSTEMPO         0.163      0.021      7.660      0.000
+    SLOPE             -0.312      0.039     -7.992      0.000
+    PFPDSTIMIN         0.132      0.020      6.565      0.000
+    PFPDSTEMPO         0.163      0.021      7.659      0.000
 
  SLOPE    WITH
     PFPDSTEMPO        -0.055      0.038     -1.450      0.147
 
  PFPDSTIM WITH
-    PFPDSTEMPO         0.318      0.020     15.986      0.000
+    PFPDSTEMPO         0.318      0.020     15.984      0.000
 
  Means
-    PFPDSTEMPO         3.707      0.063     58.902      0.000
-    PFPDSTIMIN        10.966      0.158     69.461      0.000
-    INTERCEPT         12.162      0.204     59.563      0.000
+    PFPDSTEMPO         3.707      0.063     58.895      0.000
+    PFPDSTIMIN        10.966      0.158     69.452      0.000
+    INTERCEPT         12.162      0.204     59.556      0.000
 
  Intercepts
     RT1_CORT           0.000      0.000    999.000    999.000
     RT2_CORT           0.000      0.000    999.000    999.000
     RT3_CORT           0.000      0.000    999.000    999.000
     RT4_CORT           0.000      0.000    999.000    999.000
-    SLOPE             -9.129      0.707    -12.907      0.000
+    SLOPE             -9.129      0.707    -12.905      0.000
 
  Variances
     PFPDSTEMPO         1.000      0.000    999.000    999.000
@@ -388,11 +422,11 @@ STDYX Standardization
     INTERCEPT          1.000      0.000    999.000    999.000
 
  Residual Variances
-    RT1_CORT           0.047      0.003     15.529      0.000
-    RT2_CORT           0.048      0.003     15.661      0.000
-    RT3_CORT           0.050      0.003     15.689      0.000
-    RT4_CORT           0.050      0.003     15.399      0.000
-    SLOPE              0.884      0.030     29.931      0.000
+    RT1_CORT           0.047      0.003     15.527      0.000
+    RT2_CORT           0.048      0.003     15.660      0.000
+    RT3_CORT           0.050      0.003     15.687      0.000
+    RT4_CORT           0.050      0.003     15.397      0.000
+    SLOPE              0.884      0.030     29.928      0.000
 
 
 STDY Standardization
@@ -401,42 +435,42 @@ STDY Standardization
                     Estimate       S.E.  Est./S.E.    P-Value
 
  INTERCEP BY
-    RT1_CORT           0.976      0.002    623.069      0.000
-    RT2_CORT           0.986      0.003    387.575      0.000
-    RT3_CORT           1.001      0.006    169.249      0.000
-    RT4_CORT           1.005      0.008    120.171      0.000
+    RT1_CORT           0.976      0.002    622.992      0.000
+    RT2_CORT           0.986      0.003    387.527      0.000
+    RT3_CORT           1.001      0.006    169.228      0.000
+    RT4_CORT           1.005      0.008    120.156      0.000
 
  SLOPE    BY
     RT1_CORT           0.000      0.000    999.000    999.000
-    RT2_CORT           0.048      0.003     14.840      0.000
-    RT3_CORT           0.150      0.011     13.904      0.000
-    RT4_CORT           0.218      0.015     14.594      0.000
+    RT2_CORT           0.048      0.003     14.838      0.000
+    RT3_CORT           0.150      0.011     13.902      0.000
+    RT4_CORT           0.218      0.015     14.592      0.000
 
  SLOPE    ON
-    PFPDSTIMIN         0.341      0.043      7.861      0.000
+    PFPDSTIMIN         0.341      0.043      7.860      0.000
 
  INTERCEP WITH
-    SLOPE             -0.312      0.039     -7.993      0.000
-    PFPDSTIMIN         0.132      0.020      6.566      0.000
-    PFPDSTEMPO         0.163      0.021      7.660      0.000
+    SLOPE             -0.312      0.039     -7.992      0.000
+    PFPDSTIMIN         0.132      0.020      6.565      0.000
+    PFPDSTEMPO         0.163      0.021      7.659      0.000
 
  SLOPE    WITH
     PFPDSTEMPO        -0.055      0.038     -1.450      0.147
 
  PFPDSTIM WITH
-    PFPDSTEMPO         0.318      0.020     15.986      0.000
+    PFPDSTEMPO         0.318      0.020     15.984      0.000
 
  Means
-    PFPDSTEMPO         3.707      0.063     58.902      0.000
-    PFPDSTIMIN        10.966      0.158     69.461      0.000
-    INTERCEPT         12.162      0.204     59.563      0.000
+    PFPDSTEMPO         3.707      0.063     58.895      0.000
+    PFPDSTIMIN        10.966      0.158     69.452      0.000
+    INTERCEPT         12.162      0.204     59.556      0.000
 
  Intercepts
     RT1_CORT           0.000      0.000    999.000    999.000
     RT2_CORT           0.000      0.000    999.000    999.000
     RT3_CORT           0.000      0.000    999.000    999.000
     RT4_CORT           0.000      0.000    999.000    999.000
-    SLOPE             -9.129      0.707    -12.907      0.000
+    SLOPE             -9.129      0.707    -12.905      0.000
 
  Variances
     PFPDSTEMPO         1.000      0.000    999.000    999.000
@@ -444,11 +478,11 @@ STDY Standardization
     INTERCEPT          1.000      0.000    999.000    999.000
 
  Residual Variances
-    RT1_CORT           0.047      0.003     15.529      0.000
-    RT2_CORT           0.048      0.003     15.661      0.000
-    RT3_CORT           0.050      0.003     15.689      0.000
-    RT4_CORT           0.050      0.003     15.399      0.000
-    SLOPE              0.884      0.030     29.931      0.000
+    RT1_CORT           0.047      0.003     15.527      0.000
+    RT2_CORT           0.048      0.003     15.660      0.000
+    RT3_CORT           0.050      0.003     15.687      0.000
+    RT4_CORT           0.050      0.003     15.397      0.000
+    SLOPE              0.884      0.030     29.928      0.000
 
 
 STD Standardization
@@ -457,54 +491,54 @@ STD Standardization
                     Estimate       S.E.  Est./S.E.    P-Value
 
  INTERCEP BY
-    RT1_CORT          47.407      0.802     59.127      0.000
-    RT2_CORT          47.407      0.802     59.127      0.000
-    RT3_CORT          47.407      0.802     59.127      0.000
-    RT4_CORT          47.407      0.802     59.127      0.000
+    RT1_CORT          47.407      0.802     59.119      0.000
+    RT2_CORT          47.407      0.802     59.119      0.000
+    RT3_CORT          47.407      0.802     59.119      0.000
+    RT4_CORT          47.407      0.802     59.119      0.000
 
  SLOPE    BY
     RT1_CORT           0.000      0.000    999.000    999.000
-    RT2_CORT           2.301      0.149     15.435      0.000
-    RT3_CORT           7.121      0.494     14.423      0.000
-    RT4_CORT          10.292      0.688     14.969      0.000
+    RT2_CORT           2.301      0.149     15.433      0.000
+    RT3_CORT           7.121      0.494     14.421      0.000
+    RT4_CORT          10.292      0.688     14.967      0.000
 
  SLOPE    ON
-    PFPDSTIMIN         0.311      0.040      7.821      0.000
+    PFPDSTIMIN         0.311      0.040      7.820      0.000
 
  INTERCEP WITH
-    SLOPE             -0.312      0.039     -7.993      0.000
-    PFPDSTIMIN         0.145      0.022      6.474      0.000
-    PFPDSTEMPO         0.024      0.003      7.548      0.000
+    SLOPE             -0.312      0.039     -7.992      0.000
+    PFPDSTIMIN         0.145      0.022      6.473      0.000
+    PFPDSTEMPO         0.024      0.003      7.547      0.000
 
  SLOPE    WITH
     PFPDSTEMPO        -0.008      0.006     -1.449      0.147
 
  PFPDSTIM WITH
-    PFPDSTEMPO         0.052      0.004     14.791      0.000
+    PFPDSTEMPO         0.052      0.004     14.789      0.000
 
  Means
-    PFPDSTEMPO         0.552      0.003    166.255      0.000
-    PFPDSTIMIN        12.020      0.024    493.578      0.000
-    INTERCEPT         12.162      0.204     59.563      0.000
+    PFPDSTEMPO         0.552      0.003    166.234      0.000
+    PFPDSTIMIN        12.020      0.024    493.517      0.000
+    INTERCEPT         12.162      0.204     59.556      0.000
 
  Intercepts
     RT1_CORT           0.000      0.000    999.000    999.000
     RT2_CORT           0.000      0.000    999.000    999.000
     RT3_CORT           0.000      0.000    999.000    999.000
     RT4_CORT           0.000      0.000    999.000    999.000
-    SLOPE             -9.129      0.707    -12.907      0.000
+    SLOPE             -9.129      0.707    -12.905      0.000
 
  Variances
-    PFPDSTEMPO         0.022      0.001     33.422      0.000
-    PFPDSTIMIN         1.201      0.035     34.497      0.000
+    PFPDSTEMPO         0.022      0.001     33.418      0.000
+    PFPDSTIMIN         1.201      0.035     34.493      0.000
     INTERCEPT          1.000      0.000    999.000    999.000
 
  Residual Variances
-    RT1_CORT         112.028      6.480     17.289      0.000
-    RT2_CORT         112.028      6.480     17.289      0.000
-    RT3_CORT         112.028      6.480     17.289      0.000
-    RT4_CORT         112.028      6.480     17.289      0.000
-    SLOPE              0.884      0.030     29.931      0.000
+    RT1_CORT         112.028      6.480     17.287      0.000
+    RT2_CORT         112.028      6.480     17.287      0.000
+    RT3_CORT         112.028      6.480     17.287      0.000
+    RT4_CORT         112.028      6.480     17.287      0.000
+    SLOPE              0.884      0.030     29.928      0.000
 
 
 R-SQUARE
@@ -512,15 +546,238 @@ R-SQUARE
     Observed                                        Two-Tailed
     Variable        Estimate       S.E.  Est./S.E.    P-Value
 
-    RT1_CORT           0.953      0.003    311.535      0.000
-    RT2_CORT           0.952      0.003    307.360      0.000
-    RT3_CORT           0.950      0.003    298.384      0.000
-    RT4_CORT           0.950      0.003    290.211      0.000
+    RT1_CORT           0.953      0.003    311.496      0.000
+    RT2_CORT           0.952      0.003    307.321      0.000
+    RT3_CORT           0.950      0.003    298.347      0.000
+    RT4_CORT           0.950      0.003    290.175      0.000
 
      Latent                                         Two-Tailed
     Variable        Estimate       S.E.  Est./S.E.    P-Value
 
-    SLOPE              0.116      0.030      3.931      0.000
+    SLOPE              0.116      0.030      3.930      0.000
+
+
+CONFIDENCE INTERVALS OF MODEL RESULTS
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ INTERCEP BY
+    RT1_CORT         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    RT2_CORT         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    RT3_CORT         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    RT4_CORT         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ SLOPE    BY
+    RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_CORT         0.209       0.213       0.214       0.224       0.233       0.235       0.238
+    RT3_CORT         0.674       0.678       0.681       0.692       0.703       0.705       0.710
+    RT4_CORT         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ SLOPE    ON
+    PFPDSTIMIN       2.230       2.462       2.580       3.199       3.818       3.936       4.168
+
+ INTERCEP WITH
+    SLOPE         -193.004    -181.052    -174.939    -143.011    -111.084    -104.970     -93.018
+    PFPDSTIMIN       4.071       4.740       5.082       6.869       8.656       8.998       9.667
+    PFPDSTEMPO       0.748       0.843       0.892       1.149       1.405       1.454       1.549
+
+ SLOPE    WITH
+    PFPDSTEMPO      -0.219      -0.186      -0.169      -0.079       0.010       0.027       0.061
+
+ PFPDSTIM WITH
+    PFPDSTEMPO       0.043       0.045       0.046       0.052       0.058       0.059       0.061
+
+ Means
+    PFPDSTEMPO       0.544       0.546       0.547       0.552       0.558       0.559       0.561
+    PFPDSTIMIN      11.957      11.972      11.979      12.020      12.060      12.067      12.082
+    INTERCEPT      573.815     574.475     574.813     576.579     578.344     578.682     579.343
+
+ Intercepts
+    RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT3_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT4_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    SLOPE         -105.573    -102.794    -101.373     -93.950     -86.528     -85.106     -82.328
+
+ Variances
+    PFPDSTEMPO       0.020       0.021       0.021       0.022       0.023       0.024       0.024
+    PFPDSTIMIN       1.112       1.133       1.144       1.201       1.259       1.270       1.291
+    INTERCEPT     2051.565    2098.384    2122.333    2247.401    2372.469    2396.418    2443.237
+
+ Residual Variances
+    RT1_CORT        95.336      99.327     101.368     112.028     122.688     124.730     128.720
+    RT2_CORT        95.336      99.327     101.368     112.028     122.688     124.730     128.720
+    RT3_CORT        95.336      99.327     101.368     112.028     122.688     124.730     128.720
+    RT4_CORT        95.336      99.327     101.368     112.028     122.688     124.730     128.720
+    SLOPE           57.344      66.017      70.454      93.622     116.791     121.228     129.901
+
+
+CONFIDENCE INTERVALS OF STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ INTERCEP BY
+    RT1_CORT         0.972       0.973       0.973       0.976       0.979       0.979       0.980
+    RT2_CORT         0.980       0.981       0.982       0.986       0.990       0.991       0.993
+    RT3_CORT         0.986       0.989       0.991       1.001       1.011       1.013       1.016
+    RT4_CORT         0.984       0.989       0.992       1.005       1.019       1.022       1.027
+
+ SLOPE    BY
+    RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_CORT         0.040       0.042       0.043       0.048       0.053       0.054       0.056
+    RT3_CORT         0.123       0.129       0.133       0.150       0.168       0.172       0.178
+    RT4_CORT         0.180       0.189       0.194       0.218       0.243       0.248       0.257
+
+ SLOPE    ON
+    PFPDSTIMIN       0.229       0.256       0.269       0.341       0.412       0.426       0.452
+
+ INTERCEP WITH
+    SLOPE           -0.412      -0.388      -0.376      -0.312      -0.248      -0.235      -0.211
+    PFPDSTIMIN       0.080       0.093       0.099       0.132       0.165       0.172       0.184
+    PFPDSTEMPO       0.108       0.121       0.128       0.163       0.197       0.204       0.217
+
+ SLOPE    WITH
+    PFPDSTEMPO      -0.153      -0.129      -0.117      -0.055       0.007       0.019       0.043
+
+ PFPDSTIM WITH
+    PFPDSTEMPO       0.267       0.279       0.285       0.318       0.351       0.357       0.369
+
+ Means
+    PFPDSTEMPO       3.545       3.583       3.603       3.707       3.810       3.830       3.869
+    PFPDSTIMIN      10.559      10.656      10.706      10.966      11.225      11.275      11.372
+    INTERCEPT       11.636      11.762      11.826      12.162      12.498      12.563      12.688
+
+ Intercepts
+    RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT3_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT4_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    SLOPE          -10.951     -10.515     -10.292      -9.129      -7.965      -7.742      -7.307
+
+ Variances
+    PFPDSTEMPO       1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    PFPDSTIMIN       1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    INTERCEPT        1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ Residual Variances
+    RT1_CORT         0.040       0.041       0.042       0.047       0.053       0.053       0.055
+    RT2_CORT         0.041       0.042       0.043       0.048       0.054       0.055       0.056
+    RT3_CORT         0.042       0.044       0.045       0.050       0.055       0.056       0.058
+    RT4_CORT         0.042       0.044       0.045       0.050       0.056       0.057       0.059
+    SLOPE            0.808       0.826       0.835       0.884       0.933       0.942       0.960
+
+
+STDY Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ INTERCEP BY
+    RT1_CORT         0.972       0.973       0.973       0.976       0.979       0.979       0.980
+    RT2_CORT         0.980       0.981       0.982       0.986       0.990       0.991       0.993
+    RT3_CORT         0.986       0.989       0.991       1.001       1.011       1.013       1.016
+    RT4_CORT         0.984       0.989       0.992       1.005       1.019       1.022       1.027
+
+ SLOPE    BY
+    RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_CORT         0.040       0.042       0.043       0.048       0.053       0.054       0.056
+    RT3_CORT         0.123       0.129       0.133       0.150       0.168       0.172       0.178
+    RT4_CORT         0.180       0.189       0.194       0.218       0.243       0.248       0.257
+
+ SLOPE    ON
+    PFPDSTIMIN       0.229       0.256       0.269       0.341       0.412       0.426       0.452
+
+ INTERCEP WITH
+    SLOPE           -0.412      -0.388      -0.376      -0.312      -0.248      -0.235      -0.211
+    PFPDSTIMIN       0.080       0.093       0.099       0.132       0.165       0.172       0.184
+    PFPDSTEMPO       0.108       0.121       0.128       0.163       0.197       0.204       0.217
+
+ SLOPE    WITH
+    PFPDSTEMPO      -0.153      -0.129      -0.117      -0.055       0.007       0.019       0.043
+
+ PFPDSTIM WITH
+    PFPDSTEMPO       0.267       0.279       0.285       0.318       0.351       0.357       0.369
+
+ Means
+    PFPDSTEMPO       3.545       3.583       3.603       3.707       3.810       3.830       3.869
+    PFPDSTIMIN      10.559      10.656      10.706      10.966      11.225      11.275      11.372
+    INTERCEPT       11.636      11.762      11.826      12.162      12.498      12.563      12.688
+
+ Intercepts
+    RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT3_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT4_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    SLOPE          -10.951     -10.515     -10.292      -9.129      -7.965      -7.742      -7.307
+
+ Variances
+    PFPDSTEMPO       1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    PFPDSTIMIN       1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    INTERCEPT        1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ Residual Variances
+    RT1_CORT         0.040       0.041       0.042       0.047       0.053       0.053       0.055
+    RT2_CORT         0.041       0.042       0.043       0.048       0.054       0.055       0.056
+    RT3_CORT         0.042       0.044       0.045       0.050       0.055       0.056       0.058
+    RT4_CORT         0.042       0.044       0.045       0.050       0.056       0.057       0.059
+    SLOPE            0.808       0.826       0.835       0.884       0.933       0.942       0.960
+
+
+STD Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ INTERCEP BY
+    RT1_CORT        45.341      45.835      46.088      47.407      48.726      48.978      49.472
+    RT2_CORT        45.341      45.835      46.088      47.407      48.726      48.978      49.472
+    RT3_CORT        45.341      45.835      46.088      47.407      48.726      48.978      49.472
+    RT4_CORT        45.341      45.835      46.088      47.407      48.726      48.978      49.472
+
+ SLOPE    BY
+    RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_CORT         1.917       2.009       2.056       2.301       2.546       2.593       2.685
+    RT3_CORT         5.849       6.153       6.309       7.121       7.934       8.089       8.393
+    RT4_CORT         8.520       8.944       9.160      10.292      11.423      11.639      12.063
+
+ SLOPE    ON
+    PFPDSTIMIN       0.208       0.233       0.245       0.311       0.376       0.389       0.413
+
+ INTERCEP WITH
+    SLOPE           -0.412      -0.388      -0.376      -0.312      -0.248      -0.235      -0.211
+    PFPDSTIMIN       0.087       0.101       0.108       0.145       0.182       0.189       0.203
+    PFPDSTEMPO       0.016       0.018       0.019       0.024       0.030       0.031       0.032
+
+ SLOPE    WITH
+    PFPDSTEMPO      -0.023      -0.019      -0.018      -0.008       0.001       0.003       0.006
+
+ PFPDSTIM WITH
+    PFPDSTEMPO       0.043       0.045       0.046       0.052       0.058       0.059       0.061
+
+ Means
+    PFPDSTEMPO       0.544       0.546       0.547       0.552       0.558       0.559       0.561
+    PFPDSTIMIN      11.957      11.972      11.979      12.020      12.060      12.067      12.082
+    INTERCEPT       11.636      11.762      11.826      12.162      12.498      12.563      12.688
+
+ Intercepts
+    RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT3_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT4_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    SLOPE          -10.951     -10.515     -10.292      -9.129      -7.965      -7.742      -7.307
+
+ Variances
+    PFPDSTEMPO       0.020       0.021       0.021       0.022       0.023       0.024       0.024
+    PFPDSTIMIN       1.112       1.133       1.144       1.201       1.259       1.270       1.291
+    INTERCEPT        1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ Residual Variances
+    RT1_CORT        95.336      99.327     101.368     112.028     122.688     124.730     128.720
+    RT2_CORT        95.336      99.327     101.368     112.028     122.688     124.730     128.720
+    RT3_CORT        95.336      99.327     101.368     112.028     122.688     124.730     128.720
+    RT4_CORT        95.336      99.327     101.368     112.028     122.688     124.730     128.720
+    SLOPE            0.808       0.826       0.835       0.884       0.933       0.942       0.960
 
 
 TECHNICAL 4 OUTPUT
@@ -544,7 +801,7 @@ TECHNICAL 4 OUTPUT
            EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
               INTERCEP      SLOPE         PFPDSTEM      PFPDSTIM
               ________      ________      ________      ________
-              537.356      -140.412       166.255       493.578
+              537.290      -140.394       166.234       493.517
 
 
            TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
@@ -565,8 +822,8 @@ TECHNICAL 4 OUTPUT
            S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
               INTERCEP      SLOPE         PFPDSTEM      PFPDSTIM
               ________      ________      ________      ________
- INTERCEP      76.020
- SLOPE         19.575        14.152
+ INTERCEP      76.029
+ SLOPE         19.577        14.153
  PFPDSTEM       0.156         0.058         0.001
  PFPDSTIM       1.086         0.454         0.004         0.035
 
@@ -574,10 +831,10 @@ TECHNICAL 4 OUTPUT
            EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
               INTERCEP      SLOPE         PFPDSTEM      PFPDSTIM
               ________      ________      ________      ________
- INTERCEP      29.563
+ INTERCEP      29.560
  SLOPE         -6.183         7.484
- PFPDSTEM       7.380         1.496        33.422
- PFPDSTIM       6.324         8.464        14.791        34.497
+ PFPDSTEM       7.379         1.496        33.418
+ PFPDSTIM       6.323         8.463        14.789        34.493
 
 
            TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
@@ -611,9 +868,9 @@ TECHNICAL 4 OUTPUT
               INTERCEP      SLOPE         PFPDSTEM      PFPDSTIM
               ________      ________      ________      ________
  INTERCEP     999.000
- SLOPE         -6.734       999.000
- PFPDSTEM       7.660         1.495       999.000
- PFPDSTIM       6.566         7.861        15.986       999.000
+ SLOPE         -6.733       999.000
+ PFPDSTEM       7.659         1.495       999.000
+ PFPDSTIM       6.565         7.860        15.984       999.000
 
 
            TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
@@ -633,8 +890,8 @@ DIAGRAM INFORMATION
   Diagram output
     c:\users\nchaku\documents\github\pubertybrain\full_model\dcn_analyses\main analyses\1.fullmodel_cort_f.dgm
 
-     Beginning Time:  09:07:49
-        Ending Time:  09:07:49
+     Beginning Time:  12:39:25
+        Ending Time:  12:39:25
        Elapsed Time:  00:00:00
 
 
