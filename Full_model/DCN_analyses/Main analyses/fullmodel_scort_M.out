@@ -1,6 +1,6 @@
 Mplus VERSION 8.8 (Mac)
 MUTHEN & MUTHEN
-01/18/2026   7:31 PM
+02/04/2026   9:25 AM
 
 INPUT INSTRUCTIONS
 
@@ -70,6 +70,10 @@ INPUT INSTRUCTIONS
   intercept WITH pmPDStiming;
   slope WITH pmPDStempo;
   slope ON pmPDStiming;
+
+  MODEL INDIRECT:
+  wm6 ind intercept ela_plus;
+  wm6 ind pmPDStempo ela_plus; !exploratory
 
 
   OUTPUT: SAMPSTAT STANDARDIZED TECH4;
@@ -628,6 +632,95 @@ R-SQUARE
     SLOPE              0.005      0.005      1.008      0.314
 
 
+TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect     -0.070      0.012     -5.799      0.000
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS          -0.028      0.007     -3.785      0.000
+
+  Specific indirect 2
+    WM6
+    PMPDSTEM
+    ELA_PLUS          -0.042      0.008     -5.041      0.000
+
+
+
+STANDARDIZED TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect     -0.042      0.007     -5.897      0.000
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS          -0.017      0.004     -3.804      0.000
+
+  Specific indirect 2
+    WM6
+    PMPDSTEM
+    ELA_PLUS          -0.025      0.005     -5.119      0.000
+
+
+
+STDY Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect     -0.042      0.007     -5.897      0.000
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS          -0.017      0.004     -3.804      0.000
+
+  Specific indirect 2
+    WM6
+    PMPDSTEM
+    ELA_PLUS          -0.025      0.005     -5.119      0.000
+
+
+
+STD Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect     -0.070      0.012     -5.799      0.000
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS          -0.028      0.007     -3.785      0.000
+
+  Specific indirect 2
+    WM6
+    PMPDSTEM
+    ELA_PLUS          -0.042      0.008     -5.041      0.000
+
+
+
+
 TECHNICAL 4 OUTPUT
 
 
@@ -818,8 +911,8 @@ TECHNICAL 4 OUTPUT
  ELA_PLUS       0.000
 
 
-     Beginning Time:  19:31:27
-        Ending Time:  19:31:27
+     Beginning Time:  09:25:13
+        Ending Time:  09:25:13
        Elapsed Time:  00:00:00
 
 
