@@ -39,6 +39,7 @@ ANALYSIS:
 TYPE = COMPLEX;
 ESTIMATOR = MLR;
 ITERATIONS = 10000;
+bootstrap = 10000;
 	
 MODEL:	intercept by rT1_cort-rT4_cort@1;
 	intercept;
@@ -65,8 +66,12 @@ intercept WITH pmPDStiming;
 slope WITH pmPDStempo;
 slope ON pmPDStiming;
 
+MODEL INDIRECT: 
+wm6 ind intercept ela_plus;
+wm6 ind pmPDStempo ela_plus; !exploratory
 
-OUTPUT: SAMPSTAT STANDARDIZED TECH4;
+
+OUTPUT: SAMPSTAT STANDARDIZED TECH4 cint(bcbootstrap);
 
 !PLOT:
 !    TYPE = PLOT3;                       ! enables LOOP function plots

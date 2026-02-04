@@ -70,12 +70,12 @@ wm6;
 pfPDStiming pfPDStempo;
 pfPDStiming WITH pfPDStempo;
 
-wm6 intercept slope quad pfPDStiming pfPDStempo ON ela_plus;
+wm6 intercept quad pfPDStiming pfPDStempo ON ela_plus;
 
-wm6 ON pfPDStiming pfPDStempo slope intercept quad;
+wm6 ON pfPDStiming pfPDStempo intercept quad;
 intercept WITH pfPDStiming;
-!slope WITH pfPDStempo;
-!slope ON pfPDStiming;
+
+ela_plus WITH slope @0;
 
 
 OUTPUT: SAMPSTAT STANDARDIZED TECH4;

@@ -1,6 +1,6 @@
 Mplus VERSION 8.8 (Mac)
 MUTHEN & MUTHEN
-01/28/2026  10:22 AM
+02/04/2026   9:06 AM
 
 INPUT INSTRUCTIONS
 
@@ -76,12 +76,12 @@ INPUT INSTRUCTIONS
   pfPDStiming pfPDStempo;
   pfPDStiming WITH pfPDStempo;
 
-  wm6 intercept slope quad pfPDStiming pfPDStempo ON ela_plus;
+  wm6 intercept quad pfPDStiming pfPDStempo ON ela_plus;
 
-  wm6 ON pfPDStiming pfPDStempo slope intercept quad;
+  wm6 ON pfPDStiming pfPDStempo intercept quad;
   intercept WITH pfPDStiming;
-  !slope WITH pfPDStempo;
-  !slope ON pfPDStiming;
+
+  ela_plus WITH slope @0;
 
 
   OUTPUT: SAMPSTAT STANDARDIZED TECH4;
@@ -241,490 +241,439 @@ UNIVARIATE SAMPLE STATISTICS
 
 THE MODEL ESTIMATION TERMINATED NORMALLY
 
-     THE STANDARD ERRORS OF THE MODEL PARAMETER ESTIMATES COULD NOT BE
-     COMPUTED.  THE MODEL MAY NOT BE IDENTIFIED.  CHECK YOUR MODEL.
-     PROBLEM INVOLVING THE FOLLOWING PARAMETER:
-     Parameter 19, WM6 ON ELA_PLUS
 
-     THE CONDITION NUMBER IS      -0.190D-14.
 
-     THE ROBUST CHI-SQUARE COULD NOT BE COMPUTED.
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       26
+
+Loglikelihood
+
+          H0 Value                      -27654.989
+          H0 Scaling Correction Factor      1.5196
+            for MLR
+          H1 Value                      -27330.152
+          H1 Scaling Correction Factor      1.6721
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                   55361.978
+          Bayesian (BIC)                 55512.309
+          Sample-Size Adjusted BIC       55429.701
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                            343.341*
+          Degrees of Freedom                    18
+          P-Value                           0.0000
+          Scaling Correction Factor         1.8922
+            for MLR
+
+*   The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV cannot be used
+    for chi-square difference testing in the regular way.  MLM, MLR and WLSM
+    chi-square difference testing is described on the Mplus website.  MLMV, WLSMV,
+    and ULSMV difference testing is done using the DIFFTEST option.
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.087
+          90 Percent C.I.                    0.079  0.095
+          Probability RMSEA <= .05           0.000
+
+CFI/TLI
+
+          CFI                                0.961
+          TLI                                0.939
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                           8307.495
+          Degrees of Freedom                    28
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.063
 
 
 
 MODEL RESULTS
 
-                    Estimate
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
 
  INTERCEP BY
-    RT1_SCORT          1.000
-    RT2_SCORT          1.000
-    RT3_SCORT          1.000
-    RT4_SCORT          1.000
+    RT1_SCORT          1.000      0.000    999.000    999.000
+    RT2_SCORT          1.000      0.000    999.000    999.000
+    RT3_SCORT          1.000      0.000    999.000    999.000
+    RT4_SCORT          1.000      0.000    999.000    999.000
 
  SLOPE    BY
-    RT1_SCORT          0.000
-    RT2_SCORT          1.000
-    RT3_SCORT          2.000
-    RT4_SCORT          3.000
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          1.000      0.000    999.000    999.000
+    RT3_SCORT          2.000      0.000    999.000    999.000
+    RT4_SCORT          3.000      0.000    999.000    999.000
 
  QUAD     BY
-    RT1_SCORT          0.000
-    RT2_SCORT          1.000
-    RT3_SCORT          4.000
-    RT4_SCORT          9.000
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          1.000      0.000    999.000    999.000
+    RT3_SCORT          4.000      0.000    999.000    999.000
+    RT4_SCORT          9.000      0.000    999.000    999.000
 
  INTERCEP ON
-    ELA_PLUS          -0.250
-
- SLOPE    ON
-    ELA_PLUS          -0.033
+    ELA_PLUS          -0.261      0.051     -5.103      0.000
 
  QUAD     ON
-    ELA_PLUS           0.001
+    ELA_PLUS          -0.009      0.002     -5.203      0.000
 
  WM6      ON
-    SLOPE              5.954
-    INTERCEPT          0.096
-    QUAD               1.105
+    INTERCEPT          0.096      0.015      6.516      0.000
+    QUAD               1.109      1.302      0.851      0.395
 
  WM6      ON
-    ELA_PLUS           0.015
-    PFPDSTIMIN         0.105
-    PFPDSTEMPO         2.038
+    ELA_PLUS          -0.166      0.036     -4.645      0.000
+    PFPDSTIMIN         0.105      0.059      1.797      0.072
+    PFPDSTEMPO         2.039      0.403      5.054      0.000
 
  PFPDSTIM ON
-    ELA_PLUS          -0.115
+    ELA_PLUS          -0.115      0.013     -8.760      0.000
 
  PFPDSTEM ON
-    ELA_PLUS          -0.020
+    ELA_PLUS          -0.020      0.002    -10.368      0.000
 
  INTERCEP WITH
-    SLOPE              0.000
-    QUAD               0.035
-    PFPDSTIMIN         0.031
+    SLOPE              0.000      0.000    999.000    999.000
+    QUAD               0.035      0.019      1.797      0.072
+    PFPDSTIMIN         0.031      0.098      0.320      0.749
 
  SLOPE    WITH
-    QUAD               0.000
+    QUAD               0.000      0.000    999.000    999.000
+    ELA_PLUS           0.000      0.000    999.000    999.000
 
  PFPDSTIM WITH
-    PFPDSTEMPO         0.044
+    PFPDSTEMPO         0.044      0.004     11.760      0.000
 
  Means
-    ELA_PLUS           1.833
+    ELA_PLUS           1.833      0.042     43.540      0.000
+    SLOPE              0.793      0.031     25.794      0.000
 
  Intercepts
-    PFPDSTIMIN        12.237
-    PFPDSTEMPO         0.586
-    WM6                6.532
-    RT1_SCORT          0.000
-    RT2_SCORT          0.000
-    RT3_SCORT          0.000
-    RT4_SCORT          0.000
-    INTERCEPT         58.476
-    SLOPE              0.854
-    QUAD              -0.287
+    PFPDSTIMIN        12.236      0.035    347.858      0.000
+    PFPDSTEMPO         0.586      0.005    124.064      0.000
+    WM6               11.587      1.289      8.991      0.000
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.000      0.000    999.000    999.000
+    RT3_SCORT          0.000      0.000    999.000    999.000
+    RT4_SCORT          0.000      0.000    999.000    999.000
+    INTERCEPT         58.496      0.131    445.083      0.000
+    QUAD              -0.268      0.010    -27.364      0.000
 
  Variances
-    ELA_PLUS           3.268
+    ELA_PLUS           3.267      0.132     24.711      0.000
+    SLOPE              0.000      0.000    999.000    999.000
 
  Residual Variances
-    PFPDSTIMIN         1.173
-    PFPDSTEMPO         0.022
-    WM6                7.695
-    RT1_SCORT          0.647
-    RT2_SCORT          0.647
-    RT3_SCORT          0.647
-    RT4_SCORT          0.647
-    INTERCEPT         17.101
-    SLOPE              0.000
-    QUAD               0.008
+    PFPDSTIMIN         1.174      0.035     33.779      0.000
+    PFPDSTEMPO         0.022      0.001     30.617      0.000
+    WM6                7.695      0.301     25.533      0.000
+    RT1_SCORT          0.648      0.045     14.397      0.000
+    RT2_SCORT          0.648      0.045     14.397      0.000
+    RT3_SCORT          0.648      0.045     14.397      0.000
+    RT4_SCORT          0.648      0.045     14.397      0.000
+    INTERCEPT         17.103      0.606     28.213      0.000
+    QUAD               0.008      0.001      6.354      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.226E-06
+       (ratio of smallest to largest eigenvalue)
 
 
 STANDARDIZED MODEL RESULTS
 
-                      StdYX       StdY        Std
-                    Estimate   Estimate   Estimate
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
 
  INTERCEP BY
-    RT1_SCORT          0.982      0.982      4.160
-    RT2_SCORT          0.978      0.978      4.160
-    RT3_SCORT          0.968      0.968      4.160
-    RT4_SCORT          0.945      0.945      4.160
+    RT1_SCORT          0.982      0.001    708.726      0.000
+    RT2_SCORT          0.979      0.002    530.279      0.000
+    RT3_SCORT          0.969      0.004    224.286      0.000
+    RT4_SCORT          0.945      0.008    114.285      0.000
 
  SLOPE    BY
-    RT1_SCORT          0.000      0.000      0.000
-    RT2_SCORT          0.014      0.014      0.059
-    RT3_SCORT          0.027      0.027      0.118
-    RT4_SCORT          0.040      0.040      0.177
+    RT1_SCORT        999.000    999.000    999.000    999.000
+    RT2_SCORT        999.000    999.000    999.000    999.000
+    RT3_SCORT        999.000    999.000    999.000    999.000
+    RT4_SCORT        999.000    999.000    999.000    999.000
 
  QUAD     BY
-    RT1_SCORT          0.000      0.000      0.000
-    RT2_SCORT          0.021      0.021      0.089
-    RT3_SCORT          0.082      0.082      0.354
-    RT4_SCORT          0.181      0.181      0.797
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.021      0.002     12.968      0.000
+    RT3_SCORT          0.084      0.007     12.874      0.000
+    RT4_SCORT          0.184      0.014     12.907      0.000
 
  INTERCEP ON
-    ELA_PLUS          -0.109     -0.109     -0.060
-
- SLOPE    ON
-    ELA_PLUS          -1.000     -1.000     -0.553
+    ELA_PLUS          -0.113      0.022     -5.140      0.000
 
  QUAD     ON
-    ELA_PLUS           0.015      0.015      0.008
+    ELA_PLUS          -0.189      0.037     -5.151      0.000
 
  WM6      ON
-    SLOPE              0.123      0.123      0.352
-    INTERCEPT          0.139      0.139      0.399
-    QUAD               0.034      0.034      0.098
+    INTERCEPT          0.139      0.022      6.445      0.000
+    QUAD               0.035      0.041      0.862      0.389
 
  WM6      ON
-    ELA_PLUS           0.010      0.010      0.015
-    PFPDSTIMIN         0.040      0.040      0.105
-    PFPDSTEMPO         0.109      0.109      2.038
+    ELA_PLUS          -0.105      0.022     -4.676      0.000
+    PFPDSTIMIN         0.041      0.023      1.794      0.073
+    PFPDSTEMPO         0.109      0.022      5.014      0.000
 
  PFPDSTIM ON
-    ELA_PLUS          -0.189     -0.189     -0.115
+    ELA_PLUS          -0.188      0.021     -8.896      0.000
 
  PFPDSTEM ON
-    ELA_PLUS          -0.234     -0.234     -0.020
+    ELA_PLUS          -0.233      0.022    -10.423      0.000
 
  INTERCEP WITH
-    SLOPE            999.000    999.000    999.000
-    QUAD               0.095      0.095      0.095
-    PFPDSTIMIN         0.007      0.007      0.007
+    SLOPE            999.000    999.000    999.000    999.000
+    QUAD               0.095      0.056      1.690      0.091
+    PFPDSTIMIN         0.007      0.022      0.320      0.749
 
  SLOPE    WITH
-    QUAD             999.000    999.000    999.000
+    QUAD             999.000    999.000    999.000    999.000
+    ELA_PLUS         999.000    999.000    999.000    999.000
 
  PFPDSTIM WITH
-    PFPDSTEMPO         0.272      0.272      0.044
+    PFPDSTEMPO         0.272      0.022     12.286      0.000
 
  Means
-    ELA_PLUS           1.014      1.014      1.833
+    ELA_PLUS           1.014      0.018     57.082      0.000
+    SLOPE            999.000    999.000    999.000    999.000
 
  Intercepts
-    PFPDSTIMIN        11.094     11.094     12.237
-    PFPDSTEMPO         3.843      3.843      0.586
-    WM6                2.281      2.281      6.532
-    RT1_SCORT          0.000      0.000      0.000
-    RT2_SCORT          0.000      0.000      0.000
-    RT3_SCORT          0.000      0.000      0.000
-    RT4_SCORT          0.000      0.000      0.000
-    INTERCEPT         14.057     14.057     14.057
-    SLOPE             14.445     14.445     14.445
-    QUAD              -3.243     -3.243     -3.243
+    PFPDSTIMIN        11.094      0.158     70.413      0.000
+    PFPDSTEMPO         3.842      0.068     56.917      0.000
+    WM6                4.045      0.462      8.764      0.000
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.000      0.000    999.000    999.000
+    RT3_SCORT          0.000      0.000    999.000    999.000
+    RT4_SCORT          0.000      0.000    999.000    999.000
+    INTERCEPT         14.054      0.247     56.900      0.000
+    QUAD              -2.976      0.251    -11.867      0.000
 
  Variances
-    ELA_PLUS           1.000      1.000      3.268
+    ELA_PLUS           1.000      0.000    999.000    999.000
+    SLOPE            999.000    999.000    999.000    999.000
 
  Residual Variances
-    PFPDSTIMIN         0.964      0.964      1.173
-    PFPDSTEMPO         0.945      0.945      0.022
-    WM6                0.938      0.938      7.695
-    RT1_SCORT          0.036      0.036      0.647
-    RT2_SCORT          0.036      0.036      0.647
-    RT3_SCORT          0.035      0.035      0.647
-    RT4_SCORT          0.033      0.033      0.647
-    INTERCEPT          0.988      0.988      0.988
-    SLOPE              0.000    999.000    999.000
-    QUAD               1.000      1.000      1.000
+    PFPDSTIMIN         0.965      0.008    121.202      0.000
+    PFPDSTEMPO         0.946      0.010     90.583      0.000
+    WM6                0.938      0.010     91.209      0.000
+    RT1_SCORT          0.036      0.003     13.253      0.000
+    RT2_SCORT          0.036      0.003     13.300      0.000
+    RT3_SCORT          0.035      0.003     13.309      0.000
+    RT4_SCORT          0.033      0.003     12.953      0.000
+    INTERCEPT          0.987      0.005    197.953      0.000
+    QUAD               0.964      0.014     69.512      0.000
 
 
-MODEL COMMAND WITH FINAL ESTIMATES USED AS STARTING VALUES
+STDY Standardization
 
-     intercept BY rt1_scort@1;
-     intercept BY rt2_scort@1;
-     intercept BY rt3_scort@1;
-     intercept BY rt4_scort@1;
-     slope BY rt1_scort@0;
-     slope BY rt2_scort@1;
-     slope BY rt3_scort@2;
-     slope BY rt4_scort@3;
-     quad BY rt1_scort@0;
-     quad BY rt2_scort@1;
-     quad BY rt3_scort@4;
-     quad BY rt4_scort@9;
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
 
-     intercept ON ela_plus*-0.24977;
-     slope ON ela_plus*-0.03268;
-     quad ON ela_plus*0.00074;
-     wm6 ON ela_plus*0.01523;
-     wm6 ON pfpdstiming*0.10499;
-     wm6 ON pfpdstempo*2.03755;
-     pfpdstiming ON ela_plus*-0.11511;
-     pfpdstempo ON ela_plus*-0.01973;
-     wm6 ON slope*5.95409;
-     wm6 ON intercept*0.09588;
-     wm6 ON quad*1.10464;
+ INTERCEP BY
+    RT1_SCORT          0.982      0.001    708.726      0.000
+    RT2_SCORT          0.979      0.002    530.279      0.000
+    RT3_SCORT          0.969      0.004    224.286      0.000
+    RT4_SCORT          0.945      0.008    114.285      0.000
 
-     pfpdstiming WITH pfpdstempo*0.04368;
-     intercept WITH slope@0;
-     intercept WITH quad*0.03476;
-     intercept WITH pfpdstiming*0.03080;
-     slope WITH quad@0;
+ SLOPE    BY
+    RT1_SCORT        999.000    999.000    999.000    999.000
+    RT2_SCORT        999.000    999.000    999.000    999.000
+    RT3_SCORT        999.000    999.000    999.000    999.000
+    RT4_SCORT        999.000    999.000    999.000    999.000
 
-     [ pfpdstiming*12.23700 ];
-     [ pfpdstempo*0.58641 ];
-     [ wm6*6.53223 ];
-     [ rt1_scort@0 ];
-     [ rt2_scort@0 ];
-     [ rt3_scort@0 ];
-     [ rt4_scort@0 ];
-     [ ela_plus*1.83289 ];
-     [ intercept*58.47642 ];
-     [ slope*0.85351 ];
-     [ quad*-0.28730 ];
+ QUAD     BY
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.021      0.002     12.968      0.000
+    RT3_SCORT          0.084      0.007     12.874      0.000
+    RT4_SCORT          0.184      0.014     12.907      0.000
 
-     pfpdstiming*1.17336;
-     pfpdstempo*0.02202;
-     wm6*7.69468;
-     rt1_scort*0.64730 (theta);
-     rt2_scort*0.64730 (theta);
-     rt3_scort*0.64730 (theta);
-     rt4_scort*0.64730 (theta);
-     ela_plus*3.26845;
-     intercept*17.10109;
-     slope@0;
-     quad*0.00785;
+ INTERCEP ON
+    ELA_PLUS          -0.113      0.022     -5.140      0.000
 
+ QUAD     ON
+    ELA_PLUS          -0.189      0.037     -5.151      0.000
 
+ WM6      ON
+    INTERCEPT          0.139      0.022      6.445      0.000
+    QUAD               0.035      0.041      0.862      0.389
 
-TECHNICAL 1 OUTPUT
+ WM6      ON
+    ELA_PLUS          -0.105      0.022     -4.676      0.000
+    PFPDSTIMIN         0.041      0.023      1.794      0.073
+    PFPDSTEMPO         0.109      0.022      5.014      0.000
 
+ PFPDSTIM ON
+    ELA_PLUS          -0.188      0.021     -8.896      0.000
 
-     PARAMETER SPECIFICATION
+ PFPDSTEM ON
+    ELA_PLUS          -0.233      0.022    -10.423      0.000
 
+ INTERCEP WITH
+    SLOPE            999.000    999.000    999.000    999.000
+    QUAD               0.095      0.056      1.690      0.091
+    PFPDSTIMIN         0.007      0.022      0.320      0.749
 
-           NU
-              PFPDSTIM      PFPDSTEM      WM6           RT1_SCOR      RT2_SCOR
-              ________      ________      ________      ________      ________
-                  0             0             0             0             0
+ SLOPE    WITH
+    QUAD             999.000    999.000    999.000    999.000
+    ELA_PLUS         999.000    999.000    999.000    999.000
 
+ PFPDSTIM WITH
+    PFPDSTEMPO         0.272      0.022     12.286      0.000
 
-           NU
-              RT3_SCOR      RT4_SCOR      ELA_PLUS
-              ________      ________      ________
-                  0             0             0
+ Means
+    ELA_PLUS           1.014      0.018     57.082      0.000
+    SLOPE            999.000    999.000    999.000    999.000
 
+ Intercepts
+    PFPDSTIMIN        11.094      0.158     70.413      0.000
+    PFPDSTEMPO         3.842      0.068     56.917      0.000
+    WM6                4.045      0.462      8.764      0.000
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.000      0.000    999.000    999.000
+    RT3_SCORT          0.000      0.000    999.000    999.000
+    RT4_SCORT          0.000      0.000    999.000    999.000
+    INTERCEPT         14.054      0.247     56.900      0.000
+    QUAD              -2.976      0.251    -11.867      0.000
 
-           LAMBDA
-              INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
-              ________      ________      ________      ________      ________
- PFPDSTIM           0             0             0             0             0
- PFPDSTEM           0             0             0             0             0
- WM6                0             0             0             0             0
- RT1_SCOR           0             0             0             0             0
- RT2_SCOR           0             0             0             0             0
- RT3_SCOR           0             0             0             0             0
- RT4_SCOR           0             0             0             0             0
- ELA_PLUS           0             0             0             0             0
+ Variances
+    ELA_PLUS           1.000      0.000    999.000    999.000
+    SLOPE            999.000    999.000    999.000    999.000
+
+ Residual Variances
+    PFPDSTIMIN         0.965      0.008    121.202      0.000
+    PFPDSTEMPO         0.946      0.010     90.583      0.000
+    WM6                0.938      0.010     91.209      0.000
+    RT1_SCORT          0.036      0.003     13.253      0.000
+    RT2_SCORT          0.036      0.003     13.300      0.000
+    RT3_SCORT          0.035      0.003     13.309      0.000
+    RT4_SCORT          0.033      0.003     12.953      0.000
+    INTERCEPT          0.987      0.005    197.953      0.000
+    QUAD               0.964      0.014     69.512      0.000
 
 
-           LAMBDA
-              WM6           ELA_PLUS
-              ________      ________
- PFPDSTIM           0             0
- PFPDSTEM           0             0
- WM6                0             0
- RT1_SCOR           0             0
- RT2_SCOR           0             0
- RT3_SCOR           0             0
- RT4_SCOR           0             0
- ELA_PLUS           0             0
+STD Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_SCORT          4.162      0.074     56.468      0.000
+    RT2_SCORT          4.162      0.074     56.468      0.000
+    RT3_SCORT          4.162      0.074     56.468      0.000
+    RT4_SCORT          4.162      0.074     56.468      0.000
+
+ SLOPE    BY
+    RT1_SCORT        999.000    999.000    999.000    999.000
+    RT2_SCORT        999.000    999.000    999.000    999.000
+    RT3_SCORT        999.000    999.000    999.000    999.000
+    RT4_SCORT        999.000    999.000    999.000    999.000
+
+ QUAD     BY
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.090      0.007     13.020      0.000
+    RT3_SCORT          0.361      0.028     13.020      0.000
+    RT4_SCORT          0.812      0.062     13.020      0.000
+
+ INTERCEP ON
+    ELA_PLUS          -0.063      0.012     -5.156      0.000
+
+ QUAD     ON
+    ELA_PLUS          -0.105      0.020     -5.162      0.000
+
+ WM6      ON
+    INTERCEPT          0.399      0.062      6.434      0.000
+    QUAD               0.100      0.116      0.862      0.389
+
+ WM6      ON
+    ELA_PLUS          -0.166      0.036     -4.645      0.000
+    PFPDSTIMIN         0.105      0.059      1.797      0.072
+    PFPDSTEMPO         2.039      0.403      5.054      0.000
+
+ PFPDSTIM ON
+    ELA_PLUS          -0.115      0.013     -8.760      0.000
+
+ PFPDSTEM ON
+    ELA_PLUS          -0.020      0.002    -10.368      0.000
+
+ INTERCEP WITH
+    SLOPE            999.000    999.000    999.000    999.000
+    QUAD               0.095      0.056      1.690      0.091
+    PFPDSTIMIN         0.008      0.024      0.320      0.749
+
+ SLOPE    WITH
+    QUAD             999.000    999.000    999.000    999.000
+    ELA_PLUS         999.000    999.000    999.000    999.000
+
+ PFPDSTIM WITH
+    PFPDSTEMPO         0.044      0.004     11.760      0.000
+
+ Means
+    ELA_PLUS           1.833      0.042     43.540      0.000
+    SLOPE            999.000    999.000    999.000    999.000
+
+ Intercepts
+    PFPDSTIMIN        12.236      0.035    347.858      0.000
+    PFPDSTEMPO         0.586      0.005    124.064      0.000
+    WM6               11.587      1.289      8.991      0.000
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.000      0.000    999.000    999.000
+    RT3_SCORT          0.000      0.000    999.000    999.000
+    RT4_SCORT          0.000      0.000    999.000    999.000
+    INTERCEPT         14.054      0.247     56.900      0.000
+    QUAD              -2.976      0.251    -11.867      0.000
+
+ Variances
+    ELA_PLUS           3.267      0.132     24.711      0.000
+    SLOPE            999.000    999.000    999.000    999.000
+
+ Residual Variances
+    PFPDSTIMIN         1.174      0.035     33.779      0.000
+    PFPDSTEMPO         0.022      0.001     30.617      0.000
+    WM6                7.695      0.301     25.533      0.000
+    RT1_SCORT          0.648      0.045     14.397      0.000
+    RT2_SCORT          0.648      0.045     14.397      0.000
+    RT3_SCORT          0.648      0.045     14.397      0.000
+    RT4_SCORT          0.648      0.045     14.397      0.000
+    INTERCEPT          0.987      0.005    197.953      0.000
+    QUAD               0.964      0.014     69.512      0.000
 
 
-           THETA
-              PFPDSTIM      PFPDSTEM      WM6           RT1_SCOR      RT2_SCOR
-              ________      ________      ________      ________      ________
- PFPDSTIM           0
- PFPDSTEM           0             0
- WM6                0             0             0
- RT1_SCOR           0             0             0             1
- RT2_SCOR           0             0             0             0             1
- RT3_SCOR           0             0             0             0             0
- RT4_SCOR           0             0             0             0             0
- ELA_PLUS           0             0             0             0             0
+R-SQUARE
 
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
 
-           THETA
-              RT3_SCOR      RT4_SCOR      ELA_PLUS
-              ________      ________      ________
- RT3_SCOR           1
- RT4_SCOR           0             1
- ELA_PLUS           0             0             0
+    PFPDSTIM           0.035      0.008      4.448      0.000
+    PFPDSTEM           0.054      0.010      5.212      0.000
+    WM6                0.062      0.010      6.037      0.000
+    RT1_SCOR           0.964      0.003    354.363      0.000
+    RT2_SCOR           0.964      0.003    357.542      0.000
+    RT3_SCOR           0.965      0.003    365.550      0.000
+    RT4_SCOR           0.967      0.003    374.875      0.000
 
+     Latent                                         Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
 
-           ALPHA
-              INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
-              ________      ________      ________      ________      ________
-                  2             3             4             5             6
-
-
-           ALPHA
-              WM6           ELA_PLUS
-              ________      ________
-                  7             8
-
-
-           BETA
-              INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
-              ________      ________      ________      ________      ________
- INTERCEP           0             0             0             0             0
- SLOPE              0             0             0             0             0
- QUAD               0             0             0             0             0
- PFPDSTIM           0             0             0             0             0
- PFPDSTEM           0             0             0             0             0
- WM6               14            15            16            17            18
- ELA_PLUS           0             0             0             0             0
-
-
-           BETA
-              WM6           ELA_PLUS
-              ________      ________
- INTERCEP           0             9
- SLOPE              0            10
- QUAD               0            11
- PFPDSTIM           0            12
- PFPDSTEM           0            13
- WM6                0            19
- ELA_PLUS           0             0
-
-
-           PSI
-              INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
-              ________      ________      ________      ________      ________
- INTERCEP          20
- SLOPE              0             0
- QUAD              21             0            22
- PFPDSTIM          23             0             0            24
- PFPDSTEM           0             0             0            25            26
- WM6                0             0             0             0             0
- ELA_PLUS           0             0             0             0             0
-
-
-           PSI
-              WM6           ELA_PLUS
-              ________      ________
- WM6               27
- ELA_PLUS           0            28
-
-
-     STARTING VALUES
-
-
-           NU
-              PFPDSTIM      PFPDSTEM      WM6           RT1_SCOR      RT2_SCOR
-              ________      ________      ________      ________      ________
-                0.000         0.000         0.000         0.000         0.000
-
-
-           NU
-              RT3_SCOR      RT4_SCOR      ELA_PLUS
-              ________      ________      ________
-                0.000         0.000         0.000
-
-
-           LAMBDA
-              INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
-              ________      ________      ________      ________      ________
- PFPDSTIM       0.000         0.000         0.000         1.000         0.000
- PFPDSTEM       0.000         0.000         0.000         0.000         1.000
- WM6            0.000         0.000         0.000         0.000         0.000
- RT1_SCOR       1.000         0.000         0.000         0.000         0.000
- RT2_SCOR       1.000         1.000         1.000         0.000         0.000
- RT3_SCOR       1.000         2.000         4.000         0.000         0.000
- RT4_SCOR       1.000         3.000         9.000         0.000         0.000
- ELA_PLUS       0.000         0.000         0.000         0.000         0.000
-
-
-           LAMBDA
-              WM6           ELA_PLUS
-              ________      ________
- PFPDSTIM       0.000         0.000
- PFPDSTEM       0.000         0.000
- WM6            1.000         0.000
- RT1_SCOR       0.000         0.000
- RT2_SCOR       0.000         0.000
- RT3_SCOR       0.000         0.000
- RT4_SCOR       0.000         0.000
- ELA_PLUS       0.000         1.000
-
-
-           THETA
-              PFPDSTIM      PFPDSTEM      WM6           RT1_SCOR      RT2_SCOR
-              ________      ________      ________      ________      ________
- PFPDSTIM       0.000
- PFPDSTEM       0.000         0.000
- WM6            0.000         0.000         0.000
- RT1_SCOR       0.000         0.000         0.000         8.746
- RT2_SCOR       0.000         0.000         0.000         0.000         9.279
- RT3_SCOR       0.000         0.000         0.000         0.000         0.000
- RT4_SCOR       0.000         0.000         0.000         0.000         0.000
- ELA_PLUS       0.000         0.000         0.000         0.000         0.000
-
-
-           THETA
-              RT3_SCOR      RT4_SCOR      ELA_PLUS
-              ________      ________      ________
- RT3_SCOR       9.450
- RT4_SCOR       0.000         9.563
- ELA_PLUS       0.000         0.000         0.000
-
-
-           ALPHA
-              INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
-              ________      ________      ________      ________      ________
-                0.000         0.000         0.000        12.026         0.550
-
-
-           ALPHA
-              WM6           ELA_PLUS
-              ________      ________
-               18.920         1.822
-
-
-           BETA
-              INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
-              ________      ________      ________      ________      ________
- INTERCEP       0.000         0.000         0.000         0.000         0.000
- SLOPE          0.000         0.000         0.000         0.000         0.000
- QUAD           0.000         0.000         0.000         0.000         0.000
- PFPDSTIM       0.000         0.000         0.000         0.000         0.000
- PFPDSTEM       0.000         0.000         0.000         0.000         0.000
- WM6            0.000         0.000         0.000         0.000         0.000
- ELA_PLUS       0.000         0.000         0.000         0.000         0.000
-
-
-           BETA
-              WM6           ELA_PLUS
-              ________      ________
- INTERCEP       0.000         0.000
- SLOPE          0.000         0.000
- QUAD           0.000         0.000
- PFPDSTIM       0.000         0.000
- PFPDSTEM       0.000         0.000
- WM6            0.000         0.000
- ELA_PLUS       0.000         0.000
-
-
-           PSI
-              INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
-              ________      ________      ________      ________      ________
- INTERCEP       0.050
- SLOPE          0.000         0.000
- QUAD           0.000         0.000         0.050
- PFPDSTIM       0.000         0.000         0.000         0.608
- PFPDSTEM       0.000         0.000         0.000         0.000         0.012
- WM6            0.000         0.000         0.000         0.000         0.000
- ELA_PLUS       0.000         0.000         0.000         0.000         0.000
-
-
-           PSI
-              WM6           ELA_PLUS
-              ________      ________
- WM6            4.113
- ELA_PLUS       0.000         1.630
+    INTERCEP           0.013      0.005      2.570      0.010
+    QUAD               0.036      0.014      2.576      0.010
 
 
 TECHNICAL 4 OUTPUT
@@ -736,7 +685,7 @@ TECHNICAL 4 OUTPUT
            ESTIMATED MEANS FOR THE LATENT VARIABLES
               INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
               ________      ________      ________      ________      ________
-               58.019         0.794        -0.286        12.026         0.550
+               58.018         0.793        -0.286        12.026         0.550
 
 
            ESTIMATED MEANS FOR THE LATENT VARIABLES
@@ -745,46 +694,196 @@ TECHNICAL 4 OUTPUT
                18.916         1.833
 
 
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
+              ________      ________      ________      ________      ________
+                0.094         0.031         0.009         0.024         0.003
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              WM6           ELA_PLUS
+              ________      ________
+                0.062         0.042
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
+              ________      ________      ________      ________      ________
+              619.305        25.794       -30.799       490.919       162.308
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              WM6           ELA_PLUS
+              ________      ________
+              307.060        43.540
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              WM6           ELA_PLUS
+              ________      ________
+                0.000         0.000
+
+
            ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
               INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
               ________      ________      ________      ________      ________
- INTERCEP       1.217
- SLOPE          0.051         0.023
- QUAD           0.311         0.066         8.205
- PFPDSTIM       0.125         0.016         1.889        17.952
- PFPDSTEM       0.137         0.018         1.928        17.366        18.085
- WM6            0.148         0.020         1.989        17.495        17.594
- ELA_PLUS       0.159         0.022         2.073        17.692        17.833
+ INTERCEP      17.325
+ SLOPE          0.000         0.000
+ QUAD           0.043         0.000         0.008
+ PFPDSTIM       0.129         0.000         0.004         1.217
+ PFPDSTEM       0.017         0.000         0.001         0.051         0.023
+ WM6            1.898         0.000         0.020         0.311         0.066
+ ELA_PLUS      -0.852         0.000        -0.031        -0.375        -0.064
 
 
            ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
               WM6           ELA_PLUS
               ________      ________
- WM6           18.471
- ELA_PLUS      18.184        19.390
+ WM6            8.205
+ ELA_PLUS      -0.830         3.267
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
+              ________      ________      ________      ________      ________
+ INTERCEP       0.614
+ SLOPE          0.000         0.000
+ QUAD           0.019         0.000         0.001
+ PFPDSTIM       0.101         0.000         0.001         0.036
+ PFPDSTEM       0.004         0.000         0.000         0.004         0.001
+ WM6            0.257         0.000         0.010         0.071         0.009
+ ELA_PLUS       0.170         0.000         0.006         0.045         0.007
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              WM6           ELA_PLUS
+              ________      ________
+ WM6            0.307
+ ELA_PLUS       0.117         0.132
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
+              ________      ________      ________      ________      ________
+ INTERCEP      28.234
+ SLOPE          0.000         0.000
+ QUAD           2.212         0.000         6.510
+ PFPDSTIM       1.283         0.000         3.990        34.194
+ PFPDSTEM       4.398         0.000         4.219        13.664        31.031
+ WM6            7.389         0.000         1.906         4.403         7.091
+ ELA_PLUS      -5.021         0.000        -5.128        -8.414        -9.425
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              WM6           ELA_PLUS
+              ________      ________
+ WM6           26.715
+ ELA_PLUS      -7.115        24.711
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
+              ________      ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          1.000         1.000
+ QUAD           0.027         1.000         0.000
+ PFPDSTIM       0.200         1.000         0.000         0.000
+ PFPDSTEM       0.000         1.000         0.000         0.000         0.000
+ WM6            0.000         1.000         0.057         0.000         0.000
+ ELA_PLUS       0.000         1.000         0.000         0.000         0.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              WM6           ELA_PLUS
+              ________      ________
+ WM6            0.000
+ ELA_PLUS       0.000         0.000
 
 
            ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
               INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
               ________      ________      ________      ________      ________
  INTERCEP       1.000
- SLOPE          0.304         1.000
- QUAD           0.098         0.151         1.000
- PFPDSTIM       0.027         0.025         0.156         1.000
- PFPDSTEM       0.029         0.028         0.158         0.964         1.000
- WM6            0.031         0.031         0.162         0.961         0.963
- ELA_PLUS       0.033         0.033         0.164         0.948         0.952
+ SLOPE        999.000       999.000
+ QUAD           0.114       999.000         1.000
+ PFPDSTIM       0.028       999.000         0.036         1.000
+ PFPDSTEM       0.026       999.000         0.044         0.304         1.000
+ WM6            0.159       999.000         0.077         0.098         0.151
+ ELA_PLUS      -0.113       999.000        -0.189        -0.188        -0.233
 
 
            ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
               WM6           ELA_PLUS
               ________      ________
  WM6            1.000
- ELA_PLUS       0.961         1.000
+ ELA_PLUS      -0.160         1.000
 
 
-     Beginning Time:  10:22:37
-        Ending Time:  10:22:38
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
+              ________      ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE        999.000         0.000
+ QUAD           0.055       999.000         0.000
+ PFPDSTIM       0.022       999.000         0.009         0.000
+ PFPDSTEM       0.006       999.000         0.010         0.021         0.000
+ WM6            0.021       999.000         0.041         0.022         0.021
+ ELA_PLUS       0.022       999.000         0.037         0.021         0.022
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              WM6           ELA_PLUS
+              ________      ________
+ WM6            0.000
+ ELA_PLUS       0.022         0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
+              ________      ________      ________      ________      ________
+ INTERCEP     999.000
+ SLOPE          1.000       999.000
+ QUAD           2.055         1.000       999.000
+ PFPDSTIM       1.287         1.000         4.001       999.000
+ PFPDSTEM       4.457         1.000         4.238        14.383       999.000
+ WM6            7.630         1.000         1.857         4.459         7.317
+ ELA_PLUS      -5.140         1.000        -5.151        -8.896       -10.423
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              WM6           ELA_PLUS
+              ________      ________
+ WM6          999.000
+ ELA_PLUS      -7.452       999.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         QUAD          PFPDSTIM      PFPDSTEM
+              ________      ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.317         0.000
+ QUAD           0.040         0.317         0.000
+ PFPDSTIM       0.198         0.317         0.000         0.000
+ PFPDSTEM       0.000         0.317         0.000         0.000         0.000
+ WM6            0.000         0.317         0.063         0.000         0.000
+ ELA_PLUS       0.000         0.317         0.000         0.000         0.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              WM6           ELA_PLUS
+              ________      ________
+ WM6            0.000
+ ELA_PLUS       0.000         0.000
+
+
+     Beginning Time:  09:06:47
+        Ending Time:  09:06:48
        Elapsed Time:  00:00:01
 
 

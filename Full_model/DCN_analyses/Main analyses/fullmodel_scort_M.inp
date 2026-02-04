@@ -65,6 +65,10 @@ intercept WITH pmPDStiming;
 slope WITH pmPDStempo;
 slope ON pmPDStiming;
 
+MODEL INDIRECT: 
+wm6 ind intercept ela_plus;
+wm6 ind pmPDStempo ela_plus; !exploratory
+
 
 OUTPUT: SAMPSTAT STANDARDIZED TECH4;
 
