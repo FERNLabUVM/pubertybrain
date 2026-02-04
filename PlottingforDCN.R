@@ -3,7 +3,7 @@ sessionInfo()
 
 #open libraries
 ##install.packages("sitar")
-install.packages("ggdist")
+##install.packages("ggdist")
 library(haven)
 library(dplyr)
 library(tidyr)
@@ -15,30 +15,23 @@ library(ggdist)
 
 #set working directory
 #MAC:
-#setwd("~/Documents/GitHub/pubertybrain")
-setwd("C:/Users/nchaku/Documents/GitHub/pubertybrain")
+setwd("~/Documents/GitHub/pubertybrain")
+#setwd("C:/Users/nchaku/Documents/GitHub/pubertybrain")
 
-#Run puberty descriptive table
-df <- read_dta("Puberty_timing_tempo_models/Final data/PDS_251230.dta")
+#Look at descriptives
+df <- read.csv("dfmerged.csv")
+
+names(df)
+df <- df %>%
+  select(-sex, -X)
+
+df[df == -999] <- NA
 
 names(df)
 ncol(df)
 length(colnames(df))
 
-# packages
-library(tidyverse)
-library(ggdist)
-library(patchwork)
-
-# label mapping
-measure_labels <- c(
-  yPDStiming = "Youth-reported timing",
-  pPDStiming = "Parent-reported timing",
-  yPDStempo  = "Youth-reported tempo",
-  pPDStempo  = "Parent-reported tempo"
-)
-
-# prepare data
+# --- prepare long data (your code) ---
 df_long <- df %>%
   pivot_longer(
     cols = c(yPDStiming, pPDStiming, yPDStempo, pPDStempo),
@@ -53,11 +46,88 @@ df_long <- df %>%
     )
   )
 
-# split data
+# helper to compute Cohen's d (pooled SD)
+cohen_d_ind <- function(x, g) {
+  # x: numeric vector, g: grouping factor with two levels
+  # returns Cohen's d (group2 - group1, group levels ordered as in g)
+  if (length(levels(g)) != 2) stop("g must have exactly 2 levels")
+  lv <- levels(g)
+  x1 <- x[g == lv[1]]
+  x2 <- x[g == lv[2]]
+  n1 <- sum(!is.na(x1)); n2 <- sum(!is.na(x2))
+  sd1 <- sd(x1, na.rm = TRUE); sd2 <- sd(x2, na.rm = TRUE)
+  # pooled SD
+  sp <- sqrt(((n1 - 1) * sd1^2 + (n2 - 1) * sd2^2) / (n1 + n2 - 2))
+  d <- (mean(x2, na.rm = TRUE) - mean(x1, na.rm = TRUE)) / sp
+  return(d)
+}
+
+# --- compute t-tests + effect sizes + formatted APA label ---
+ttest_apalabels <- df_long %>%
+  group_by(measure) %>%
+  summarise(
+    # run t.test (Welch by default)
+    tt = list(t.test(value ~ male)),
+    # convenience stats for d
+    n_f = sum(male == levels(male)[1] & !is.na(value)),
+    n_m = sum(male == levels(male)[2] & !is.na(value)),
+    mean_f = mean(value[male == levels(male)[1]], na.rm = TRUE),
+    mean_m = mean(value[male == levels(male)[2]], na.rm = TRUE),
+    sd_f = sd(value[male == levels(male)[1]], na.rm = TRUE),
+    sd_m = sd(value[male == levels(male)[2]], na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  rowwise() %>%
+  mutate(
+    t_stat = as.numeric(tt$statistic),
+    df     = as.numeric(tt$parameter),
+    p_val  = as.numeric(tt$p.value),
+    # Cohen's d using pooled SD (direction: Male - Female)
+    d_cohen = cohen_d_ind(
+      x = df_long$value[df_long$measure == measure],
+      g = droplevels(df_long$male[df_long$measure == measure])
+    ),
+    # format p for APA: "< .001" or "= .XXX" (omit leading zero in p)
+    p_text = ifelse(p_val < 0.001, "< .001", paste0("= ", sub("^0", "", sprintf("%.3f", p_val)))),
+    # format t and df: df as integer if close to whole value
+    t_text = sprintf("%.2f", t_stat),
+    df_text = ifelse(abs(df - round(df)) < 1e-6, as.character(round(df)), sprintf("%.1f", df)),
+    d_text = sprintf("%.2f", d_cohen),
+    apa = paste0("t(", df_text, ") = ", t_text, ", p ", p_text, ", d = ", d_text)
+  ) %>%
+  ungroup() %>%
+  select(measure, apa, p_val)
+
+# --- compute safe y positions per measure so labels are visible ---
+y_limits <- df_long %>%
+  group_by(measure) %>%
+  summarise(
+    ymax = max(value, na.rm = TRUE),
+    ymin = min(value, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    yrange = ymax - ymin,
+    y_label = ifelse(yrange > 0, ymax + 0.08 * yrange, ymax + 1)
+  )
+
+ttest_apalabels <- left_join(ttest_apalabels, y_limits, by = "measure")
+
+# --- split for timing / tempo facets ---
 timing_df <- df_long %>% filter(measure %in% c("yPDStiming", "pPDStiming"))
 tempo_df  <- df_long %>% filter(measure %in% c("yPDStempo", "pPDStempo"))
 
-# shared theme
+pvals_timing <- ttest_apalabels %>% filter(measure %in% c("yPDStiming", "pPDStiming"))
+pvals_tempo  <- ttest_apalabels %>% filter(measure %in% c("yPDStempo", "pPDStempo"))
+
+# --- plotting (as before) ---
+measure_labels <- c(
+  yPDStiming = "Youth-reported timing",
+  pPDStiming = "Parent-reported timing",
+  yPDStempo  = "Youth-reported tempo",
+  pPDStempo  = "Parent-reported tempo"
+)
+
 base_theme <- theme_minimal(base_size = 13) +
   theme(
     panel.grid.minor = element_blank(),
@@ -65,64 +135,406 @@ base_theme <- theme_minimal(base_size = 13) +
     strip.text = element_text(face = "bold")
   )
 
-# timing plot
 p_timing <- ggplot(timing_df, aes(x = male, y = value, fill = male, color = male)) +
-  stat_halfeye(
-    adjust = 0.5,
-    width = 0.6,
-    justification = -0.3,
-    alpha = 0.6
+  stat_halfeye(adjust = 0.5, width = 0.6, justification = -0.3, alpha = 0.6) +
+  geom_boxplot(width = 0.15, outlier.shape = NA, alpha = 0.5) +
+  geom_jitter(width = 0.1, size = 1.2, alpha = 0.6) +
+  stat_summary(fun = mean, geom = "point", shape = 18, size = 3, color = "black") +
+  geom_text(
+    data = pvals_timing,
+    aes(x = 1.5, y = y_label, label = apa),
+    inherit.aes = FALSE,
+    size = 3, vjust = 0
   ) +
-  geom_boxplot(
-    width = 0.15,
-    outlier.shape = NA,
-    alpha = 0.5
-  ) +
-  geom_jitter(
-    width = 0.1,
-    size = 1.2,
-    alpha = 0.6
-  ) +
-  facet_wrap(
-    ~ measure,
-    nrow = 1,
-    labeller = as_labeller(measure_labels)
-  ) +
-  scale_y_continuous(limits = c(9, 18), breaks = seq(9, 18, by = 1)) +
+  facet_wrap(~ measure, nrow = 1, labeller = as_labeller(measure_labels)) +
+  scale_y_continuous(breaks = seq(8, 18, by = 1), expand = expansion(mult = c(0, 0.08))) +
   labs(x = NULL, y = "Timing") +
-  base_theme
+  base_theme +
+  coord_cartesian(clip = "off")
 
-# tempo plot
+# tempo plot: remove hard limits 0-1 and allow some top expansion
 p_tempo <- ggplot(tempo_df, aes(x = male, y = value, fill = male, color = male)) +
-  stat_halfeye(
-    adjust = 0.5,
-    width = 0.6,
-    justification = -0.3,
-    alpha = 0.6
+  stat_halfeye(adjust = 0.5, width = 0.6, justification = -0.3, alpha = 0.6) +
+  geom_boxplot(width = 0.15, outlier.shape = NA, alpha = 0.5) +
+  geom_jitter(width = 0.1, size = 1.2, alpha = 0.6) +
+  stat_summary(fun = mean, geom = "point", shape = 18, size = 3, color = "black") +
+  geom_text(
+    data = pvals_tempo,
+    aes(x = 1.5, y = y_label, label = apa),
+    inherit.aes = FALSE,
+    size = 3, vjust = 0
   ) +
-  geom_boxplot(
-    width = 0.15,
-    outlier.shape = NA,
-    alpha = 0.5
-  ) +
-  geom_jitter(
-    width = 0.1,
-    size = 1.2,
-    alpha = 0.6
-  ) +
-  facet_wrap(
-    ~ measure,
-    nrow = 1,
-    labeller = as_labeller(measure_labels)
-  ) +
-  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
+  facet_wrap(~ measure, nrow = 1, labeller = as_labeller(measure_labels)) +
+  scale_y_continuous(breaks = seq(0, 1, by = 0.1), expand = expansion(mult = c(0, 0.12))) +
   labs(x = NULL, y = "Tempo") +
-  base_theme
+  base_theme +
+  coord_cartesian(clip = "off")
 
-# combine: timing first, then tempo
 final_plot <- p_timing / p_tempo
-
 print(final_plot)
+
+names(df)
+
+library(gtsummary)
+library(dplyr)
+library(purrr)
+
+vars <- c(
+  "wmb", "wm6", 
+  "ela_plus",
+  "age_1", "age_2", "age_3", "age_4",
+  "yPDStiming", "pPDStiming", "yPDStempo", "pPDStempo",
+  "T1_totalGMV", "T2_totalGMV", "T3_totalGMV", "T4_totalGMV",
+  "cort_vol_1", "cort_vol_2", "cort_vol_3", "cort_vol_4",
+  "subcort_vol_1", "subcort_vol_2", "subcort_vol_3", "subcort_vol_4"
+)
+
+# 3) Build gtsummary table using vars directly
+tbl <- df %>%
+  mutate(male = factor(male, labels = c("Female", "Male"))) %>%
+  select(all_of(vars), male) %>%
+  tbl_summary(
+    by = male,
+    statistic = all_continuous() ~ "{mean} ({sd})",
+    digits = all_continuous() ~ 2,
+    missing = "no"
+  ) %>%
+  add_overall() %>%
+  add_p(test = all_continuous() ~ "t.test") %>%
+  modify_header(
+    label ~ "",
+    stat_0 ~ "**Overall**",
+    stat_1 ~ "**Female**",
+    stat_2 ~ "**Male**",
+    p.value ~ "**p**"
+  ) %>%
+  bold_labels()
+
+df <- df %>%
+  mutate(male = factor(male, levels = c(0, 1), labels = c("Female", "Male")))
+
+effect_sizes <- map_dfr(vars, function(v) {
+  tmp <- df %>%
+    select(all_of(v), male) %>%   # <-- FIXED: all_of(v), not vars
+    filter(!is.na(.data[[v]]), !is.na(male))
+  
+  # check groups present
+  if (nlevels(tmp$male) != 2 ||
+      sum(tmp$male == "Female") < 2 ||
+      sum(tmp$male == "Male") < 2) {
+    return(tibble(
+      variable = v,
+      d = NA_real_,
+      n_female = sum(tmp$male == "Female"),
+      n_male   = sum(tmp$male == "Male")
+    ))
+  }
+  
+  x_f <- tmp[[v]][tmp$male == "Female"]
+  x_m <- tmp[[v]][tmp$male == "Male"]
+  n_f <- length(x_f)
+  n_m <- length(x_m)
+  
+  sd_f <- sd(x_f, na.rm = TRUE)
+  sd_m <- sd(x_m, na.rm = TRUE)
+  
+  sp <- sqrt(((n_f - 1) * sd_f^2 + (n_m - 1) * sd_m^2) / (n_f + n_m - 2))
+  d  <- (mean(x_m, na.rm = TRUE) - mean(x_f, na.rm = TRUE)) / sp
+  
+  tibble(
+    variable = v,
+    d = round(d, 2),
+    n_female = n_f,
+    n_male   = n_m
+  )
+})
+
+print(effect_sizes, n = Inf)
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(patchwork)
+library(purrr)
+
+# Helper to pivot a family (columns -> wave/value)
+pivot_family <- function(df, cols, family_name, wave_labels = c("Baseline","Year 2","Year 4","Year 6")) {
+  df %>%
+    select(ID, male, all_of(cols)) %>%
+    pivot_longer(
+      cols = all_of(cols),
+      names_to = "wave_raw",
+      values_to = "value"
+    ) %>%
+    mutate(
+      wave = factor(wave_raw, levels = cols, labels = wave_labels),
+      family = family_name
+    )
+}
+
+# Pivot each family
+gmv_long <- pivot_family(df_long,
+                         cols = c("T1_totalGMV","T2_totalGMV","T3_totalGMV","T4_totalGMV"),
+                         family_name = "Total GMV")
+
+cort_long <- pivot_family(df_long,
+                          cols = c("cort_vol_1","cort_vol_2","cort_vol_3","cort_vol_4"),
+                          family_name = "Cortical volume")
+
+subcort_long <- pivot_family(df_long,
+                             cols = c("subcort_vol_1","subcort_vol_2","subcort_vol_3","subcort_vol_4"),
+                             family_name = "Subcortical volume")
+
+# Plotting function: Male & Female overlaid (mean +/- SE ribbon, mean line & points)
+set.seed(123)  # reproducible
+frac_individuals <- 0.10
+
+plot_overlay_se_with_inds <- function(df_family, ylab, title, y_lim, y_breaks, frac = frac_individuals) {
+  
+  # sample IDs by sex
+  sampled_ids <- df_family %>%
+    distinct(ID, male) %>%
+    group_by(male) %>%
+    slice_sample(prop = frac) %>%
+    pull(ID)
+  
+  df_ind <- df_family %>% filter(ID %in% sampled_ids)
+  
+  ggplot(df_family, aes(x = wave, y = value, group = male, color = male, fill = male)) +
+    
+    # faint individual trajectories (subset) - inherit aes so x/y available
+    geom_line(
+      data = df_ind,
+      aes(group = ID),
+      alpha = 0.15,
+      linewidth = 0.2,
+      inherit.aes = TRUE
+    ) +
+    
+    # mean +/- SE ribbon, line, points
+    stat_summary(fun.data = mean_se, geom = "ribbon", alpha = 0.18, show.legend = FALSE) +
+    stat_summary(fun = mean, geom = "line", linewidth = 1) +
+    stat_summary(fun = mean, geom = "point", size = 2) +
+    
+    labs(x = "Wave", y = ylab, color = "Sex", fill = "Sex", title = title) +
+    theme_minimal(base_size = 13) +
+    theme(
+      legend.position = "top",
+      legend.title = element_text(face = "bold"),
+      plot.title = element_text(face = "bold", hjust = 0.5),
+      panel.grid.minor = element_blank()
+    ) +
+    
+    # *zoom* without dropping data
+    coord_cartesian(ylim = y_lim) +
+    scale_y_continuous(breaks = y_breaks)
+}
+
+# build plots with requested axis zooms (using coord_cartesian so rows aren't removed)
+p_gmv <- plot_overlay_se_with_inds(
+  gmv_long, "Total GMV", "Total GMV",
+  y_lim = c(500000, 700000),
+  y_breaks = seq(500000, 700000, by = 50000)
+)
+
+p_cort <- plot_overlay_se_with_inds(
+  cort_long, "Cortical volume", "Cortical Volume",
+  y_lim = c(500000, 700000),
+  y_breaks = seq(500000, 700000, by = 50000)
+)
+
+p_subcort <- plot_overlay_se_with_inds(
+  subcort_long, "Subcortical volume", "Subcortical Volume",
+  y_lim = c(50000, 70000),
+  y_breaks = seq(50000, 70000, by = 5000)
+)
+
+final_plot <- (p_gmv / p_cort / p_subcort) + plot_layout(heights = c(1,1,1))
+print(final_plot)
+
+stats <- df %>%
+  group_by(male) %>%
+  summarise(
+    N_total      = n(),
+    N_nonmissing = sum(!is.na(ela_plus)),
+    mean = mean(ela_plus, na.rm = TRUE),
+    sd   = sd(ela_plus, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+stats
+
+#Make ELA plot
+counts_fac <- df %>%
+  filter(!is.na(ela_plus)) %>%
+  count(male, bin = cut(ela_plus, breaks = 0:10, right = FALSE, include.lowest = TRUE)) %>%
+  group_by(male) %>%
+  summarise(ymax = max(n, na.rm = TRUE), .groups = "drop")
+
+ann_fac <- stats %>%
+  left_join(counts_fac, by = "male") %>%
+  mutate(
+    x = 8.8,
+    y = ifelse(is.na(ymax), 1, ymax * 0.92),   # fallback if no counts
+    label = sprintf("Mean = %.2f\nSD = %.2f", mean, sd)
+  )
+
+counts_ov <- df %>%
+  filter(!is.na(ela_plus)) %>%
+  count(male, bin = cut(ela_plus, breaks = 0:10, right = FALSE, include.lowest = TRUE))
+
+ymax_global <- if (nrow(counts_ov) == 0) 1 else max(counts_ov$n, na.rm = TRUE)
+
+ann_ov <- stats %>%
+  mutate(
+    x = 8.8,
+    y = ymax_global * c(0.92, 0.80)[as.integer(male)],
+    label = sprintf("%s: Mean = %.2f, SD = %.2f", male, mean, sd)
+  )
+
+p_hist_faceted <- ggplot(df %>% filter(!is.na(ela_plus)), aes(x = ela_plus)) +
+  geom_histogram(breaks = 0:10, closed = "left", color = "black", fill = "grey80") +
+  facet_wrap(~male) +
+  labs(x = "Early-Life Adversity (ELA)", y = "Count") +
+  theme_minimal()
+
+p_hist_overlay <- ggplot(df %>% filter(!is.na(ela_plus)), aes(x = ela_plus, fill = male)) +
+  geom_histogram(position = "identity", alpha = 0.45, breaks = 0:10, color = "black") +
+  labs(x = "Early-Life Adversity (ELA)", y = "Count") +
+  theme_minimal()
+
+p1 <- p_hist_faceted +
+  geom_label(
+    data = ann_fac,
+    inherit.aes = FALSE,
+    aes(x = x, y = y, label = label, fill = male),
+    color = "white",
+    label.size = 0,
+    alpha = 0.90,
+    show.legend = FALSE
+  )
+
+p1
+
+p2 <- p_hist_overlay +
+  geom_label(
+    data = ann_ov,
+    inherit.aes = FALSE,
+    aes(x = x, y = y, label = label, fill = male),
+    color = "white",
+    label.size = 0,
+    alpha = 0.90,
+    show.legend = FALSE
+  )
+
+p2
+
+names(df)
+
+library(corrplot)
+library(ggcorrplot)
+
+vars <- c("subcort_vol_4", "subcort_vol_3", "subcort_vol_2","subcort_vol_1",  
+  "cort_vol_4", "cort_vol_3", "cort_vol_2",   "cort_vol_1", 
+  "T4_totalGMV", "T3_totalGMV", "T2_totalGMV",   "T1_totalGMV", 
+  "pPDStempo", "yPDStempo", "pPDStiming",   "yPDStiming", 
+  "ela_plus", "wm6", "wmb" 
+)
+
+mat_male <- df %>% filter(male == "Male")   %>% select(all_of(vars)) %>% as.matrix()
+mat_fem  <- df %>% filter(male == "Female") %>% select(all_of(vars)) %>% as.matrix()
+
+# rcorr returns list r and P
+rc_male <- Hmisc::rcorr(mat_male, type = "pearson")
+rc_fem  <- Hmisc::rcorr(mat_fem,  type = "pearson")
+
+r_male <- rc_male$r
+p_male <- rc_male$P
+
+r_fem  <- rc_fem$r
+p_fem  <- rc_fem$P
+
+# --- 4) build combined matrices: upper = male, lower = female, diag = 1 and p=0 ---
+n <- length(vars)
+corr_combined <- matrix(NA_real_, nrow = n, ncol = n, dimnames = list(vars, vars))
+p_combined    <- matrix(NA_real_, nrow = n, ncol = n, dimnames = list(vars, vars))
+
+# upper triangle (strictly upper) -> male
+corr_combined[upper.tri(corr_combined)] <- r_male[upper.tri(r_male)]
+p_combined[upper.tri(p_combined)]       <- p_male[upper.tri(p_male)]
+
+# lower triangle (strictly lower) -> female
+corr_combined[lower.tri(corr_combined)] <- r_fem[lower.tri(r_fem)]
+p_combined[lower.tri(p_combined)]       <- p_fem[lower.tri(p_fem)]
+
+# diagonal -> 1 and p = 0 (won't be used but keeps things tidy)
+diag(corr_combined) <- 1
+diag(p_combined)    <- 0
+
+# --- 5) plot with ggcorrplot, blanking non-significant entries (alpha = 0.05) ---
+alpha_sig <- 0.05
+
+var_labels <- c(
+  wmb = "Working memory (Baseline)",
+  wm6 = "Working memory (Year 6)",
+  ela_plus = "ELA",
+  yPDStiming = "PDS timing (youth-reported)",
+  pPDStiming = "PDS timing (parent-reported)",
+  yPDStempo  = "PDS tempo (youth-reported)",
+  pPDStempo  = "PDS tempo (parent-reported)",
+  T1_totalGMV = "Total GMV (Baseline)",
+  T2_totalGMV = "Total GMV (Year 2)",
+  T3_totalGMV = "Total GMV (Year 4)",
+  T4_totalGMV = "Total GMV (Year 6)",
+  cort_vol_1 = "Cortical volume (Baseline)",
+  cort_vol_2 = "Cortical volume (Year 2)",
+  cort_vol_3 = "Cortical volume (Year 4)",
+  cort_vol_4 = "Cortical volume (Year 6)",
+  subcort_vol_1 = "Subcortical volume (Baseline)",
+  subcort_vol_2 = "Subcortical volume (Year 2)",
+  subcort_vol_3 = "Subcortical volume (Year 4)",
+  subcort_vol_4 = "Subcortical volume (Year 6)"
+)
+
+pretty_names <- var_labels[colnames(corr_combined)]
+
+# safety check
+if (any(is.na(pretty_names))) {
+  stop("Missing labels for: ",
+       paste(names(pretty_names)[is.na(pretty_names)], collapse = ", "))
+}
+
+colnames(corr_combined) <- pretty_names
+rownames(corr_combined) <- pretty_names
+
+colnames(p_combined) <- pretty_names
+rownames(p_combined) <- pretty_names
+
+ggcorrplot(
+  corr_combined,
+  method = "square",
+  type = "full",
+  lab = TRUE,
+  lab_size = 2.5,
+  hc.order = FALSE,      # FALSE so we keep the exact variable order you provided
+  outline.col = "gray80",
+  ggtheme = ggplot2::theme_minimal(),
+  colors = c("#2166AC", "white", "#B2182B"),
+  p.mat = p_combined,    # provide p matrix
+  insig = "blank",       # blank out non-significant correlations
+  sig.level = alpha_sig
+) +
+  theme_minimal(base_size = 12) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.text.y = element_text(size = 9)
+  ) +
+  labs(
+    title = "Correlation Matrix (Upper = Male, Lower = Female)",
+    subtitle = paste0("Only correlations with p < ", alpha_sig, " are shown (Pearson).")
+  )
+
+
 
 
 

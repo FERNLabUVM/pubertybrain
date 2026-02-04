@@ -15,7 +15,10 @@ require(sitar)
 #set working directory
 
 #Natasha:
+#setwd("C:/Users/nchaku/Documents/GitHub/pubertybrain")
 setwd("C:/Users/nchaku/Documents/GitHub/pubertybrain")
+setwd("~/Documents/GitHub/pubertybrain")
+
 #Alexis:
 #setwd("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/pubertybrain/")
 
@@ -23,11 +26,10 @@ setwd("C:/Users/nchaku/Documents/GitHub/pubertybrain")
 
 #Open data
 dfpub <- read_dta("Puberty_timing_tempo_models/Final data/PDS_251230.dta")
-dfbrain <- read.csv("GMV_timing_tempo_models/gmv_mplus.csv")
+dfbrain <- read.csv("GMV_timing_tempo_models/Flux analyses/gmv_mplus.csv")
 wmem <- read_dta("Working_memory/WRKMEM_251230.dta")
 
 #transform wmem to wide format
-
 wmem <- wmem %>%
   filter(year %in% c(1, 4)) %>%
   pivot_wider(
@@ -46,14 +48,16 @@ sum(!is.na(wmem$wm6))
 
 ######ELA plus composite (from 5.1 data release)###########
 
-ELA <- read.csv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/pubertybrain/ela_plus_abcd.csv") %>%
+#ELA <- read.csv("/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/pubertybrain/ela_plus_abcd.csv") %>%
+#  filter(eventname == "baseline_year_1_arm_1")
+
+ELA <- read.csv("ela_plus_abcd.csv") %>%
   filter(eventname == "baseline_year_1_arm_1")
 
 hist(ELA$ela_plus)
 table(ELA$ela_plus)
 
 ####standardize IDs and merge across 5.1 and 6.0
-
 #Clean IDs in 5.1
 ELA <- ELA %>%
   mutate(ID = paste0("sub-", sub("NDAR_INV", "", src_subject_id))) %>%
@@ -65,7 +69,6 @@ ELA <- ELA %>%
   select(ID, ela_plus)
 
 ####merge all####
-
 dfmerged <- dfbrain %>%
   left_join(dfpub, by = "ID") %>%
   left_join(wmem, by = "ID") %>%
@@ -75,19 +78,19 @@ dfmerged <- dfbrain %>%
 #because if they are not in dfbrain then they were not included in the 6.0 release (or they are missing ALL imaging data)
 
 #final n=5041
-
 write.csv(dfmerged, "dfmerged.csv", row.names = TRUE)
+write_dta(dfmerged, "dfmerged.dta")
 
 #format for mplus
-
+names(dfmerged)
 dfmerged_mplus <- dfmerged %>%
-  select(-ID,-mpfPDS,-mpmPDS) %>%
+  select(-ID, -male, -yPDStiming, -pPDStiming, -yPDStempo, -pPDStempo) %>%
   select(numeric_id, everything())
 
 dfmerged_mplus <- dfmerged_mplus %>%
   mutate(across(everything(), ~ ifelse(is.na(.), -999, .)))
 
-write.table(dfmerged_mplus,'/Users/ab3377/Library/CloudStorage/OneDrive-UniversityofVermont/OneDrive/Manuscripts/reg report DCN/pubertybrain/dfmerged_mplus.dat', row.names = FALSE, col.names = FALSE)
+write.table(dfmerged_mplus,'dfmerged_mplus.dat', row.names = FALSE, col.names = FALSE)
 
 colnames(dfmerged_mplus)
 
