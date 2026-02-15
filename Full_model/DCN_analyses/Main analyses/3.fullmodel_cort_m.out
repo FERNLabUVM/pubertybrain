@@ -1,6 +1,6 @@
-Mplus VERSION 8.11
+Mplus VERSION 8.8 (Mac)
 MUTHEN & MUTHEN
-02/04/2026  12:53 PM
+02/15/2026   6:46 PM
 
 INPUT INSTRUCTIONS
 
@@ -75,9 +75,9 @@ INPUT INSTRUCTIONS
   wm6 ON ela_plus;
   wm6 ON pmPDStiming pmPDStempo slope intercept;
 
-  !MODEL INDIRECT:
-  !wm6 ind intercept ela_plus;
-  !wm6 ind pmPDStempo ela_plus; !exploratory
+  MODEL INDIRECT:
+  wm6 ind intercept ela_plus;
+  wm6 ind pmPDStempo ela_plus; !exploratory
 
   OUTPUT: SAMPSTAT STANDARDIZED TECH4 CINTERVAL;
 
@@ -672,6 +672,95 @@ R-SQUARE
     SLOPE              0.147      0.028      5.206      0.000
 
 
+TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect     -0.063      0.010     -6.098      0.000
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS          -0.027      0.007     -3.983      0.000
+
+  Specific indirect 2
+    WM6
+    PMPDSTEM
+    ELA_PLUS          -0.036      0.008     -4.744      0.000
+
+
+
+STANDARDIZED TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect     -0.038      0.006     -6.178      0.000
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS          -0.016      0.004     -3.975      0.000
+
+  Specific indirect 2
+    WM6
+    PMPDSTEM
+    ELA_PLUS          -0.021      0.004     -4.821      0.000
+
+
+
+STDY Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect     -0.038      0.006     -6.178      0.000
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS          -0.016      0.004     -3.975      0.000
+
+  Specific indirect 2
+    WM6
+    PMPDSTEM
+    ELA_PLUS          -0.021      0.004     -4.821      0.000
+
+
+
+STD Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect     -0.063      0.010     -6.098      0.000
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS          -0.027      0.007     -3.983      0.000
+
+  Specific indirect 2
+    WM6
+    PMPDSTEM
+    ELA_PLUS          -0.036      0.008     -4.744      0.000
+
+
+
+
 CONFIDENCE INTERVALS OF MODEL RESULTS
 
                   Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
@@ -725,28 +814,28 @@ CONFIDENCE INTERVALS OF MODEL RESULTS
     ELA_PLUS         1.718       1.742       1.754       1.818       1.882       1.894       1.918
 
  Intercepts
-    PMPDSTIMIN      13.985      14.004      14.013      14.064      14.115      14.125      14.144
-    PMPDSTEMPO       0.482       0.484       0.485       0.491       0.497       0.498       0.500
+    PMPDSTIM        13.985      14.004      14.013      14.064      14.115      14.125      14.144
+    PMPDSTEM         0.482       0.484       0.485       0.491       0.497       0.498       0.500
     WM6              6.444       7.305       7.745      10.044      12.343      12.783      13.644
     RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
     RT2_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
     RT3_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
     RT4_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
-    INTERCEPT      624.053     625.046     625.554     628.208     630.861     631.369     632.363
+    INTERCEP       624.053     625.046     625.554     628.208     630.861     631.369     632.363
     SLOPE         -111.956    -108.504    -106.738     -97.517     -88.295     -86.529     -83.077
 
  Variances
     ELA_PLUS         2.818       2.893       2.932       3.133       3.334       3.372       3.448
 
  Residual Variances
-    PMPDSTIMIN       0.955       0.974       0.984       1.034       1.084       1.093       1.112
-    PMPDSTEMPO       0.013       0.013       0.014       0.014       0.015       0.015       0.015
+    PMPDSTIM         0.955       0.974       0.984       1.034       1.084       1.093       1.112
+    PMPDSTEM         0.013       0.013       0.014       0.014       0.015       0.015       0.015
     WM6              7.336       7.550       7.659       8.229       8.799       8.909       9.122
     RT1_CORT       111.047     115.557     117.863     129.909     141.956     144.262     148.772
     RT2_CORT       111.047     115.557     117.863     129.909     141.956     144.262     148.772
     RT3_CORT       111.047     115.557     117.863     129.909     141.956     144.262     148.772
     RT4_CORT       111.047     115.557     117.863     129.909     141.956     144.262     148.772
-    INTERCEPT     2499.665    2552.115    2578.944    2719.054    2859.163    2885.993    2938.442
+    INTERCEP      2499.665    2552.115    2578.944    2719.054    2859.163    2885.993    2938.442
     SLOPE           64.260      73.925      78.869     104.686     130.503     135.447     145.112
 
 
@@ -806,28 +895,28 @@ STDYX Standardization
     ELA_PLUS         0.983       0.993       0.999       1.027       1.055       1.061       1.072
 
  Intercepts
-    PMPDSTIMIN      13.312      13.436      13.500      13.832      14.165      14.229      14.353
-    PMPDSTEMPO       3.896       3.935       3.955       4.061       4.166       4.186       4.226
+    PMPDSTIM        13.312      13.436      13.500      13.832      14.165      14.229      14.353
+    PMPDSTEM         3.896       3.935       3.955       4.061       4.166       4.186       4.226
     WM6              2.112       2.417       2.573       3.387       4.202       4.358       4.663
     RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
     RT2_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
     RT3_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
     RT4_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
-    INTERCEPT       11.454      11.568      11.626      11.931      12.236      12.294      12.408
+    INTERCEP        11.454      11.568      11.626      11.931      12.236      12.294      12.408
     SLOPE          -10.441     -10.049      -9.849      -8.803      -7.756      -7.556      -7.164
 
  Variances
     ELA_PLUS         1.000       1.000       1.000       1.000       1.000       1.000       1.000
 
  Residual Variances
-    PMPDSTIMIN       1.000       1.000       1.000       1.000       1.000       1.000       1.000
-    PMPDSTEMPO       0.953       0.957       0.959       0.971       0.983       0.985       0.989
+    PMPDSTIM         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    PMPDSTEM         0.953       0.957       0.959       0.971       0.983       0.985       0.989
     WM6              0.905       0.913       0.916       0.936       0.955       0.959       0.966
     RT1_CORT         0.038       0.039       0.040       0.045       0.049       0.050       0.052
     RT2_CORT         0.039       0.040       0.041       0.046       0.050       0.051       0.053
     RT3_CORT         0.040       0.041       0.042       0.047       0.052       0.053       0.054
     RT4_CORT         0.040       0.042       0.043       0.048       0.053       0.054       0.056
-    INTERCEPT        0.965       0.969       0.971       0.981       0.991       0.992       0.996
+    INTERCEP         0.965       0.969       0.971       0.981       0.991       0.992       0.996
     SLOPE            0.780       0.798       0.807       0.853       0.899       0.908       0.926
 
 
@@ -884,28 +973,28 @@ STDY Standardization
     ELA_PLUS         0.983       0.993       0.999       1.027       1.055       1.061       1.072
 
  Intercepts
-    PMPDSTIMIN      13.312      13.436      13.500      13.832      14.165      14.229      14.353
-    PMPDSTEMPO       3.896       3.935       3.955       4.061       4.166       4.186       4.226
+    PMPDSTIM        13.312      13.436      13.500      13.832      14.165      14.229      14.353
+    PMPDSTEM         3.896       3.935       3.955       4.061       4.166       4.186       4.226
     WM6              2.112       2.417       2.573       3.387       4.202       4.358       4.663
     RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
     RT2_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
     RT3_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
     RT4_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
-    INTERCEPT       11.454      11.568      11.626      11.931      12.236      12.294      12.408
+    INTERCEP        11.454      11.568      11.626      11.931      12.236      12.294      12.408
     SLOPE          -10.441     -10.049      -9.849      -8.803      -7.756      -7.556      -7.164
 
  Variances
     ELA_PLUS         1.000       1.000       1.000       1.000       1.000       1.000       1.000
 
  Residual Variances
-    PMPDSTIMIN       1.000       1.000       1.000       1.000       1.000       1.000       1.000
-    PMPDSTEMPO       0.953       0.957       0.959       0.971       0.983       0.985       0.989
+    PMPDSTIM         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    PMPDSTEM         0.953       0.957       0.959       0.971       0.983       0.985       0.989
     WM6              0.905       0.913       0.916       0.936       0.955       0.959       0.966
     RT1_CORT         0.038       0.039       0.040       0.045       0.049       0.050       0.052
     RT2_CORT         0.039       0.040       0.041       0.046       0.050       0.051       0.053
     RT3_CORT         0.040       0.041       0.042       0.047       0.052       0.053       0.054
     RT4_CORT         0.040       0.042       0.043       0.048       0.053       0.054       0.056
-    INTERCEPT        0.965       0.969       0.971       0.981       0.991       0.992       0.996
+    INTERCEP         0.965       0.969       0.971       0.981       0.991       0.992       0.996
     SLOPE            0.780       0.798       0.807       0.853       0.899       0.908       0.926
 
 
@@ -962,29 +1051,114 @@ STD Standardization
     ELA_PLUS         1.718       1.742       1.754       1.818       1.882       1.894       1.918
 
  Intercepts
-    PMPDSTIMIN      13.985      14.004      14.013      14.064      14.115      14.125      14.144
-    PMPDSTEMPO       0.482       0.484       0.485       0.491       0.497       0.498       0.500
+    PMPDSTIM        13.985      14.004      14.013      14.064      14.115      14.125      14.144
+    PMPDSTEM         0.482       0.484       0.485       0.491       0.497       0.498       0.500
     WM6              6.444       7.305       7.745      10.044      12.343      12.783      13.644
     RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
     RT2_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
     RT3_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
     RT4_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
-    INTERCEPT       11.454      11.568      11.626      11.931      12.236      12.294      12.408
+    INTERCEP        11.454      11.568      11.626      11.931      12.236      12.294      12.408
     SLOPE          -10.441     -10.049      -9.849      -8.803      -7.756      -7.556      -7.164
 
  Variances
     ELA_PLUS         2.818       2.893       2.932       3.133       3.334       3.372       3.448
 
  Residual Variances
-    PMPDSTIMIN       0.955       0.974       0.984       1.034       1.084       1.093       1.112
-    PMPDSTEMPO       0.013       0.013       0.014       0.014       0.015       0.015       0.015
+    PMPDSTIM         0.955       0.974       0.984       1.034       1.084       1.093       1.112
+    PMPDSTEM         0.013       0.013       0.014       0.014       0.015       0.015       0.015
     WM6              7.336       7.550       7.659       8.229       8.799       8.909       9.122
     RT1_CORT       111.047     115.557     117.863     129.909     141.956     144.262     148.772
     RT2_CORT       111.047     115.557     117.863     129.909     141.956     144.262     148.772
     RT3_CORT       111.047     115.557     117.863     129.909     141.956     144.262     148.772
     RT4_CORT       111.047     115.557     117.863     129.909     141.956     144.262     148.772
-    INTERCEPT        0.965       0.969       0.971       0.981       0.991       0.992       0.996
+    INTERCEP         0.965       0.969       0.971       0.981       0.991       0.992       0.996
     SLOPE            0.780       0.798       0.807       0.853       0.899       0.908       0.926
+
+
+CONFIDENCE INTERVALS OF TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect   -0.090      -0.083      -0.080      -0.063      -0.046      -0.043      -0.036
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS        -0.045      -0.041      -0.039      -0.027      -0.016      -0.014      -0.010
+
+  Specific indirect 2
+    WM6
+    PMPDSTEM
+    ELA_PLUS        -0.055      -0.051      -0.048      -0.036      -0.023      -0.021      -0.016
+
+
+
+CONFIDENCE INTERVALS OF STANDARDIZED TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+
+
+STDYX Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect   -0.053      -0.050      -0.048      -0.038      -0.028      -0.026      -0.022
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS        -0.027      -0.024      -0.023      -0.016      -0.010      -0.008      -0.006
+
+  Specific indirect 2
+    WM6
+    PMPDSTEM
+    ELA_PLUS        -0.033      -0.030      -0.029      -0.021      -0.014      -0.013      -0.010
+
+
+
+STDY Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect   -0.053      -0.050      -0.048      -0.038      -0.028      -0.026      -0.022
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS        -0.027      -0.024      -0.023      -0.016      -0.010      -0.008      -0.006
+
+  Specific indirect 2
+    WM6
+    PMPDSTEM
+    ELA_PLUS        -0.033      -0.030      -0.029      -0.021      -0.014      -0.013      -0.010
+
+
+
+STD Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect   -0.090      -0.083      -0.080      -0.063      -0.046      -0.043      -0.036
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS        -0.045      -0.041      -0.039      -0.027      -0.016      -0.014      -0.010
+
+  Specific indirect 2
+    WM6
+    PMPDSTEM
+    ELA_PLUS        -0.055      -0.051      -0.048      -0.036      -0.023      -0.021      -0.016
+
+
 
 
 TECHNICAL 4 OUTPUT
@@ -1177,17 +1351,9 @@ TECHNICAL 4 OUTPUT
  ELA_PLUS       0.000
 
 
-DIAGRAM INFORMATION
-
-  Use View Diagram under the Diagram menu in the Mplus Editor to view the diagram.
-  If running Mplus from the Mplus Diagrammer, the diagram opens automatically.
-
-  Diagram output
-    c:\users\nchaku\documents\github\pubertybrain\full_model\dcn_analyses\main analyses\3.fullmodel_cort_m.dgm
-
-     Beginning Time:  12:53:38
-        Ending Time:  12:53:38
-       Elapsed Time:  00:00:00
+     Beginning Time:  18:46:44
+        Ending Time:  18:46:45
+       Elapsed Time:  00:00:01
 
 
 
@@ -1200,4 +1366,4 @@ Fax: (310) 391-8971
 Web: www.StatModel.com
 Support: Support@StatModel.com
 
-Copyright (c) 1998-2024 Muthen & Muthen
+Copyright (c) 1998-2022 Muthen & Muthen

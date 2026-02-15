@@ -73,11 +73,13 @@ pfPDStempo ON ela_plus;
 wm6 ON ela_plus;
 wm6 ON pfPDStiming pfPDStempo slope intercept;
 
+MODEL INDIRECT: 
+wm6 ind intercept ela_plus;
+wm6 ind pfPDStempo ela_plus; !exploratory
+
 OUTPUT: SAMPSTAT STANDARDIZED TECH4 CINTERVAL;
 
-!PLOT:
-!    TYPE = PLOT3;                       ! enables LOOP function plots
-!    SERIES = rT1_TOTAL-rT4_TOTAL (*);   ! optional: shows observed/model means over waves
+
 
 
 
