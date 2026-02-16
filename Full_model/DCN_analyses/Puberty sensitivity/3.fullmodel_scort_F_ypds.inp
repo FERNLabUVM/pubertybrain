@@ -1,0 +1,100 @@
+TITLE:	full model - FEMALE
+
+DATA:
+FILE IS dfmerged_mplus.dat;
+
+DEFINE:
+  ! Rescale large variables to avoid variance > 1,000,000
+  ! r indicates rescaled
+  rT1_scort = subcort_vol_1 / 1000;
+  rT2_scort = subcort_vol_2 / 1000;
+  rT3_scort = subcort_vol_3 / 1000;
+  rT4_scort = subcort_vol_4 / 1000;
+
+VARIABLE:	
+
+NAMES = 
+numeric_id sex 
+age_1 age_2 age_3 age_4
+subcort_vol_1 subcort_vol_2 subcort_vol_3 subcort_vol_4
+cort_vol_1 cort_vol_2 cort_vol_3 cort_vol_4
+fam_ID
+T1_totalGMV T2_totalGMV T3_totalGMV T4_totalGMV
+yfPDStiming yfPDStempo pfPDStiming pfPDStempo
+ymPDStiming ymPDStempo pmPDStiming pmPDStempo
+wmb wm6 
+ela_plus;
+     
+MISSING = ALL (-999);
+
+USEVAR = 
+yfPDStiming yfPDStempo
+ela_plus
+wm6
+rT1_scort rT2_scort rT3_scort rT4_scort;
+
+USEOBS are sex EQ 2;
+CLUSTER = fam_ID;
+
+ANALYSIS:
+TYPE = COMPLEX;
+ESTIMATOR = MLR;
+ITERATIONS = 10000;
+	
+MODEL:	intercept by rT1_scort-rT4_scort@1;
+	intercept;
+	[intercept];
+	slope BY rT1_scort@0
+		rT2_scort@1
+		rT3_scort@2
+		rT4_scort@3;
+	slope@0;
+	[slope];
+	
+	quad BY rT1_scort@0 
+	        rT2_scort@1
+	        rT3_scort@4 
+	        rT4_scort@9;
+	quad; 
+	[quad];
+	
+	
+	intercept WITH slope@0;
+	intercept WITH quad;    ! remove covariances with quad, npd matrix
+	slope WITH quad@0;
+	
+	rT1_scort-rT4_scort (theta); !theta forces variances to be equal over time
+	[rT1_scort-rT4_scort@0];
+
+yfPDStiming; 
+yfPDStempo;
+ela_plus;
+wm6;
+
+intercept WITH yfPDStiming yfPDStempo;
+slope WITH yfPDStempo;
+quad WITH yfPDStempo;
+yfPDStiming WITH yfPDStempo;
+
+slope ON yfPDStiming;
+quad ON yfPDStiming;
+intercept ON ela_plus;
+slope ON ela_plus;
+quad ON ela_plus;
+yfPDStiming ON ela_plus;
+yfPDStempo ON ela_plus;
+wm6 ON ela_plus;
+wm6 ON yfPDStiming yfPDStempo slope intercept quad;
+
+MODEL INDIRECT: 
+wm6 ind intercept ela_plus;
+wm6 ind yfPDStempo ela_plus; !exploratory
+
+OUTPUT: SAMPSTAT STANDARDIZED TECH4 CINTERVAL;
+
+!PLOT:
+!    TYPE = PLOT3;                       ! enables LOOP function plots
+!    SERIES = rT1_TOTAL-rT4_TOTAL (*);   ! optional: shows observed/model means over waves
+
+
+
