@@ -75,7 +75,7 @@ pmPDStempo ON ela_plus;
 !wm6 ind intercept ela_plus;
 !wm6 ind pmPDStempo ela_plus; !exploratory
 
-OUTPUT: SAMPSTAT STANDARDIZED TECH4;
+OUTPUT: SAMPSTAT STANDARDIZED TECH4 CINTERVAL;
 
 !PLOT:
 !    TYPE = PLOT3;                       ! enables LOOP function plots
