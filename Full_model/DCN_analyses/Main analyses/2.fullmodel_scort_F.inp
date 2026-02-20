@@ -72,17 +72,17 @@ ela_plus;
 !wm6;
 
 intercept WITH pfPDStiming pfPDStempo;
-slope WITH pfPDStempo;
+slope WITH pfPDStempo@0;
 quad WITH pfPDStempo;
 pfPDStiming WITH pfPDStempo;
 
-slope ON pfPDStiming;
+slope ON pfPDStiming@0;
 quad ON pfPDStiming;
 intercept ON ela_plus;
-slope ON ela_plus;
+slope ON ela_plus@0;;
 quad ON ela_plus;
-!pfPDStiming ON ela_plus;
-!pfPDStempo ON ela_plus;
+pfPDStiming ON ela_plus;
+pfPDStempo ON ela_plus;
 !wm6 ON ela_plus;
 !wm6 ON pfPDStiming pfPDStempo slope intercept quad;
 
