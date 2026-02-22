@@ -1,0 +1,498 @@
+Mplus VERSION 8.8 (Mac)
+MUTHEN & MUTHEN
+02/22/2026   5:37 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE:	full model - FEMALE
+
+  DATA:
+  FILE IS dfmerged_mplus.dat;
+
+  DEFINE:
+    ! Rescale large variables to avoid variance > 1,000,000
+    ! r indicates rescaled
+    rT1_cort = cort_vol_1 / 1000;
+    rT2_cort = cort_vol_2 / 1000;
+    rT3_cort = cort_vol_3 / 1000;
+    rT4_cort = cort_vol_4 / 1000;
+
+  VARIABLE:	
+  NAMES =
+  numeric_id sex
+  age_1 age_2 age_3 age_4
+  subcort_vol_1 subcort_vol_2 subcort_vol_3 subcort_vol_4
+  cort_vol_1 cort_vol_2 cort_vol_3 cort_vol_4
+  fam_ID
+  T1_totalGMV T2_totalGMV T3_totalGMV T4_totalGMV
+  yfPDStiming yfPDStempo pfPDStiming pfPDStempo
+  ymPDStiming ymPDStempo pmPDStiming pmPDStempo
+  wmb wm6
+  ela_plus;
+
+  MISSING = ALL (-999);
+
+  USEVAR =
+  pfPDStiming pfPDStempo
+  ela_plus
+  wmb
+  wm6
+  rT1_cort rT2_cort rT3_cort rT4_cort;
+
+
+  USEOBS are sex EQ 2;
+  CLUSTER = fam_ID;
+
+  ANALYSIS:
+  TYPE = COMPLEX;
+  ESTIMATOR = MLR;
+  ITERATIONS = 10000;
+  	
+  MODEL:	
+      intercept by rT1_cort-rT4_cort@1;
+  	intercept;
+  	[intercept];
+  	
+      slope BY rT1_cort@0
+  		rT2_cort*
+  		rT3_cort*
+  		rT4_cort@1;
+      slope;
+  	[slope];
+  	
+      intercept WITH slope;
+  	rT1_cort-rT4_cort (theta); !theta forces variances to be equal over time
+  	[rT1_cort-rT4_cort@0];
+  	
+  pfPDStiming;
+  pfPDStempo;
+  ela_plus;
+  wmb wm6;
+
+  !WM latent change score
+  WMB_l BY wmb@1;
+  WM6_l BY wm6@1;
+  !the latent true scores yt1 and yt2
+  WMB_l@0;
+  WM6_l@0;
+  !the residual variances of the observed variables (Yt1, Yt2) are fixed to 0
+  [WMB_l@0];
+  [WM6_l@0];
+  !the intercepts of the observed variables (Yt1, Yt2) are fixed to 0
+  WM6_l on WMB_l@1;
+  !the autoregressive parameter (fixed to 1)
+  Change by WM6_l@1;
+  !the latent change factor (the factor loading is fixed to 1)
+
+
+  WMB_l;
+  !the variance of the latent true score at T1 (yt1) is freely estimated
+  [WMB_l];
+  !the mean of the latent true score at T1 (yt1) is freely estimated
+  Change;
+  !the variance of the latent change factor is freely estimated
+  [Change];
+  !the mean of the latent change factor is freely estimated
+  WM6_l@0;
+  !the residual variance of the latent true score at T2 (yt2) is fixed to 0
+  [WM6_l@0];
+  !the intercept of the latent true score at T2 (yt2) is fixed to 0
+
+  intercept WITH pfPDStiming pfPDStempo;
+  slope WITH pfPDStempo;
+  pfPDStiming WITH pfPDStempo;
+
+  slope ON pfPDStiming;
+  intercept ON ela_plus;
+  slope ON ela_plus;
+  pfPDStiming ON ela_plus;
+  pfPDStempo ON ela_plus;
+  Change ON ela_plus;
+  Change ON pfPDStiming pfPDStempo slope intercept;
+
+  MODEL INDIRECT:
+  Change ind intercept ela_plus;
+  Change ind pfPDStempo ela_plus; !exploratory
+
+  OUTPUT: SAMPSTAT STANDARDIZED TECH4 CINTERVAL;
+
+
+
+
+
+
+
+
+*** WARNING in VARIABLE command
+  When a subpopulation is analyzed with TYPE=COMPLEX, standard errors
+  may be incorrect.  Use the SUBPOPULATION option instead of the
+  USEOBSERVATIONS option to obtain correct standard errors.
+*** WARNING in VARIABLE command
+  Note that only the first 8 characters of variable names are used in the output.
+  Shorten variable names to avoid any confusion.
+   2 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+full model - FEMALE
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                        2397
+
+Number of dependent variables                                    8
+Number of independent variables                                  1
+Number of continuous latent variables                            5
+
+Observed dependent variables
+
+  Continuous
+   PFPDSTIMIN  PFPDSTEMPO  WMB         WM6         RT1_CORT    RT2_CORT
+   RT3_CORT    RT4_CORT
+
+Observed independent variables
+   ELA_PLUS
+
+Continuous latent variables
+   INTERCEP    SLOPE       WMB_L       WM6_L       CHANGE
+
+Variables with special functions
+
+  Cluster variable      FAM_ID
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Maximum number of iterations                                 10000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+
+Input data file(s)
+  dfmerged_mplus.dat
+
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            58
+     Number of clusters                       2064
+
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              PFPDSTIM      PFPDSTEM      WMB           WM6           RT1_CORT
+              ________      ________      ________      ________      ________
+ PFPDSTIM       0.998
+ PFPDSTEM       0.993         0.995
+ WMB            0.983         0.980         0.985
+ WM6            0.965         0.963         0.953         0.967
+ RT1_CORT       0.990         0.987         0.977         0.960         0.992
+ RT2_CORT       0.830         0.827         0.820         0.808         0.827
+ RT3_CORT       0.611         0.609         0.604         0.592         0.607
+ RT4_CORT       0.809         0.805         0.796         0.788         0.803
+ ELA_PLUS       0.942         0.940         0.932         0.913         0.938
+
+
+           Covariance Coverage
+              RT2_CORT      RT3_CORT      RT4_CORT      ELA_PLUS
+              ________      ________      ________      ________
+ RT2_CORT       0.832
+ RT3_CORT       0.523         0.612
+ RT4_CORT       0.679         0.522         0.809
+ ELA_PLUS       0.790         0.583         0.767         0.945
+
+
+SAMPLE STATISTICS
+
+
+     ESTIMATED SAMPLE STATISTICS
+
+
+           Means
+              PFPDSTIM      PFPDSTEM      WMB           WM6           RT1_CORT
+              ________      ________      ________      ________      ________
+               12.020         0.552        16.047        18.914       576.538
+
+
+           Means
+              RT2_CORT      RT3_CORT      RT4_CORT      ELA_PLUS
+              ________      ________      ________      ________
+              564.167       538.395       520.988         1.832
+
+
+           Covariances
+              PFPDSTIM      PFPDSTEM      WMB           WM6           RT1_CORT
+              ________      ________      ________      ________      ________
+ PFPDSTIM       1.201
+ PFPDSTEM       0.052         0.022
+ WMB            0.297         0.070         8.364
+ WM6            0.347         0.068         3.760         8.220
+ RT1_CORT       5.707         1.007        26.588        27.626      2305.078
+ RT2_CORT       9.036         1.389        27.023        28.518      2224.523
+ RT3_CORT      12.182         1.287        24.400        28.289      2184.882
+ RT4_CORT       9.240         1.147        24.736        26.939      2067.036
+ ELA_PLUS      -0.365        -0.059        -0.904        -0.842       -12.067
+
+
+           Covariances
+              RT2_CORT      RT3_CORT      RT4_CORT      ELA_PLUS
+              ________      ________      ________      ________
+ RT2_CORT    2373.553
+ RT3_CORT    2249.187      2402.913
+ RT4_CORT    2106.364      2166.749      2123.782
+ ELA_PLUS     -13.415       -13.621       -13.405         3.264
+
+
+           Correlations
+              PFPDSTIM      PFPDSTEM      WMB           WM6           RT1_CORT
+              ________      ________      ________      ________      ________
+ PFPDSTIM       1.000
+ PFPDSTEM       0.318         1.000
+ WMB            0.094         0.162         1.000
+ WM6            0.110         0.160         0.453         1.000
+ RT1_CORT       0.108         0.141         0.191         0.201         1.000
+ RT2_CORT       0.169         0.191         0.192         0.204         0.951
+ RT3_CORT       0.227         0.176         0.172         0.201         0.928
+ RT4_CORT       0.183         0.167         0.186         0.204         0.934
+ ELA_PLUS      -0.184        -0.219        -0.173        -0.163        -0.139
+
+
+           Correlations
+              RT2_CORT      RT3_CORT      RT4_CORT      ELA_PLUS
+              ________      ________      ________      ________
+ RT2_CORT       1.000
+ RT3_CORT       0.942         1.000
+ RT4_CORT       0.938         0.959         1.000
+ ELA_PLUS      -0.152        -0.154        -0.161         1.000
+
+
+     MAXIMUM LOG-LIKELIHOOD VALUE FOR THE UNRESTRICTED (H1) MODEL IS -52516.036
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     PFPDSTIMING          12.021       0.154       8.829    0.04%      11.070     11.687     11.958
+            2392.000       1.201      -0.226      15.171    0.04%      12.258     12.960
+     PFPDSTEMPO            0.553      -0.211       0.108    0.04%       0.427      0.522      0.558
+            2385.000       0.022      -0.116       0.982    0.04%       0.596      0.681
+     WMB                  16.052      -0.413       1.000    0.08%      14.000     16.000     16.000
+            2362.000       8.338       0.798      26.000    0.04%      17.000     18.000
+     WM6                  18.920      -0.307       0.000    0.04%      17.000     18.000     19.000
+            2318.000       8.225       1.187      26.000    1.04%      20.000     21.000
+     RT1_CORT            576.678       0.181     433.222    0.04%     537.170    563.547    575.170
+            2378.000    2284.353       0.233     777.738    0.04%     587.167    616.420
+     RT2_CORT            564.370       0.128     391.164    0.05%     523.856    550.353    563.330
+            1994.000    2403.425       0.186     782.661    0.05%     574.930    606.589
+     RT3_CORT            539.553       0.238     401.418    0.07%     499.075    524.990    537.567
+            1467.000    2333.347       0.192     753.645    0.07%     550.129    581.144
+     RT4_CORT            521.796       0.168     350.881    0.05%     482.799    508.318    519.777
+            1940.000    2150.510       0.197     731.393    0.05%     532.538    562.007
+     ELA_PLUS              1.822       1.191       0.000   26.81%       0.000      1.000      1.000
+            2264.000       3.261       1.164      10.000    0.04%       2.000      3.000
+
+
+     NO CONVERGENCE.  NUMBER OF ITERATIONS EXCEEDED.
+
+
+
+MODEL RESULTS
+
+                    Estimate
+
+ INTERCEP BY
+    RT1_CORT           1.000
+    RT2_CORT           1.000
+    RT3_CORT           1.000
+    RT4_CORT           1.000
+
+ SLOPE    BY
+    RT1_CORT           0.000
+    RT2_CORT           0.236
+    RT3_CORT           0.296
+    RT4_CORT           1.000
+
+ WMB_L    BY
+    WMB                1.000
+
+ WM6_L    BY
+    WM6                1.000
+
+ CHANGE   BY
+    WM6_L              1.000
+
+ WM6_L    ON
+    WMB_L              1.000
+
+ CHANGE   ON
+    SLOPE              0.165
+    INTERCEPT          0.262
+
+ SLOPE    ON
+    PFPDSTIMIN        -1.384
+    ELA_PLUS           5.796
+
+ INTERCEP ON
+    ELA_PLUS           6.069
+
+ CHANGE   ON
+    ELA_PLUS         -12.628
+    PFPDSTIMIN        -6.783
+    PFPDSTEMPO        -1.309
+
+ PFPDSTIM ON
+    ELA_PLUS           2.597
+
+ PFPDSTEM ON
+    ELA_PLUS           0.434
+
+ INTERCEP WITH
+    SLOPE             26.674
+    PFPDSTIMIN       -70.405
+    PFPDSTEMPO        -4.254
+
+ SLOPE    WITH
+    PFPDSTEMPO       -17.606
+
+ ELA_PLUS WITH
+    WMB_L              9.072
+
+ PFPDSTIM WITH
+    PFPDSTEMPO         8.924
+
+ Means
+    ELA_PLUS           1.217
+    WMB_L             -9.898
+
+ Intercepts
+    PFPDSTIMIN        15.180
+    PFPDSTEMPO         0.804
+    WMB               24.969
+    WM6               -0.200
+    RT1_CORT           0.000
+    RT2_CORT           0.000
+    RT3_CORT           0.000
+    RT4_CORT           0.000
+    INTERCEPT        541.279
+    SLOPE              6.486
+    WM6_L              0.000
+    CHANGE           -18.797
+
+ Variances
+    ELA_PLUS           4.420
+    WMB_L              3.645
+
+ Residual Variances
+    PFPDSTIMIN        57.089
+    PFPDSTEMPO         1.520
+    WMB               38.077
+    WM6               52.091
+    RT1_CORT        1878.662
+    RT2_CORT        1878.662
+    RT3_CORT        1878.662
+    RT4_CORT        1878.662
+    INTERCEPT         89.859
+    SLOPE             10.442
+    WM6_L              0.000
+    CHANGE            47.309
+
+
+
+MODEL COMMAND WITH FINAL ESTIMATES USED AS STARTING VALUES
+
+     intercept BY rt1_cort@1;
+     intercept BY rt2_cort@1;
+     intercept BY rt3_cort@1;
+     intercept BY rt4_cort@1;
+     slope BY rt1_cort@0;
+     slope BY rt2_cort*0.23583;
+     slope BY rt3_cort*0.29627;
+     slope BY rt4_cort@1;
+     wmb_l BY wmb@1;
+     wm6_l BY wm6@1;
+
+     change BY wm6_l@1;
+
+     slope ON pfpdstiming*-1.38403;
+     slope ON ela_plus*5.79573;
+     intercept ON ela_plus*6.06852;
+     change ON ela_plus*-12.62777;
+     change ON pfpdstiming*-6.78304;
+     change ON pfpdstempo*-1.30948;
+     wm6_l ON wmb_l@1;
+     change ON slope*0.16492;
+     change ON intercept*0.26214;
+     pfpdstiming ON ela_plus*2.59711;
+     pfpdstempo ON ela_plus*0.43450;
+
+     pfpdstiming WITH pfpdstempo*8.92419;
+     intercept WITH slope*26.67351;
+     intercept WITH pfpdstiming*-70.40514;
+     intercept WITH pfpdstempo*-4.25434;
+     slope WITH pfpdstempo*-17.60615;
+     ela_plus WITH wmb_l*9.07164;
+
+     [ pfpdstiming*15.18025 ];
+     [ pfpdstempo*0.80427 ];
+     [ wmb*24.96857 ];
+     [ wm6*-0.19982 ];
+     [ rt1_cort@0 ];
+     [ rt2_cort@0 ];
+     [ rt3_cort@0 ];
+     [ rt4_cort@0 ];
+     [ ela_plus*1.21677 ];
+     [ intercept*541.27863 ];
+     [ slope*6.48650 ];
+     [ wmb_l*-9.89827 ];
+     [ wm6_l@0 ];
+     [ change*-18.79727 ];
+
+     pfpdstiming*57.08882;
+     pfpdstempo*1.51981;
+     wmb*38.07675;
+     wm6*52.09083;
+     rt1_cort*1878.66211 (theta);
+     rt2_cort*1878.66211 (theta);
+     rt3_cort*1878.66211 (theta);
+     rt4_cort*1878.66211 (theta);
+     ela_plus*4.41979;
+     intercept*89.85853;
+     slope*10.44244;
+     wmb_l*3.64494;
+     wm6_l@0;
+     change*47.30865;
+
+
+
+     Beginning Time:  17:37:28
+        Ending Time:  17:37:31
+       Elapsed Time:  00:00:03
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2022 Muthen & Muthen
