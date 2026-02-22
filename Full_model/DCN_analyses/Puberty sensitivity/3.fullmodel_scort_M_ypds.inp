@@ -27,7 +27,7 @@ ela_plus;
 MISSING = ALL (-999);
 
 USEVAR = 
-pmPDStiming pmPDStempo
+ymPDStiming ymPDStempo
 ela_plus
 wm6
 rT1_scort rT2_scort rT3_scort rT4_scort;
@@ -54,26 +54,26 @@ MODEL:	intercept by rT1_scort-rT4_scort@1;
 	rT1_scort-rT4_scort (theta); !theta forces variances to be equal over time
 	[rT1_scort-rT4_scort@0];
 	
-pmPDStiming; 
-pmPDStempo;
+ymPDStiming; 
+ymPDStempo;
 ela_plus;
 wm6;
 
-intercept WITH pmPDStiming pmPDStempo;
-slope WITH pmPDStempo;
-pmPDStiming WITH pmPDStempo;
+intercept WITH ymPDStiming ymPDStempo;
+slope WITH ymPDStempo;
+ymPDStiming WITH ymPDStempo;
 
-slope ON pmPDStiming;
+slope ON ymPDStiming;
 intercept ON ela_plus;
 slope ON ela_plus;
-pmPDStiming ON ela_plus;
-pmPDStempo ON ela_plus;
+ymPDStiming ON ela_plus;
+ymPDStempo ON ela_plus;
 wm6 ON ela_plus;
-wm6 ON pmPDStiming pmPDStempo slope intercept;
+wm6 ON ymPDStiming ymPDStempo slope intercept;
 
 MODEL INDIRECT: 
 wm6 ind intercept ela_plus;
-wm6 ind pmPDStempo ela_plus; !exploratory
+wm6 ind ymPDStempo ela_plus; !exploratory
 
 OUTPUT: SAMPSTAT STANDARDIZED TECH4 CINTERVAL;
 

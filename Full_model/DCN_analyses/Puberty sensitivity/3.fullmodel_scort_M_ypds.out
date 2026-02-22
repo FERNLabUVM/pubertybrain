@@ -1,0 +1,1371 @@
+Mplus VERSION 8.8 (Mac)
+MUTHEN & MUTHEN
+02/22/2026   4:21 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE:	full model - MALE
+
+  DATA:
+  FILE IS dfmerged_mplus.dat;
+
+  DEFINE:
+    ! Rescale large variables to avoid variance > 1,000,000
+    ! r indicates rescaled
+    rT1_scort = subcort_vol_1 / 1000;
+    rT2_scort = subcort_vol_2 / 1000;
+    rT3_scort = subcort_vol_3 / 1000;
+    rT4_scort = subcort_vol_4 / 1000;
+
+  VARIABLE:	
+  NAMES =
+  numeric_id sex
+  age_1 age_2 age_3 age_4
+  subcort_vol_1 subcort_vol_2 subcort_vol_3 subcort_vol_4
+  cort_vol_1 cort_vol_2 cort_vol_3 cort_vol_4
+  fam_ID
+  T1_totalGMV T2_totalGMV T3_totalGMV T4_totalGMV
+  yfPDStiming yfPDStempo pfPDStiming pfPDStempo
+  ymPDStiming ymPDStempo pmPDStiming pmPDStempo
+  wmb wm6
+  ela_plus;
+
+  MISSING = ALL (-999);
+
+  USEVAR =
+  ymPDStiming ymPDStempo
+  ela_plus
+  wm6
+  rT1_scort rT2_scort rT3_scort rT4_scort;
+
+  USEOBS are sex EQ 1;
+  CLUSTER = fam_ID;
+
+  ANALYSIS:
+
+  TYPE = COMPLEX;
+  ESTIMATOR = MLR;
+  ITERATIONS = 10000;
+  	
+  MODEL:	intercept by rT1_scort-rT4_scort@1;
+  	intercept;
+  	[intercept];
+  	slope BY rT1_scort@0
+  		rT2_scort*
+  		rT3_scort*
+  		rT4_scort@1;
+  	slope;
+  	[slope];
+  	intercept WITH slope;
+  	rT1_scort-rT4_scort (theta); !theta forces variances to be equal over time
+  	[rT1_scort-rT4_scort@0];
+  	
+  ymPDStiming;
+  ymPDStempo;
+  ela_plus;
+  wm6;
+
+  intercept WITH ymPDStiming ymPDStempo;
+  slope WITH ymPDStempo;
+  ymPDStiming WITH ymPDStempo;
+
+  slope ON ymPDStiming;
+  intercept ON ela_plus;
+  slope ON ela_plus;
+  ymPDStiming ON ela_plus;
+  ymPDStempo ON ela_plus;
+  wm6 ON ela_plus;
+  wm6 ON ymPDStiming ymPDStempo slope intercept;
+
+  MODEL INDIRECT:
+  wm6 ind intercept ela_plus;
+  wm6 ind ymPDStempo ela_plus; !exploratory
+
+  OUTPUT: SAMPSTAT STANDARDIZED TECH4 CINTERVAL;
+
+  !PLOT:
+  !    TYPE = PLOT3;                       ! enables LOOP function plots
+  !    SERIES = rT1_TOTAL-rT4_TOTAL (*);   ! optional: shows observed/model means over waves
+
+
+
+
+
+
+*** WARNING in VARIABLE command
+  When a subpopulation is analyzed with TYPE=COMPLEX, standard errors
+  may be incorrect.  Use the SUBPOPULATION option instead of the
+  USEOBSERVATIONS option to obtain correct standard errors.
+*** WARNING in VARIABLE command
+  Note that only the first 8 characters of variable names are used in the output.
+  Shorten variable names to avoid any confusion.
+   2 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+full model - MALE
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                        2644
+
+Number of dependent variables                                    7
+Number of independent variables                                  1
+Number of continuous latent variables                            2
+
+Observed dependent variables
+
+  Continuous
+   YMPDSTIMIN  YMPDSTEMPO  WM6         RT1_SCORT   RT2_SCORT   RT3_SCORT
+   RT4_SCORT
+
+Observed independent variables
+   ELA_PLUS
+
+Continuous latent variables
+   INTERCEP    SLOPE
+
+Variables with special functions
+
+  Cluster variable      FAM_ID
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Maximum number of iterations                                 10000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+
+Input data file(s)
+  dfmerged_mplus.dat
+
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            46
+     Number of clusters                       2324
+
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              YMPDSTIM      YMPDSTEM      WM6           RT1_SCOR      RT2_SCOR
+              ________      ________      ________      ________      ________
+ YMPDSTIM       0.997
+ YMPDSTEM       0.989         0.992
+ WM6            0.964         0.959         0.966
+ RT1_SCOR       0.992         0.987         0.961         0.995
+ RT2_SCOR       0.871         0.867         0.846         0.869         0.874
+ RT3_SCOR       0.631         0.628         0.612         0.630         0.567
+ RT4_SCOR       0.809         0.806         0.785         0.807         0.712
+ ELA_PLUS       0.948         0.943         0.918         0.945         0.834
+
+
+           Covariance Coverage
+              RT3_SCOR      RT4_SCOR      ELA_PLUS
+              ________      ________      ________
+ RT3_SCOR       0.632
+ RT4_SCOR       0.539         0.812
+ ELA_PLUS       0.603         0.775         0.950
+
+
+SAMPLE STATISTICS
+
+
+     ESTIMATED SAMPLE STATISTICS
+
+
+           Means
+              YMPDSTIM      YMPDSTEM      WM6           RT1_SCOR      RT2_SCOR
+              ________      ________      ________      ________      ________
+               14.025         0.391        19.059        61.928        62.651
+
+
+           Means
+              RT3_SCOR      RT4_SCOR      ELA_PLUS
+              ________      ________      ________
+               63.563        63.588         1.816
+
+
+           Covariances
+              YMPDSTIM      YMPDSTEM      WM6           RT1_SCOR      RT2_SCOR
+              ________      ________      ________      ________      ________
+ YMPDSTIM       1.035
+ YMPDSTEM       0.004         0.009
+ WM6            0.087         0.051         8.795
+ RT1_SCOR      -0.153         0.042         1.904        21.857
+ RT2_SCOR      -0.303         0.046         1.934        21.928        23.109
+ RT3_SCOR      -0.222         0.052         2.020        22.379        23.064
+ RT4_SCOR      -0.063         0.049         1.954        22.353        23.004
+ ELA_PLUS      -0.065        -0.027        -0.650        -1.078        -1.059
+
+
+           Covariances
+              RT3_SCOR      RT4_SCOR      ELA_PLUS
+              ________      ________      ________
+ RT3_SCOR      24.296
+ RT4_SCOR      23.827        24.650
+ ELA_PLUS      -1.068        -1.093         3.133
+
+
+           Correlations
+              YMPDSTIM      YMPDSTEM      WM6           RT1_SCOR      RT2_SCOR
+              ________      ________      ________      ________      ________
+ YMPDSTIM       1.000
+ YMPDSTEM       0.045         1.000
+ WM6            0.029         0.178         1.000
+ RT1_SCOR      -0.032         0.092         0.137         1.000
+ RT2_SCOR      -0.062         0.099         0.136         0.976         1.000
+ RT3_SCOR      -0.044         0.109         0.138         0.971         0.973
+ RT4_SCOR      -0.013         0.101         0.133         0.963         0.964
+ ELA_PLUS      -0.036        -0.160        -0.124        -0.130        -0.124
+
+
+           Correlations
+              RT3_SCOR      RT4_SCOR      ELA_PLUS
+              ________      ________      ________
+ RT3_SCOR       1.000
+ RT4_SCOR       0.974         1.000
+ ELA_PLUS      -0.122        -0.124         1.000
+
+
+     MAXIMUM LOG-LIKELIHOOD VALUE FOR THE UNRESTRICTED (H1) MODEL IS -29511.782
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     YMPDSTIMING          14.025       0.212      10.990    0.04%      13.183     13.714     13.951
+            2637.000       1.035      -0.051      17.003    0.04%      14.215     14.865
+     YMPDSTEMPO            0.391      -0.212       0.097    0.04%       0.311      0.370      0.395
+            2623.000       0.009      -0.106       0.670    0.04%       0.418      0.478
+     WM6                  19.057      -0.649       0.000    0.12%      17.000     18.000     19.000
+            2555.000       8.796       2.486      26.000    1.21%      20.000     21.000
+     RT1_SCORT            61.927       0.114      46.024    0.04%      58.118     60.718     61.882
+            2630.000      21.862       0.269      80.893    0.04%      63.033     65.770
+     RT2_SCORT            62.654       0.112      47.285    0.04%      58.643     61.413     62.603
+            2310.000      22.949       0.150      81.201    0.04%      63.781     66.713
+     RT3_SCORT            63.643       0.087      47.781    0.06%      59.631     62.309     63.673
+            1672.000      24.078       0.067      81.128    0.06%      64.774     67.674
+     RT4_SCORT            63.632       0.002      41.536    0.05%      59.597     62.535     63.740
+            2146.000      24.586       0.368      82.378    0.05%      64.841     67.653
+     ELA_PLUS              1.809       1.181       0.000   26.22%       0.000      1.000      1.000
+            2513.000       3.131       1.216       9.000    0.28%       2.000      3.000
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       30
+
+Loglikelihood
+
+          H0 Value                      -29623.989
+          H0 Scaling Correction Factor      1.5746
+            for MLR
+          H1 Value                      -29511.782
+          H1 Scaling Correction Factor      1.7706
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                   59307.979
+          Bayesian (BIC)                 59484.380
+          Sample-Size Adjusted BIC       59389.061
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                            102.436*
+          Degrees of Freedom                    14
+          P-Value                           0.0000
+          Scaling Correction Factor         2.1908
+            for MLR
+
+*   The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV cannot be used
+    for chi-square difference testing in the regular way.  MLM, MLR and WLSM
+    chi-square difference testing is described on the Mplus website.  MLMV, WLSMV,
+    and ULSMV difference testing is done using the DIFFTEST option.
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.049
+          90 Percent C.I.                    0.040  0.058
+          Probability RMSEA <= .05           0.563
+
+CFI/TLI
+
+          CFI                                0.990
+          TLI                                0.981
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                           9215.907
+          Degrees of Freedom                    28
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.013
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_SCORT          1.000      0.000    999.000    999.000
+    RT2_SCORT          1.000      0.000    999.000    999.000
+    RT3_SCORT          1.000      0.000    999.000    999.000
+    RT4_SCORT          1.000      0.000    999.000    999.000
+
+ SLOPE    BY
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.412      0.013     31.786      0.000
+    RT3_SCORT          0.960      0.017     58.074      0.000
+    RT4_SCORT          1.000      0.000    999.000    999.000
+
+ SLOPE    ON
+    YMPDSTIMIN         0.051      0.025      2.055      0.040
+    ELA_PLUS          -0.002      0.015     -0.163      0.871
+
+ INTERCEP ON
+    ELA_PLUS          -0.341      0.057     -6.016      0.000
+
+ WM6      ON
+    SLOPE             -0.116      0.187     -0.618      0.536
+    INTERCEPT          0.079      0.017      4.707      0.000
+
+ YMPDSTIM ON
+    ELA_PLUS          -0.021      0.012     -1.733      0.083
+
+ YMPDSTEM ON
+    ELA_PLUS          -0.009      0.001     -8.139      0.000
+
+ WM6      ON
+    ELA_PLUS          -0.138      0.034     -4.064      0.000
+    YMPDSTIMIN         0.077      0.062      1.240      0.215
+    YMPDSTEMPO         4.779      0.652      7.325      0.000
+
+ INTERCEP WITH
+    SLOPE              1.030      0.140      7.339      0.000
+    YMPDSTIMIN        -0.233      0.098     -2.378      0.017
+    YMPDSTEMPO         0.033      0.009      3.538      0.000
+
+ SLOPE    WITH
+    YMPDSTEMPO         0.008      0.002      3.211      0.001
+
+ YMPDSTIM WITH
+    YMPDSTEMPO         0.004      0.002      1.996      0.046
+
+ Means
+    ELA_PLUS           1.816      0.039     46.693      0.000
+
+ Intercepts
+    YMPDSTIMIN        14.062      0.031    454.413      0.000
+    YMPDSTEMPO         0.407      0.003    149.660      0.000
+    WM6               11.665      1.376      8.477      0.000
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.000      0.000    999.000    999.000
+    RT3_SCORT          0.000      0.000    999.000    999.000
+    RT4_SCORT          0.000      0.000    999.000    999.000
+    INTERCEPT         62.559      0.145    432.793      0.000
+    SLOPE              0.967      0.350      2.763      0.006
+
+ Variances
+    ELA_PLUS           3.133      0.122     25.642      0.000
+
+ Residual Variances
+    YMPDSTIMIN         1.034      0.029     35.245      0.000
+    YMPDSTEMPO         0.009      0.000     36.142      0.000
+    WM6                8.312      0.344     24.138      0.000
+    RT1_SCORT          0.607      0.046     13.121      0.000
+    RT2_SCORT          0.607      0.046     13.121      0.000
+    RT3_SCORT          0.607      0.046     13.121      0.000
+    RT4_SCORT          0.607      0.046     13.121      0.000
+    INTERCEPT         21.029      0.672     31.276      0.000
+    SLOPE              0.486      0.070      6.911      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.507E-06
+       (ratio of smallest to largest eigenvalue)
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_SCORT          0.986      0.001    863.500      0.000
+    RT2_SCORT          0.966      0.003    295.748      0.000
+    RT3_SCORT          0.936      0.006    156.770      0.000
+    RT4_SCORT          0.934      0.006    148.681      0.000
+
+ SLOPE    BY
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.060      0.004     14.069      0.000
+    RT3_SCORT          0.136      0.009     14.690      0.000
+    RT4_SCORT          0.141      0.010     13.929      0.000
+
+ SLOPE    ON
+    YMPDSTIMIN         0.074      0.036      2.071      0.038
+    ELA_PLUS          -0.006      0.037     -0.163      0.871
+
+ INTERCEP ON
+    ELA_PLUS          -0.131      0.022     -6.062      0.000
+
+ WM6      ON
+    SLOPE             -0.027      0.044     -0.620      0.536
+    INTERCEPT          0.123      0.026      4.750      0.000
+
+ YMPDSTIM ON
+    ELA_PLUS          -0.036      0.021     -1.737      0.082
+
+ YMPDSTEM ON
+    ELA_PLUS          -0.159      0.020     -8.172      0.000
+
+ WM6      ON
+    ELA_PLUS          -0.082      0.020     -4.056      0.000
+    YMPDSTIMIN         0.026      0.021      1.238      0.216
+    YMPDSTEMPO         0.156      0.020      7.615      0.000
+
+ INTERCEP WITH
+    SLOPE              0.322      0.050      6.438      0.000
+    YMPDSTIMIN        -0.050      0.021     -2.399      0.016
+    YMPDSTEMPO         0.075      0.021      3.559      0.000
+
+ SLOPE    WITH
+    YMPDSTEMPO         0.115      0.036      3.224      0.001
+
+ YMPDSTIM WITH
+    YMPDSTEMPO         0.040      0.020      1.987      0.047
+
+ Means
+    ELA_PLUS           1.026      0.017     59.530      0.000
+
+ Intercepts
+    YMPDSTIMIN        13.821      0.194     71.300      0.000
+    YMPDSTEMPO         4.214      0.064     66.229      0.000
+    WM6                3.933      0.486      8.096      0.000
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.000      0.000    999.000    999.000
+    RT3_SCORT          0.000      0.000    999.000    999.000
+    RT4_SCORT          0.000      0.000    999.000    999.000
+    INTERCEPT         13.525      0.213     63.350      0.000
+    SLOPE              1.382      0.522      2.650      0.008
+
+ Variances
+    ELA_PLUS           1.000      0.000    999.000    999.000
+
+ Residual Variances
+    YMPDSTIMIN         0.999      0.001    673.465      0.000
+    YMPDSTEMPO         0.975      0.006    156.524      0.000
+    WM6                0.945      0.010     99.112      0.000
+    RT1_SCORT          0.028      0.002     12.250      0.000
+    RT2_SCORT          0.026      0.002     12.558      0.000
+    RT3_SCORT          0.025      0.002     12.777      0.000
+    RT4_SCORT          0.025      0.002     12.822      0.000
+    INTERCEPT          0.983      0.006    174.942      0.000
+    SLOPE              0.995      0.005    188.963      0.000
+
+
+STDY Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_SCORT          0.986      0.001    863.500      0.000
+    RT2_SCORT          0.966      0.003    295.748      0.000
+    RT3_SCORT          0.936      0.006    156.770      0.000
+    RT4_SCORT          0.934      0.006    148.681      0.000
+
+ SLOPE    BY
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.060      0.004     14.069      0.000
+    RT3_SCORT          0.136      0.009     14.690      0.000
+    RT4_SCORT          0.141      0.010     13.929      0.000
+
+ SLOPE    ON
+    YMPDSTIMIN         0.074      0.036      2.071      0.038
+    ELA_PLUS          -0.006      0.037     -0.163      0.871
+
+ INTERCEP ON
+    ELA_PLUS          -0.131      0.022     -6.062      0.000
+
+ WM6      ON
+    SLOPE             -0.027      0.044     -0.620      0.536
+    INTERCEPT          0.123      0.026      4.750      0.000
+
+ YMPDSTIM ON
+    ELA_PLUS          -0.036      0.021     -1.737      0.082
+
+ YMPDSTEM ON
+    ELA_PLUS          -0.159      0.020     -8.172      0.000
+
+ WM6      ON
+    ELA_PLUS          -0.082      0.020     -4.056      0.000
+    YMPDSTIMIN         0.026      0.021      1.238      0.216
+    YMPDSTEMPO         0.156      0.020      7.615      0.000
+
+ INTERCEP WITH
+    SLOPE              0.322      0.050      6.438      0.000
+    YMPDSTIMIN        -0.050      0.021     -2.399      0.016
+    YMPDSTEMPO         0.075      0.021      3.559      0.000
+
+ SLOPE    WITH
+    YMPDSTEMPO         0.115      0.036      3.224      0.001
+
+ YMPDSTIM WITH
+    YMPDSTEMPO         0.040      0.020      1.987      0.047
+
+ Means
+    ELA_PLUS           1.026      0.017     59.530      0.000
+
+ Intercepts
+    YMPDSTIMIN        13.821      0.194     71.300      0.000
+    YMPDSTEMPO         4.214      0.064     66.229      0.000
+    WM6                3.933      0.486      8.096      0.000
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.000      0.000    999.000    999.000
+    RT3_SCORT          0.000      0.000    999.000    999.000
+    RT4_SCORT          0.000      0.000    999.000    999.000
+    INTERCEPT         13.525      0.213     63.350      0.000
+    SLOPE              1.382      0.522      2.650      0.008
+
+ Variances
+    ELA_PLUS           1.000      0.000    999.000    999.000
+
+ Residual Variances
+    YMPDSTIMIN         0.999      0.001    673.465      0.000
+    YMPDSTEMPO         0.975      0.006    156.524      0.000
+    WM6                0.945      0.010     99.112      0.000
+    RT1_SCORT          0.028      0.002     12.250      0.000
+    RT2_SCORT          0.026      0.002     12.558      0.000
+    RT3_SCORT          0.025      0.002     12.777      0.000
+    RT4_SCORT          0.025      0.002     12.822      0.000
+    INTERCEPT          0.983      0.006    174.942      0.000
+    SLOPE              0.995      0.005    188.963      0.000
+
+
+STD Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_SCORT          4.625      0.075     61.931      0.000
+    RT2_SCORT          4.625      0.075     61.931      0.000
+    RT3_SCORT          4.625      0.075     61.931      0.000
+    RT4_SCORT          4.625      0.075     61.931      0.000
+
+ SLOPE    BY
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.288      0.020     14.175      0.000
+    RT3_SCORT          0.671      0.046     14.694      0.000
+    RT4_SCORT          0.699      0.051     13.844      0.000
+
+ SLOPE    ON
+    YMPDSTIMIN         0.072      0.035      2.069      0.039
+    ELA_PLUS          -0.003      0.021     -0.163      0.871
+
+ INTERCEP ON
+    ELA_PLUS          -0.074      0.012     -6.129      0.000
+
+ WM6      ON
+    SLOPE             -0.081      0.131     -0.620      0.536
+    INTERCEPT          0.365      0.078      4.694      0.000
+
+ YMPDSTIM ON
+    ELA_PLUS          -0.021      0.012     -1.733      0.083
+
+ YMPDSTEM ON
+    ELA_PLUS          -0.009      0.001     -8.139      0.000
+
+ WM6      ON
+    ELA_PLUS          -0.138      0.034     -4.064      0.000
+    YMPDSTIMIN         0.077      0.062      1.240      0.215
+    YMPDSTEMPO         4.779      0.652      7.325      0.000
+
+ INTERCEP WITH
+    SLOPE              0.322      0.050      6.438      0.000
+    YMPDSTIMIN        -0.051      0.021     -2.390      0.017
+    YMPDSTEMPO         0.007      0.002      3.536      0.000
+
+ SLOPE    WITH
+    YMPDSTEMPO         0.011      0.003      3.215      0.001
+
+ YMPDSTIM WITH
+    YMPDSTEMPO         0.004      0.002      1.996      0.046
+
+ Means
+    ELA_PLUS           1.816      0.039     46.693      0.000
+
+ Intercepts
+    YMPDSTIMIN        14.062      0.031    454.413      0.000
+    YMPDSTEMPO         0.407      0.003    149.660      0.000
+    WM6               11.665      1.376      8.477      0.000
+    RT1_SCORT          0.000      0.000    999.000    999.000
+    RT2_SCORT          0.000      0.000    999.000    999.000
+    RT3_SCORT          0.000      0.000    999.000    999.000
+    RT4_SCORT          0.000      0.000    999.000    999.000
+    INTERCEPT         13.525      0.213     63.350      0.000
+    SLOPE              1.382      0.522      2.650      0.008
+
+ Variances
+    ELA_PLUS           3.133      0.122     25.642      0.000
+
+ Residual Variances
+    YMPDSTIMIN         1.034      0.029     35.245      0.000
+    YMPDSTEMPO         0.009      0.000     36.142      0.000
+    WM6                8.312      0.344     24.138      0.000
+    RT1_SCORT          0.607      0.046     13.121      0.000
+    RT2_SCORT          0.607      0.046     13.121      0.000
+    RT3_SCORT          0.607      0.046     13.121      0.000
+    RT4_SCORT          0.607      0.046     13.121      0.000
+    INTERCEPT          0.983      0.006    174.942      0.000
+    SLOPE              0.995      0.005    188.963      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    YMPDSTIM           0.001      0.001      0.869      0.385
+    YMPDSTEM           0.025      0.006      4.086      0.000
+    WM6                0.055      0.010      5.754      0.000
+    RT1_SCOR           0.972      0.002    431.750      0.000
+    RT2_SCOR           0.974      0.002    461.751      0.000
+    RT3_SCOR           0.975      0.002    501.126      0.000
+    RT4_SCOR           0.975      0.002    505.406      0.000
+
+     Latent                                         Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    INTERCEP           0.017      0.006      3.031      0.002
+    SLOPE              0.005      0.005      1.044      0.296
+
+
+TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect     -0.068      0.011     -6.153      0.000
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS          -0.027      0.007     -3.679      0.000
+
+  Specific indirect 2
+    WM6
+    YMPDSTEM
+    ELA_PLUS          -0.042      0.008     -5.439      0.000
+
+
+
+STANDARDIZED TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect     -0.041      0.007     -6.284      0.000
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS          -0.016      0.004     -3.694      0.000
+
+  Specific indirect 2
+    WM6
+    YMPDSTEM
+    ELA_PLUS          -0.025      0.004     -5.558      0.000
+
+
+
+STDY Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect     -0.041      0.007     -6.284      0.000
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS          -0.016      0.004     -3.694      0.000
+
+  Specific indirect 2
+    WM6
+    YMPDSTEM
+    ELA_PLUS          -0.025      0.004     -5.558      0.000
+
+
+
+STD Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect     -0.068      0.011     -6.153      0.000
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS          -0.027      0.007     -3.679      0.000
+
+  Specific indirect 2
+    WM6
+    YMPDSTEM
+    ELA_PLUS          -0.042      0.008     -5.439      0.000
+
+
+
+
+CONFIDENCE INTERVALS OF MODEL RESULTS
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ INTERCEP BY
+    RT1_SCORT        1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    RT2_SCORT        1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    RT3_SCORT        1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    RT4_SCORT        1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ SLOPE    BY
+    RT1_SCORT        0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_SCORT        0.378       0.386       0.390       0.412       0.433       0.437       0.445
+    RT3_SCORT        0.917       0.928       0.933       0.960       0.987       0.992       1.003
+    RT4_SCORT        1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ SLOPE    ON
+    YMPDSTIMIN      -0.013       0.002       0.010       0.051       0.091       0.099       0.114
+    ELA_PLUS        -0.040      -0.031      -0.026      -0.002       0.021       0.026       0.035
+
+ INTERCEP ON
+    ELA_PLUS        -0.487      -0.452      -0.434      -0.341      -0.248      -0.230      -0.195
+
+ WM6      ON
+    SLOPE           -0.598      -0.483      -0.424      -0.116       0.192       0.251       0.367
+    INTERCEPT        0.036       0.046       0.051       0.079       0.106       0.112       0.122
+
+ YMPDSTIM ON
+    ELA_PLUS        -0.051      -0.044      -0.040      -0.021      -0.001       0.003       0.010
+
+ YMPDSTEM ON
+    ELA_PLUS        -0.011      -0.011      -0.010      -0.009      -0.007      -0.007      -0.006
+
+ WM6      ON
+    ELA_PLUS        -0.225      -0.204      -0.194      -0.138      -0.082      -0.071      -0.050
+    YMPDSTIMIN      -0.083      -0.045      -0.025       0.077       0.179       0.199       0.237
+    YMPDSTEMPO       3.098       3.500       3.706       4.779       5.852       6.058       6.459
+
+ INTERCEP WITH
+    SLOPE            0.669       0.755       0.799       1.030       1.261       1.305       1.392
+    YMPDSTIMIN      -0.486      -0.425      -0.394      -0.233      -0.072      -0.041       0.019
+    YMPDSTEMPO       0.009       0.015       0.018       0.033       0.048       0.051       0.057
+
+ SLOPE    WITH
+    YMPDSTEMPO       0.002       0.003       0.004       0.008       0.012       0.012       0.014
+
+ YMPDSTIM WITH
+    YMPDSTEMPO      -0.001       0.000       0.001       0.004       0.007       0.008       0.009
+
+ Means
+    ELA_PLUS         1.716       1.740       1.752       1.816       1.880       1.893       1.917
+
+ Intercepts
+    YMPDSTIM        13.982      14.001      14.011      14.062      14.113      14.123      14.142
+    YMPDSTEM         0.400       0.402       0.402       0.407       0.411       0.412       0.414
+    WM6              8.121       8.968       9.401      11.665      13.928      14.362      15.209
+    RT1_SCOR         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_SCOR         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT3_SCOR         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT4_SCOR         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    INTERCEP        62.186      62.275      62.321      62.559      62.796      62.842      62.931
+    SLOPE            0.065       0.281       0.391       0.967       1.542       1.653       1.868
+
+ Variances
+    ELA_PLUS         2.818       2.893       2.932       3.133       3.334       3.372       3.447
+
+ Residual Variances
+    YMPDSTIM         0.958       0.976       0.986       1.034       1.082       1.091       1.109
+    YMPDSTEM         0.008       0.009       0.009       0.009       0.009       0.010       0.010
+    WM6              7.425       7.637       7.746       8.312       8.879       8.987       9.199
+    RT1_SCOR         0.488       0.516       0.531       0.607       0.683       0.698       0.726
+    RT2_SCOR         0.488       0.516       0.531       0.607       0.683       0.698       0.726
+    RT3_SCOR         0.488       0.516       0.531       0.607       0.683       0.698       0.726
+    RT4_SCOR         0.488       0.516       0.531       0.607       0.683       0.698       0.726
+    INTERCEP        19.297      19.711      19.923      21.029      22.135      22.347      22.761
+    SLOPE            0.305       0.348       0.371       0.486       0.602       0.624       0.668
+
+
+CONFIDENCE INTERVALS OF STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ INTERCEP BY
+    RT1_SCORT        0.983       0.984       0.984       0.986       0.988       0.988       0.989
+    RT2_SCORT        0.958       0.960       0.961       0.966       0.971       0.972       0.974
+    RT3_SCORT        0.921       0.924       0.926       0.936       0.946       0.948       0.951
+    RT4_SCORT        0.918       0.922       0.923       0.934       0.944       0.946       0.950
+
+ SLOPE    BY
+    RT1_SCORT        0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_SCORT        0.049       0.052       0.053       0.060       0.067       0.069       0.071
+    RT3_SCORT        0.112       0.118       0.121       0.136       0.151       0.154       0.160
+    RT4_SCORT        0.115       0.121       0.125       0.141       0.158       0.161       0.167
+
+ SLOPE    ON
+    YMPDSTIMIN      -0.018       0.004       0.015       0.074       0.132       0.143       0.165
+    ELA_PLUS        -0.101      -0.078      -0.066      -0.006       0.054       0.066       0.089
+
+ INTERCEP ON
+    ELA_PLUS        -0.186      -0.173      -0.166      -0.131      -0.095      -0.088      -0.075
+
+ WM6      ON
+    SLOPE           -0.141      -0.114      -0.100      -0.027       0.045       0.059       0.086
+    INTERCEPT        0.056       0.072       0.080       0.123       0.166       0.174       0.190
+
+ YMPDSTIM ON
+    ELA_PLUS        -0.089      -0.076      -0.070      -0.036      -0.002       0.005       0.017
+
+ YMPDSTEM ON
+    ELA_PLUS        -0.210      -0.198      -0.192      -0.159      -0.127      -0.121      -0.109
+
+ WM6      ON
+    ELA_PLUS        -0.134      -0.122      -0.116      -0.082      -0.049      -0.043      -0.030
+    YMPDSTIMIN      -0.029      -0.015      -0.009       0.026       0.062       0.068       0.081
+    YMPDSTEMPO       0.103       0.116       0.122       0.156       0.189       0.196       0.208
+
+ INTERCEP WITH
+    SLOPE            0.193       0.224       0.240       0.322       0.404       0.420       0.451
+    YMPDSTIMIN      -0.104      -0.091      -0.084      -0.050      -0.016      -0.009       0.004
+    YMPDSTEMPO       0.021       0.034       0.040       0.075       0.110       0.116       0.129
+
+ SLOPE    WITH
+    YMPDSTEMPO       0.023       0.045       0.056       0.115       0.174       0.185       0.207
+
+ YMPDSTIM WITH
+    YMPDSTEMPO      -0.012       0.001       0.007       0.040       0.073       0.079       0.092
+
+ Means
+    ELA_PLUS         0.982       0.992       0.998       1.026       1.055       1.060       1.071
+
+ Intercepts
+    YMPDSTIM        13.322      13.441      13.502      13.821      14.140      14.201      14.321
+    YMPDSTEM         4.051       4.090       4.110       4.214       4.319       4.339       4.378
+    WM6              2.682       2.981       3.134       3.933       4.733       4.886       5.185
+    RT1_SCOR         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_SCOR         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT3_SCOR         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT4_SCOR         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    INTERCEP        12.975      13.107      13.174      13.525      13.876      13.944      14.075
+    SLOPE            0.039       0.360       0.524       1.382       2.240       2.405       2.726
+
+ Variances
+    ELA_PLUS         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ Residual Variances
+    YMPDSTIM         0.995       0.996       0.996       0.999       1.001       1.002       1.003
+    YMPDSTEM         0.959       0.962       0.964       0.975       0.985       0.987       0.991
+    WM6              0.921       0.926       0.929       0.945       0.961       0.964       0.970
+    RT1_SCOR         0.022       0.023       0.024       0.028       0.031       0.032       0.033
+    RT2_SCOR         0.021       0.022       0.023       0.026       0.030       0.031       0.032
+    RT3_SCOR         0.020       0.021       0.022       0.025       0.028       0.029       0.030
+    RT4_SCOR         0.020       0.021       0.022       0.025       0.028       0.029       0.030
+    INTERCEP         0.968       0.972       0.974       0.983       0.992       0.994       0.997
+    SLOPE            0.981       0.984       0.986       0.995       1.003       1.005       1.008
+
+
+STDY Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ INTERCEP BY
+    RT1_SCORT        0.983       0.984       0.984       0.986       0.988       0.988       0.989
+    RT2_SCORT        0.958       0.960       0.961       0.966       0.971       0.972       0.974
+    RT3_SCORT        0.921       0.924       0.926       0.936       0.946       0.948       0.951
+    RT4_SCORT        0.918       0.922       0.923       0.934       0.944       0.946       0.950
+
+ SLOPE    BY
+    RT1_SCORT        0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_SCORT        0.049       0.052       0.053       0.060       0.067       0.069       0.071
+    RT3_SCORT        0.112       0.118       0.121       0.136       0.151       0.154       0.160
+    RT4_SCORT        0.115       0.121       0.125       0.141       0.158       0.161       0.167
+
+ SLOPE    ON
+    YMPDSTIMIN      -0.018       0.004       0.015       0.074       0.132       0.143       0.165
+    ELA_PLUS        -0.101      -0.078      -0.066      -0.006       0.054       0.066       0.089
+
+ INTERCEP ON
+    ELA_PLUS        -0.186      -0.173      -0.166      -0.131      -0.095      -0.088      -0.075
+
+ WM6      ON
+    SLOPE           -0.141      -0.114      -0.100      -0.027       0.045       0.059       0.086
+    INTERCEPT        0.056       0.072       0.080       0.123       0.166       0.174       0.190
+
+ YMPDSTIM ON
+    ELA_PLUS        -0.089      -0.076      -0.070      -0.036      -0.002       0.005       0.017
+
+ YMPDSTEM ON
+    ELA_PLUS        -0.210      -0.198      -0.192      -0.159      -0.127      -0.121      -0.109
+
+ WM6      ON
+    ELA_PLUS        -0.134      -0.122      -0.116      -0.082      -0.049      -0.043      -0.030
+    YMPDSTIMIN      -0.029      -0.015      -0.009       0.026       0.062       0.068       0.081
+    YMPDSTEMPO       0.103       0.116       0.122       0.156       0.189       0.196       0.208
+
+ INTERCEP WITH
+    SLOPE            0.193       0.224       0.240       0.322       0.404       0.420       0.451
+    YMPDSTIMIN      -0.104      -0.091      -0.084      -0.050      -0.016      -0.009       0.004
+    YMPDSTEMPO       0.021       0.034       0.040       0.075       0.110       0.116       0.129
+
+ SLOPE    WITH
+    YMPDSTEMPO       0.023       0.045       0.056       0.115       0.174       0.185       0.207
+
+ YMPDSTIM WITH
+    YMPDSTEMPO      -0.012       0.001       0.007       0.040       0.073       0.079       0.092
+
+ Means
+    ELA_PLUS         0.982       0.992       0.998       1.026       1.055       1.060       1.071
+
+ Intercepts
+    YMPDSTIM        13.322      13.441      13.502      13.821      14.140      14.201      14.321
+    YMPDSTEM         4.051       4.090       4.110       4.214       4.319       4.339       4.378
+    WM6              2.682       2.981       3.134       3.933       4.733       4.886       5.185
+    RT1_SCOR         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_SCOR         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT3_SCOR         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT4_SCOR         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    INTERCEP        12.975      13.107      13.174      13.525      13.876      13.944      14.075
+    SLOPE            0.039       0.360       0.524       1.382       2.240       2.405       2.726
+
+ Variances
+    ELA_PLUS         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ Residual Variances
+    YMPDSTIM         0.995       0.996       0.996       0.999       1.001       1.002       1.003
+    YMPDSTEM         0.959       0.962       0.964       0.975       0.985       0.987       0.991
+    WM6              0.921       0.926       0.929       0.945       0.961       0.964       0.970
+    RT1_SCOR         0.022       0.023       0.024       0.028       0.031       0.032       0.033
+    RT2_SCOR         0.021       0.022       0.023       0.026       0.030       0.031       0.032
+    RT3_SCOR         0.020       0.021       0.022       0.025       0.028       0.029       0.030
+    RT4_SCOR         0.020       0.021       0.022       0.025       0.028       0.029       0.030
+    INTERCEP         0.968       0.972       0.974       0.983       0.992       0.994       0.997
+    SLOPE            0.981       0.984       0.986       0.995       1.003       1.005       1.008
+
+
+STD Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ INTERCEP BY
+    RT1_SCORT        4.433       4.479       4.502       4.625       4.748       4.772       4.818
+    RT2_SCORT        4.433       4.479       4.502       4.625       4.748       4.772       4.818
+    RT3_SCORT        4.433       4.479       4.502       4.625       4.748       4.772       4.818
+    RT4_SCORT        4.433       4.479       4.502       4.625       4.748       4.772       4.818
+
+ SLOPE    BY
+    RT1_SCORT        0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_SCORT        0.236       0.248       0.255       0.288       0.321       0.328       0.340
+    RT3_SCORT        0.554       0.582       0.596       0.671       0.747       0.761       0.789
+    RT4_SCORT        0.569       0.600       0.616       0.699       0.782       0.798       0.829
+
+ SLOPE    ON
+    YMPDSTIMIN      -0.018       0.004       0.015       0.072       0.130       0.141       0.163
+    ELA_PLUS        -0.057      -0.044      -0.037      -0.003       0.031       0.037       0.050
+
+ INTERCEP ON
+    ELA_PLUS        -0.105      -0.097      -0.094      -0.074      -0.054      -0.050      -0.043
+
+ WM6      ON
+    SLOPE           -0.418      -0.337      -0.296      -0.081       0.134       0.175       0.256
+    INTERCEPT        0.165       0.213       0.237       0.365       0.493       0.517       0.565
+
+ YMPDSTIM ON
+    ELA_PLUS        -0.051      -0.044      -0.040      -0.021      -0.001       0.003       0.010
+
+ YMPDSTEM ON
+    ELA_PLUS        -0.011      -0.011      -0.010      -0.009      -0.007      -0.007      -0.006
+
+ WM6      ON
+    ELA_PLUS        -0.225      -0.204      -0.194      -0.138      -0.082      -0.071      -0.050
+    YMPDSTIMIN      -0.083      -0.045      -0.025       0.077       0.179       0.199       0.237
+    YMPDSTEMPO       3.098       3.500       3.706       4.779       5.852       6.058       6.459
+
+ INTERCEP WITH
+    SLOPE            0.193       0.224       0.240       0.322       0.404       0.420       0.451
+    YMPDSTIMIN      -0.106      -0.093      -0.086      -0.051      -0.016      -0.009       0.004
+    YMPDSTEMPO       0.002       0.003       0.004       0.007       0.010       0.011       0.012
+
+ SLOPE    WITH
+    YMPDSTEMPO       0.002       0.004       0.005       0.011       0.017       0.018       0.020
+
+ YMPDSTIM WITH
+    YMPDSTEMPO      -0.001       0.000       0.001       0.004       0.007       0.008       0.009
+
+ Means
+    ELA_PLUS         1.716       1.740       1.752       1.816       1.880       1.893       1.917
+
+ Intercepts
+    YMPDSTIM        13.982      14.001      14.011      14.062      14.113      14.123      14.142
+    YMPDSTEM         0.400       0.402       0.402       0.407       0.411       0.412       0.414
+    WM6              8.121       8.968       9.401      11.665      13.928      14.362      15.209
+    RT1_SCOR         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_SCOR         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT3_SCOR         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT4_SCOR         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    INTERCEP        12.975      13.107      13.174      13.525      13.876      13.944      14.075
+    SLOPE            0.039       0.360       0.524       1.382       2.240       2.405       2.726
+
+ Variances
+    ELA_PLUS         2.818       2.893       2.932       3.133       3.334       3.372       3.447
+
+ Residual Variances
+    YMPDSTIM         0.958       0.976       0.986       1.034       1.082       1.091       1.109
+    YMPDSTEM         0.008       0.009       0.009       0.009       0.009       0.010       0.010
+    WM6              7.425       7.637       7.746       8.312       8.879       8.987       9.199
+    RT1_SCOR         0.488       0.516       0.531       0.607       0.683       0.698       0.726
+    RT2_SCOR         0.488       0.516       0.531       0.607       0.683       0.698       0.726
+    RT3_SCOR         0.488       0.516       0.531       0.607       0.683       0.698       0.726
+    RT4_SCOR         0.488       0.516       0.531       0.607       0.683       0.698       0.726
+    INTERCEP         0.968       0.972       0.974       0.983       0.992       0.994       0.997
+    SLOPE            0.981       0.984       0.986       0.995       1.003       1.005       1.008
+
+
+CONFIDENCE INTERVALS OF TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect   -0.097      -0.090      -0.087      -0.068      -0.050      -0.047      -0.040
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS        -0.046      -0.041      -0.039      -0.027      -0.015      -0.013      -0.008
+
+  Specific indirect 2
+    WM6
+    YMPDSTEM
+    ELA_PLUS        -0.061      -0.057      -0.054      -0.042      -0.029      -0.027      -0.022
+
+
+
+CONFIDENCE INTERVALS OF STANDARDIZED TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+
+
+STDYX Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect   -0.058      -0.054      -0.052      -0.041      -0.030      -0.028      -0.024
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS        -0.027      -0.025      -0.023      -0.016      -0.009      -0.008      -0.005
+
+  Specific indirect 2
+    WM6
+    YMPDSTEM
+    ELA_PLUS        -0.036      -0.034      -0.032      -0.025      -0.017      -0.016      -0.013
+
+
+
+STDY Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect   -0.058      -0.054      -0.052      -0.041      -0.030      -0.028      -0.024
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS        -0.027      -0.025      -0.023      -0.016      -0.009      -0.008      -0.005
+
+  Specific indirect 2
+    WM6
+    YMPDSTEM
+    ELA_PLUS        -0.036      -0.034      -0.032      -0.025      -0.017      -0.016      -0.013
+
+
+
+STD Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+Effects from ELA_PLUS to WM6
+
+  Sum of indirect   -0.097      -0.090      -0.087      -0.068      -0.050      -0.047      -0.040
+
+  Specific indirect 1
+    WM6
+    INTERCEP
+    ELA_PLUS        -0.046      -0.041      -0.039      -0.027      -0.015      -0.013      -0.008
+
+  Specific indirect 2
+    WM6
+    YMPDSTEM
+    ELA_PLUS        -0.061      -0.057      -0.054      -0.042      -0.029      -0.027      -0.022
+
+
+
+
+TECHNICAL 4 OUTPUT
+
+
+     ESTIMATES DERIVED FROM THE MODEL
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         YMPDSTIM      YMPDSTEM      WM6
+              ________      ________      ________      ________      ________
+               61.939         1.673        14.024         0.391        19.059
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              ELA_PLUS
+              ________
+                1.816
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         YMPDSTIM      YMPDSTEM      WM6
+              ________      ________      ________      ________      ________
+                0.099         0.027         0.021         0.002         0.060
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              ELA_PLUS
+              ________
+                0.039
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         YMPDSTIM      YMPDSTEM      WM6
+              ________      ________      ________      ________      ________
+              625.232        61.172       662.188       200.910       316.852
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              ELA_PLUS
+              ________
+               46.693
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         YMPDSTIM      YMPDSTEM      WM6
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              ELA_PLUS
+              ________
+                0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         YMPDSTIM      YMPDSTEM      WM6
+              ________      ________      ________      ________      ________
+ INTERCEP      21.394
+ SLOPE          1.022         0.489
+ YMPDSTIM      -0.211         0.053         1.035
+ YMPDSTEM       0.042         0.008         0.004         0.009
+ WM6            1.902         0.067         0.087         0.051         8.795
+ ELA_PLUS      -1.068        -0.011        -0.065        -0.027        -0.650
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              ELA_PLUS
+              ________
+ ELA_PLUS       3.133
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         YMPDSTIM      YMPDSTEM      WM6
+              ________      ________      ________      ________      ________
+ INTERCEP       0.691
+ SLOPE          0.142         0.071
+ YMPDSTIM       0.099         0.025         0.029
+ YMPDSTEM       0.009         0.002         0.002         0.000
+ WM6            0.296         0.081         0.065         0.006         0.370
+ ELA_PLUS       0.184         0.045         0.037         0.003         0.108
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              ELA_PLUS
+              ________
+ ELA_PLUS       0.122
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         YMPDSTIM      YMPDSTEM      WM6
+              ________      ________      ________      ________      ________
+ INTERCEP      30.966
+ SLOPE          7.190         6.922
+ YMPDSTIM      -2.136         2.065        35.237
+ YMPDSTEM       4.492         3.279         2.267        36.647
+ WM6            6.432         0.835         1.347         8.186        23.747
+ ELA_PLUS      -5.812        -0.235        -1.736        -7.816        -6.013
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              ELA_PLUS
+              ________
+ ELA_PLUS      25.642
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         YMPDSTIM      YMPDSTEM      WM6
+              ________      ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.000         0.000
+ YMPDSTIM       0.033         0.039         0.000
+ YMPDSTEM       0.000         0.001         0.023         0.000
+ WM6            0.000         0.403         0.178         0.000         0.000
+ ELA_PLUS       0.000         0.815         0.083         0.000         0.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              ELA_PLUS
+              ________
+ ELA_PLUS       0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         YMPDSTIM      YMPDSTEM      WM6
+              ________      ________      ________      ________      ________
+ INTERCEP       1.000
+ SLOPE          0.316         1.000
+ YMPDSTIM      -0.045         0.074         1.000
+ YMPDSTEM       0.094         0.117         0.045         1.000
+ WM6            0.139         0.032         0.029         0.178         1.000
+ ELA_PLUS      -0.131        -0.009        -0.036        -0.159        -0.124
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              ELA_PLUS
+              ________
+ ELA_PLUS       1.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         YMPDSTIM      YMPDSTEM      WM6
+              ________      ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.050         0.000
+ YMPDSTIM       0.021         0.036         0.000
+ YMPDSTEM       0.021         0.036         0.020         0.000
+ WM6            0.021         0.039         0.021         0.020         0.000
+ ELA_PLUS       0.022         0.037         0.021         0.020         0.020
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              ELA_PLUS
+              ________
+ ELA_PLUS       0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         YMPDSTIM      YMPDSTEM      WM6
+              ________      ________      ________      ________      ________
+ INTERCEP     999.000
+ SLOPE          6.313       999.000
+ YMPDSTIM      -2.152         2.080       999.000
+ YMPDSTEM       4.535         3.300         2.257       999.000
+ WM6            6.735         0.834         1.345         8.886       999.000
+ ELA_PLUS      -6.062        -0.235        -1.737        -8.172        -6.124
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              ELA_PLUS
+              ________
+ ELA_PLUS     999.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         YMPDSTIM      YMPDSTEM      WM6
+              ________      ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.000         0.000
+ YMPDSTIM       0.031         0.038         0.000
+ YMPDSTEM       0.000         0.001         0.024         0.000
+ WM6            0.000         0.404         0.179         0.000         0.000
+ ELA_PLUS       0.000         0.814         0.082         0.000         0.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              ELA_PLUS
+              ________
+ ELA_PLUS       0.000
+
+
+     Beginning Time:  16:21:49
+        Ending Time:  16:21:50
+       Elapsed Time:  00:00:01
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2022 Muthen & Muthen

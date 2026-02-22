@@ -72,19 +72,20 @@ ela_plus;
 wm6;
 
 intercept WITH yfPDStiming yfPDStempo;
-slope WITH yfPDStempo;
+slope WITH yfPDStempo@0;
 quad WITH yfPDStempo;
 yfPDStiming WITH yfPDStempo;
 
-slope ON yfPDStiming;
+slope ON yfPDStiming@0;
 quad ON yfPDStiming;
 intercept ON ela_plus;
-slope ON ela_plus;
+slope ON ela_plus@0;
 quad ON ela_plus;
 yfPDStiming ON ela_plus;
 yfPDStempo ON ela_plus;
 wm6 ON ela_plus;
-wm6 ON yfPDStiming yfPDStempo slope intercept quad;
+wm6 ON yfPDStiming yfPDStempo intercept quad;
+wm6 ON slope@0;
 
 MODEL INDIRECT: 
 wm6 ind intercept ela_plus;
