@@ -173,6 +173,9 @@ p_tempo <- ggplot(tempo_df, aes(x = male, y = value, fill = male, color = male))
 final_plot <- p_timing / p_tempo
 print(final_plot)
 
+
+
+
 names(df)
 
 library(gtsummary)
