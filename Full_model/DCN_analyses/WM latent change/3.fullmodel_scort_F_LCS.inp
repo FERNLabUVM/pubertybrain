@@ -30,7 +30,7 @@ MISSING = ALL (-999);
 USEVAR = 
 pfPDStiming pfPDStempo
 ela_plus
-wm6
+wmb wm6
 rT1_scort rT2_scort rT3_scort rT4_scort;
 
 USEOBS are sex EQ 2;
@@ -69,7 +69,49 @@ MODEL:	intercept by rT1_scort-rT4_scort@1;
 pfPDStiming; 
 pfPDStempo;
 ela_plus;
-wm6;
+wmb wm6;
+
+!WM latent change score
+
+WMB_l BY wmb@1;
+WM6_l BY wm6@1;
+!the latent true scores yt1 and yt2
+
+wmb@0;
+wm6@0;
+!the residual variances of the observed variables (Yt1, Yt2) are fixed to 0
+
+[wmb@0];
+[wm6@0];
+!the intercepts of the observed variables (Yt1, Yt2) are fixed to 0
+
+WM6_l on WMB_l@1;
+!the autoregressive parameter (fixed to 1)
+
+Change by WM6_l@1;
+!the latent change factor (the factor loading is fixed to 1)
+
+WMB_l with Change;
+!the covariance between the latent true score at T1 (yt1) and the
+!latent change factor
+
+WMB_l;
+!the variance of the latent true score at T1 (yt1) is freely estimated
+
+[WMB_l];
+!the mean of the latent true score at T1 (yt1) is freely estimated
+
+Change;
+!the variance of the latent change factor is freely estimated
+
+[Change];
+!the mean of the latent change factor is freely estimated
+
+WM6_l@0;
+!the residual variance of the latent true score at T2 (yt2) is fixed to 0
+
+[WM6_l@0];
+!the intercept of the latent true score at T2 (yt2) is fixed to 0
 
 intercept WITH pfPDStiming pfPDStempo;
 slope WITH pfPDStempo@0;
@@ -83,13 +125,13 @@ slope ON ela_plus@0;
 quad ON ela_plus;
 pfPDStiming ON ela_plus;
 pfPDStempo ON ela_plus;
-wm6 ON ela_plus;
-wm6 ON pfPDStiming pfPDStempo intercept quad;
-wm6 ON slope@0;
+Change ON ela_plus;
+Change ON pfPDStiming pfPDStempo intercept quad;
+Change ON slope@0;
 
 MODEL INDIRECT: 
-wm6 ind intercept ela_plus;
-wm6 ind pfPDStempo ela_plus; !exploratory
+Change ind intercept ela_plus;
+Change ind pfPDStempo ela_plus; !exploratory
 
 OUTPUT: SAMPSTAT STANDARDIZED TECH4 CINTERVAL;
 
