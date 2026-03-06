@@ -1,0 +1,1640 @@
+Mplus VERSION 8.8 (Mac)
+MUTHEN & MUTHEN
+03/06/2026  10:00 AM
+
+INPUT INSTRUCTIONS
+
+  TITLE:	full model - MALE
+
+  DATA:
+  FILE IS dfmerged_mplus.dat;
+
+  DEFINE:
+    ! Rescale large variables to avoid variance > 1,000,000
+    ! r indicates rescaled
+    rT1_cort = cort_vol_1 / 1000;
+    rT2_cort = cort_vol_2 / 1000;
+    rT3_cort = cort_vol_3 / 1000;
+    rT4_cort = cort_vol_4 / 1000;
+
+  VARIABLE:	
+  NAMES =
+  numeric_id sex
+  age_1 age_2 age_3 age_4
+  subcort_vol_1 subcort_vol_2 subcort_vol_3 subcort_vol_4
+  cort_vol_1 cort_vol_2 cort_vol_3 cort_vol_4
+  fam_ID
+  T1_totalGMV T2_totalGMV T3_totalGMV T4_totalGMV
+  yfPDStiming yfPDStempo pfPDStiming pfPDStempo
+  ymPDStiming ymPDStempo pmPDStiming pmPDStempo
+  wmb wm6
+  ela_plus;
+
+  MISSING = ALL (-999);
+
+  USEVAR =
+  pmPDStiming pmPDStempo
+  ela_plus
+  wmb
+  wm6
+  rT1_cort rT2_cort rT3_cort rT4_cort;
+
+  USEOBS are sex EQ 1;
+  CLUSTER = fam_ID;
+
+  ANALYSIS:
+  TYPE = COMPLEX;
+  ESTIMATOR = MLR;
+  	
+  MODEL:	intercept by rT1_cort-rT4_cort@1;
+  	intercept;
+  	[intercept];
+  	slope BY rT1_cort@0
+  		rT2_cort*
+  		rT3_cort*
+  		rT4_cort@1;
+  	slope;
+  	[slope];
+  	intercept WITH slope;
+  	rT1_cort-rT4_cort (theta); !theta forces variances to be equal over time
+  	[rT1_cort-rT4_cort@0];
+  	
+  pmPDStiming;
+  pmPDStempo;
+  ela_plus;
+  wmb wm6;
+
+  !WM latent change score
+
+  WMB_l BY wmb@1;
+  WM6_l BY wm6@1;
+  !the latent true scores yt1 and yt2
+
+  wmb@0;
+  wm6@0;
+  !the residual variances of the observed variables (Yt1, Yt2) are fixed to 0
+
+  [wmb@0];
+  [wm6@0];
+  !the intercepts of the observed variables (Yt1, Yt2) are fixed to 0
+
+  WMB_l on WM6_l@1;
+  !the autoregressive parameter (fixed to 1)
+
+  Change by WM6_l@1;
+  !the latent change factor (the factor loading is fixed to 1)
+
+  WMB_l with Change;
+  !the covariance between the latent true score at T1 (yt1) and the
+  !latent change factor
+
+  WMB_l;
+  !the variance of the latent true score at T1 (yt1) is freely estimated
+
+  [WMB_l];
+  !the mean of the latent true score at T1 (yt1) is freely estimated
+
+  Change;
+  !the variance of the latent change factor is freely estimated
+
+  [Change];
+  !the mean of the latent change factor is freely estimated
+
+  WM6_l@0;
+  !the residual variance of the latent true score at T2 (yt2) is fixed to 0
+
+  [WM6_l@0];
+  !the intercept of the latent true score at T2 (yt2) is fixed to 0
+
+  intercept WITH pmPDStiming pmPDStempo;
+  slope WITH pmPDStempo;
+  pmPDStiming WITH pmPDStempo;
+
+  slope ON pmPDStiming;
+  intercept ON ela_plus;
+  slope ON ela_plus;
+  pmPDStiming ON ela_plus;
+  pmPDStempo ON ela_plus;
+  Change ON ela_plus;
+  Change ON pmPDStiming pmPDStempo slope intercept;
+
+  MODEL INDIRECT:
+  Change ind intercept ela_plus;
+  Change ind pmPDStempo ela_plus; !exploratory
+
+  OUTPUT: SAMPSTAT STANDARDIZED TECH4 CINTERVAL;
+
+  !PLOT:
+  !    TYPE = PLOT3;                       ! enables LOOP function plots
+  !    SERIES = rT1_TOTAL-rT4_TOTAL (*);   ! optional: shows observed/model means over waves
+
+
+
+
+
+
+*** WARNING in VARIABLE command
+  When a subpopulation is analyzed with TYPE=COMPLEX, standard errors
+  may be incorrect.  Use the SUBPOPULATION option instead of the
+  USEOBSERVATIONS option to obtain correct standard errors.
+*** WARNING in VARIABLE command
+  Note that only the first 8 characters of variable names are used in the output.
+  Shorten variable names to avoid any confusion.
+   2 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+full model - MALE
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                        2644
+
+Number of dependent variables                                    8
+Number of independent variables                                  1
+Number of continuous latent variables                            5
+
+Observed dependent variables
+
+  Continuous
+   PMPDSTIMIN  PMPDSTEMPO  WMB         WM6         RT1_CORT    RT2_CORT
+   RT3_CORT    RT4_CORT
+
+Observed independent variables
+   ELA_PLUS
+
+Continuous latent variables
+   INTERCEP    SLOPE       WMB_L       WM6_L       CHANGE
+
+Variables with special functions
+
+  Cluster variable      FAM_ID
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Maximum number of iterations                                  1000
+Convergence criterion                                    0.500D-04
+Maximum number of steepest descent iterations                   20
+Maximum number of iterations for H1                           2000
+Convergence criterion for H1                             0.100D-03
+
+Input data file(s)
+  dfmerged_mplus.dat
+
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of missing data patterns            52
+     Number of clusters                       2324
+
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              PMPDSTIM      PMPDSTEM      WMB           WM6           RT1_CORT
+              ________      ________      ________      ________      ________
+ PMPDSTIM       0.997
+ PMPDSTEM       0.988         0.991
+ WMB            0.983         0.978         0.986
+ WM6            0.964         0.958         0.952         0.966
+ RT1_CORT       0.992         0.986         0.981         0.961         0.995
+ RT2_CORT       0.871         0.865         0.860         0.846         0.869
+ RT3_CORT       0.630         0.626         0.623         0.612         0.630
+ RT4_CORT       0.809         0.806         0.801         0.785         0.807
+ ELA_PLUS       0.948         0.942         0.938         0.918         0.945
+
+
+           Covariance Coverage
+              RT2_CORT      RT3_CORT      RT4_CORT      ELA_PLUS
+              ________      ________      ________      ________
+ RT2_CORT       0.874
+ RT3_CORT       0.567         0.632
+ RT4_CORT       0.712         0.539         0.812
+ ELA_PLUS       0.834         0.603         0.775         0.950
+
+
+SAMPLE STATISTICS
+
+
+     ESTIMATED SAMPLE STATISTICS
+
+
+           Means
+              PMPDSTIM      PMPDSTEM      WMB           WM6           RT1_CORT
+              ________      ________      ________      ________      ________
+               14.061         0.470        16.140        19.050       620.835
+
+
+           Means
+              RT2_CORT      RT3_CORT      RT4_CORT      ELA_PLUS
+              ________      ________      ________      ________
+              611.737       598.812       582.100         1.818
+
+
+           Covariances
+              PMPDSTIM      PMPDSTEM      WMB           WM6           RT1_CORT
+              ________      ________      ________      ________      ________
+ PMPDSTIM       1.034
+ PMPDSTEM       0.031         0.015
+ WMB            0.274         0.060         9.394
+ WM6            0.225         0.059         4.369         8.783
+ RT1_CORT       3.645         0.817        29.466        26.358      2864.242
+ RT2_CORT       2.653         0.910        30.235        27.335      2740.854
+ RT3_CORT       6.035         1.025        27.115        24.775      2699.372
+ RT4_CORT       7.333         0.893        25.057        24.215      2591.483
+ ELA_PLUS      -0.006        -0.036        -0.690        -0.641       -12.228
+
+
+           Covariances
+              RT2_CORT      RT3_CORT      RT4_CORT      ELA_PLUS
+              ________      ________      ________      ________
+ RT2_CORT    2875.190
+ RT3_CORT    2714.832      2858.999
+ RT4_CORT    2589.145      2645.387      2670.446
+ ELA_PLUS     -13.857       -12.767       -12.202         3.133
+
+
+           Correlations
+              PMPDSTIM      PMPDSTEM      WMB           WM6           RT1_CORT
+              ________      ________      ________      ________      ________
+ PMPDSTIM       1.000
+ PMPDSTEM       0.249         1.000
+ WMB            0.088         0.163         1.000
+ WM6            0.075         0.165         0.481         1.000
+ RT1_CORT       0.067         0.126         0.180         0.166         1.000
+ RT2_CORT       0.049         0.140         0.184         0.172         0.955
+ RT3_CORT       0.111         0.159         0.165         0.156         0.943
+ RT4_CORT       0.140         0.143         0.158         0.158         0.937
+ ELA_PLUS      -0.003        -0.170        -0.127        -0.122        -0.129
+
+
+           Correlations
+              RT2_CORT      RT3_CORT      RT4_CORT      ELA_PLUS
+              ________      ________      ________      ________
+ RT2_CORT       1.000
+ RT3_CORT       0.947         1.000
+ RT4_CORT       0.934         0.957         1.000
+ ELA_PLUS      -0.146        -0.135        -0.133         1.000
+
+
+     MAXIMUM LOG-LIKELIHOOD VALUE FOR THE UNRESTRICTED (H1) MODEL IS -58990.374
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     PMPDSTIMING          14.062       0.208      10.905    0.04%      13.214     13.744     14.010
+            2637.000       1.034      -0.012      17.130    0.04%      14.250     14.910
+     PMPDSTEMPO            0.470      -0.267       0.105    0.04%       0.367      0.446      0.475
+            2620.000       0.015      -0.020       0.834    0.04%       0.507      0.571
+     WMB                  16.151      -0.577       1.000    0.04%      14.000     16.000     16.000
+            2607.000       9.376       0.958      25.000    0.04%      17.000     19.000
+     WM6                  19.057      -0.649       0.000    0.12%      17.000     18.000     19.000
+            2555.000       8.796       2.486      26.000    1.21%      20.000     21.000
+     RT1_CORT            620.864       0.015     421.474    0.04%     576.796    607.050    620.370
+            2630.000    2867.603       0.230     828.705    0.04%     634.587    664.813
+     RT2_CORT            612.261      -0.069     399.014    0.04%     568.783    599.561    613.370
+            2310.000    2846.094       0.286     795.911    0.04%     626.140    655.161
+     RT3_CORT            599.878       0.054     410.497    0.06%     554.880    586.353    600.959
+            1672.000    2852.926       0.249     808.209    0.06%     612.111    643.045
+     RT4_CORT            582.759       0.097     394.551    0.05%     540.037    570.099    582.712
+            2146.000    2631.317       0.336     777.004    0.05%     595.325    622.793
+     ELA_PLUS              1.809       1.181       0.000   26.22%       0.000      1.000      1.000
+            2513.000       3.131       1.216       9.000    0.28%       2.000      3.000
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       33
+
+Loglikelihood
+
+          H0 Value                      -59065.783
+          H0 Scaling Correction Factor      1.3865
+            for MLR
+          H1 Value                      -58990.374
+          H1 Scaling Correction Factor      1.4342
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                  118197.565
+          Bayesian (BIC)                118391.607
+          Sample-Size Adjusted BIC      118286.756
+            (n* = (n + 2) / 24)
+
+Chi-Square Test of Model Fit
+
+          Value                             99.931*
+          Degrees of Freedom                    21
+          P-Value                           0.0000
+          Scaling Correction Factor         1.5092
+            for MLR
+
+*   The chi-square value for MLM, MLMV, MLR, ULSMV, WLSM and WLSMV cannot be used
+    for chi-square difference testing in the regular way.  MLM, MLR and WLSM
+    chi-square difference testing is described on the Mplus website.  MLMV, WLSMV,
+    and ULSMV difference testing is done using the DIFFTEST option.
+
+RMSEA (Root Mean Square Error Of Approximation)
+
+          Estimate                           0.038
+          90 Percent C.I.                    0.030  0.045
+          Probability RMSEA <= .05           0.997
+
+CFI/TLI
+
+          CFI                                0.993
+          TLI                                0.987
+
+Chi-Square Test of Model Fit for the Baseline Model
+
+          Value                          10829.330
+          Degrees of Freedom                    36
+          P-Value                           0.0000
+
+SRMR (Standardized Root Mean Square Residual)
+
+          Value                              0.033
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_CORT           1.000      0.000    999.000    999.000
+    RT2_CORT           1.000      0.000    999.000    999.000
+    RT3_CORT           1.000      0.000    999.000    999.000
+    RT4_CORT           1.000      0.000    999.000    999.000
+
+ SLOPE    BY
+    RT1_CORT           0.000      0.000    999.000    999.000
+    RT2_CORT           0.225      0.007     30.844      0.000
+    RT3_CORT           0.573      0.009     62.728      0.000
+    RT4_CORT           1.000      0.000    999.000    999.000
+
+ WMB_L    BY
+    WMB                1.000      0.000    999.000    999.000
+
+ WM6_L    BY
+    WM6                1.000      0.000    999.000    999.000
+
+ CHANGE   BY
+    WM6_L              1.000      0.000    999.000    999.000
+
+ WMB_L    ON
+    WM6_L              1.000      0.000    999.000    999.000
+
+ CHANGE   ON
+    SLOPE             -0.033      0.013     -2.586      0.010
+    INTERCEPT          0.007      0.001      5.508      0.000
+
+ SLOPE    ON
+    PMPDSTIMIN         4.164      0.397     10.494      0.000
+    ELA_PLUS           0.148      0.252      0.588      0.556
+
+ INTERCEP ON
+    ELA_PLUS          -4.124      0.637     -6.471      0.000
+
+ CHANGE   ON
+    ELA_PLUS          -0.145      0.030     -4.789      0.000
+    PMPDSTIMIN         0.271      0.072      3.758      0.000
+    PMPDSTEMPO         2.960      0.454      6.514      0.000
+
+ PMPDSTIM ON
+    ELA_PLUS          -0.002      0.012     -0.159      0.874
+
+ PMPDSTEM ON
+    ELA_PLUS          -0.012      0.001     -8.024      0.000
+
+ INTERCEP WITH
+    SLOPE           -162.833     23.184     -7.023      0.000
+    PMPDSTIMIN         2.941      1.117      2.633      0.008
+    PMPDSTEMPO         0.714      0.131      5.448      0.000
+
+ WMB_L    WITH
+    CHANGE            -4.473      0.307    -14.567      0.000
+
+ SLOPE    WITH
+    PMPDSTEMPO        -0.035      0.047     -0.743      0.457
+
+ PMPDSTIM WITH
+    PMPDSTEMPO         0.031      0.003     11.301      0.000
+
+ Means
+    ELA_PLUS           1.818      0.039     46.663      0.000
+
+ Intercepts
+    PMPDSTIMIN        14.065      0.031    453.661      0.000
+    PMPDSTEMPO         0.491      0.004    135.139      0.000
+    WMB                0.000      0.000    999.000    999.000
+    WM6                0.000      0.000    999.000    999.000
+    RT1_CORT           0.000      0.000    999.000    999.000
+    RT2_CORT           0.000      0.000    999.000    999.000
+    RT3_CORT           0.000      0.000    999.000    999.000
+    RT4_CORT           0.000      0.000    999.000    999.000
+    INTERCEPT        628.202      1.613    389.527      0.000
+    SLOPE            -97.425      5.610    -17.367      0.000
+    WMB_L             -2.910      0.061    -47.365      0.000
+    WM6_L              0.000      0.000    999.000    999.000
+    CHANGE             8.774      1.286      6.821      0.000
+
+ Variances
+    ELA_PLUS           3.133      0.122     25.638      0.000
+
+ Residual Variances
+    PMPDSTIMIN         1.034      0.030     33.954      0.000
+    PMPDSTEMPO         0.014      0.000     35.000      0.000
+    WMB                0.000      0.000    999.000    999.000
+    WM6                0.000      0.000    999.000    999.000
+    RT1_CORT         129.908      7.321     17.743      0.000
+    RT2_CORT         129.908      7.321     17.743      0.000
+    RT3_CORT         129.908      7.321     17.743      0.000
+    RT4_CORT         129.908      7.321     17.743      0.000
+    INTERCEPT       2719.108     85.189     31.918      0.000
+    SLOPE            104.629     15.693      6.667      0.000
+    WMB_L              9.443      0.368     25.661      0.000
+    WM6_L              0.000      0.000    999.000    999.000
+    CHANGE             8.186      0.347     23.573      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.118E-07
+       (ratio of smallest to largest eigenvalue)
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_CORT           0.977      0.001    699.482      0.000
+    RT2_CORT           0.988      0.002    423.190      0.000
+    RT3_CORT           1.001      0.005    208.556      0.000
+    RT4_CORT           1.010      0.008    122.645      0.000
+
+ SLOPE    BY
+    RT1_CORT           0.000      0.000    999.000    999.000
+    RT2_CORT           0.047      0.003     14.803      0.000
+    RT3_CORT           0.121      0.008     14.327      0.000
+    RT4_CORT           0.212      0.015     14.528      0.000
+
+ WMB_L    BY
+    WMB                1.000      0.000    999.000    999.000
+
+ WM6_L    BY
+    WM6                1.000      0.000    999.000    999.000
+
+ CHANGE   BY
+    WM6_L              1.000      0.000    999.000    999.000
+
+ WMB_L    ON
+    WM6_L              0.973      0.023     42.501      0.000
+
+ CHANGE   ON
+    SLOPE             -0.124      0.044     -2.836      0.005
+    INTERCEPT          0.116      0.021      5.529      0.000
+
+ SLOPE    ON
+    PMPDSTIMIN         0.382      0.037     10.429      0.000
+    ELA_PLUS           0.024      0.041      0.585      0.559
+
+ INTERCEP ON
+    ELA_PLUS          -0.139      0.021     -6.464      0.000
+
+ CHANGE   ON
+    ELA_PLUS          -0.086      0.018     -4.775      0.000
+    PMPDSTIMIN         0.093      0.025      3.783      0.000
+    PMPDSTEMPO         0.120      0.018      6.601      0.000
+
+ PMPDSTIM ON
+    ELA_PLUS          -0.003      0.021     -0.159      0.874
+
+ PMPDSTEM ON
+    ELA_PLUS          -0.171      0.021     -8.182      0.000
+
+ INTERCEP WITH
+    SLOPE             -0.305      0.040     -7.693      0.000
+    PMPDSTIMIN         0.055      0.021      2.643      0.008
+    PMPDSTEMPO         0.115      0.021      5.551      0.000
+
+ WMB_L    WITH
+    CHANGE            -0.509      0.021    -24.267      0.000
+
+ SLOPE    WITH
+    PMPDSTEMPO        -0.029      0.039     -0.740      0.460
+
+ PMPDSTIM WITH
+    PMPDSTEMPO         0.252      0.022     11.570      0.000
+
+ Means
+    ELA_PLUS           1.027      0.017     59.594      0.000
+
+ Intercepts
+    PMPDSTIMIN        13.832      0.202     68.416      0.000
+    PMPDSTEMPO         4.060      0.064     63.408      0.000
+    WMB                0.000      0.000    999.000    999.000
+    WM6                0.000      0.000    999.000    999.000
+    RT1_CORT           0.000      0.000    999.000    999.000
+    RT2_CORT           0.000      0.000    999.000    999.000
+    RT3_CORT           0.000      0.000    999.000    999.000
+    RT4_CORT           0.000      0.000    999.000    999.000
+    INTERCEPT         11.931      0.185     64.366      0.000
+    SLOPE             -8.798      0.636    -13.832      0.000
+    WMB_L             -0.953      0.023    -41.177      0.000
+    WM6_L              0.000      0.000    999.000    999.000
+    CHANGE             2.952      0.452      6.527      0.000
+
+ Variances
+    ELA_PLUS           1.000      0.000    999.000    999.000
+
+ Residual Variances
+    PMPDSTIMIN         1.000      0.000   7140.972      0.000
+    PMPDSTEMPO         0.971      0.007    136.531      0.000
+    WMB                0.000    999.000    999.000    999.000
+    WM6                0.000    999.000    999.000    999.000
+    RT1_CORT           0.045      0.003     16.388      0.000
+    RT2_CORT           0.046      0.003     16.425      0.000
+    RT3_CORT           0.047      0.003     16.321      0.000
+    RT4_CORT           0.048      0.003     15.797      0.000
+    INTERCEPT          0.981      0.006    164.965      0.000
+    SLOPE              0.853      0.028     30.245      0.000
+    WMB_L              1.012      0.042     23.944      0.000
+    WM6_L              0.000    999.000    999.000    999.000
+    CHANGE             0.927      0.012     78.251      0.000
+
+
+STDY Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_CORT           0.977      0.001    699.482      0.000
+    RT2_CORT           0.988      0.002    423.190      0.000
+    RT3_CORT           1.001      0.005    208.556      0.000
+    RT4_CORT           1.010      0.008    122.645      0.000
+
+ SLOPE    BY
+    RT1_CORT           0.000      0.000    999.000    999.000
+    RT2_CORT           0.047      0.003     14.803      0.000
+    RT3_CORT           0.121      0.008     14.327      0.000
+    RT4_CORT           0.212      0.015     14.528      0.000
+
+ WMB_L    BY
+    WMB                1.000      0.000    999.000    999.000
+
+ WM6_L    BY
+    WM6                1.000      0.000    999.000    999.000
+
+ CHANGE   BY
+    WM6_L              1.000      0.000    999.000    999.000
+
+ WMB_L    ON
+    WM6_L              0.973      0.023     42.501      0.000
+
+ CHANGE   ON
+    SLOPE             -0.124      0.044     -2.836      0.005
+    INTERCEPT          0.116      0.021      5.529      0.000
+
+ SLOPE    ON
+    PMPDSTIMIN         0.382      0.037     10.429      0.000
+    ELA_PLUS           0.024      0.041      0.585      0.559
+
+ INTERCEP ON
+    ELA_PLUS          -0.139      0.021     -6.464      0.000
+
+ CHANGE   ON
+    ELA_PLUS          -0.086      0.018     -4.775      0.000
+    PMPDSTIMIN         0.093      0.025      3.783      0.000
+    PMPDSTEMPO         0.120      0.018      6.601      0.000
+
+ PMPDSTIM ON
+    ELA_PLUS          -0.003      0.021     -0.159      0.874
+
+ PMPDSTEM ON
+    ELA_PLUS          -0.171      0.021     -8.182      0.000
+
+ INTERCEP WITH
+    SLOPE             -0.305      0.040     -7.693      0.000
+    PMPDSTIMIN         0.055      0.021      2.643      0.008
+    PMPDSTEMPO         0.115      0.021      5.551      0.000
+
+ WMB_L    WITH
+    CHANGE            -0.509      0.021    -24.267      0.000
+
+ SLOPE    WITH
+    PMPDSTEMPO        -0.029      0.039     -0.740      0.460
+
+ PMPDSTIM WITH
+    PMPDSTEMPO         0.252      0.022     11.570      0.000
+
+ Means
+    ELA_PLUS           1.027      0.017     59.594      0.000
+
+ Intercepts
+    PMPDSTIMIN        13.832      0.202     68.416      0.000
+    PMPDSTEMPO         4.060      0.064     63.408      0.000
+    WMB                0.000      0.000    999.000    999.000
+    WM6                0.000      0.000    999.000    999.000
+    RT1_CORT           0.000      0.000    999.000    999.000
+    RT2_CORT           0.000      0.000    999.000    999.000
+    RT3_CORT           0.000      0.000    999.000    999.000
+    RT4_CORT           0.000      0.000    999.000    999.000
+    INTERCEPT         11.931      0.185     64.366      0.000
+    SLOPE             -8.798      0.636    -13.832      0.000
+    WMB_L             -0.953      0.023    -41.177      0.000
+    WM6_L              0.000      0.000    999.000    999.000
+    CHANGE             2.952      0.452      6.527      0.000
+
+ Variances
+    ELA_PLUS           1.000      0.000    999.000    999.000
+
+ Residual Variances
+    PMPDSTIMIN         1.000      0.000   7140.972      0.000
+    PMPDSTEMPO         0.971      0.007    136.531      0.000
+    WMB              999.000    999.000    999.000    999.000
+    WM6              999.000    999.000    999.000    999.000
+    RT1_CORT           0.045      0.003     16.388      0.000
+    RT2_CORT           0.046      0.003     16.425      0.000
+    RT3_CORT           0.047      0.003     16.321      0.000
+    RT4_CORT           0.048      0.003     15.797      0.000
+    INTERCEPT          0.981      0.006    164.965      0.000
+    SLOPE              0.853      0.028     30.245      0.000
+    WMB_L              1.012      0.042     23.944      0.000
+    WM6_L            999.000    999.000    999.000    999.000
+    CHANGE             0.927      0.012     78.251      0.000
+
+
+STD Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ INTERCEP BY
+    RT1_CORT          52.653      0.825     63.829      0.000
+    RT2_CORT          52.653      0.825     63.829      0.000
+    RT3_CORT          52.653      0.825     63.829      0.000
+    RT4_CORT          52.653      0.825     63.829      0.000
+
+ SLOPE    BY
+    RT1_CORT           0.000      0.000    999.000    999.000
+    RT2_CORT           2.492      0.164     15.210      0.000
+    RT3_CORT           6.345      0.429     14.787      0.000
+    RT4_CORT          11.073      0.746     14.838      0.000
+
+ WMB_L    BY
+    WMB                3.055      0.052     58.947      0.000
+
+ WM6_L    BY
+    WM6                2.972      0.062     48.143      0.000
+
+ CHANGE   BY
+    WM6_L              1.000      0.000    999.000    999.000
+
+ WMB_L    ON
+    WM6_L              0.973      0.023     42.501      0.000
+
+ CHANGE   ON
+    SLOPE             -0.124      0.044     -2.836      0.005
+    INTERCEPT          0.116      0.021      5.529      0.000
+
+ SLOPE    ON
+    PMPDSTIMIN         0.376      0.036     10.458      0.000
+    ELA_PLUS           0.013      0.023      0.585      0.559
+
+ INTERCEP ON
+    ELA_PLUS          -0.078      0.012     -6.569      0.000
+
+ CHANGE   ON
+    ELA_PLUS          -0.049      0.010     -4.786      0.000
+    PMPDSTIMIN         0.091      0.024      3.795      0.000
+    PMPDSTEMPO         0.996      0.150      6.624      0.000
+
+ PMPDSTIM ON
+    ELA_PLUS          -0.002      0.012     -0.159      0.874
+
+ PMPDSTEM ON
+    ELA_PLUS          -0.012      0.001     -8.024      0.000
+
+ INTERCEP WITH
+    SLOPE             -0.305      0.040     -7.693      0.000
+    PMPDSTIMIN         0.056      0.021      2.634      0.008
+    PMPDSTEMPO         0.014      0.002      5.487      0.000
+
+ WMB_L    WITH
+    CHANGE            -0.509      0.021    -24.267      0.000
+
+ SLOPE    WITH
+    PMPDSTEMPO        -0.003      0.005     -0.739      0.460
+
+ PMPDSTIM WITH
+    PMPDSTEMPO         0.031      0.003     11.301      0.000
+
+ Means
+    ELA_PLUS           1.818      0.039     46.663      0.000
+
+ Intercepts
+    PMPDSTIMIN        14.065      0.031    453.661      0.000
+    PMPDSTEMPO         0.491      0.004    135.139      0.000
+    WMB                0.000      0.000    999.000    999.000
+    WM6                0.000      0.000    999.000    999.000
+    RT1_CORT           0.000      0.000    999.000    999.000
+    RT2_CORT           0.000      0.000    999.000    999.000
+    RT3_CORT           0.000      0.000    999.000    999.000
+    RT4_CORT           0.000      0.000    999.000    999.000
+    INTERCEPT         11.931      0.185     64.366      0.000
+    SLOPE             -8.798      0.636    -13.832      0.000
+    WMB_L             -0.953      0.023    -41.177      0.000
+    WM6_L              0.000      0.000    999.000    999.000
+    CHANGE             2.952      0.452      6.527      0.000
+
+ Variances
+    ELA_PLUS           3.133      0.122     25.638      0.000
+
+ Residual Variances
+    PMPDSTIMIN         1.034      0.030     33.954      0.000
+    PMPDSTEMPO         0.014      0.000     35.000      0.000
+    WMB              999.000    999.000    999.000    999.000
+    WM6              999.000    999.000    999.000    999.000
+    RT1_CORT         129.908      7.321     17.743      0.000
+    RT2_CORT         129.908      7.321     17.743      0.000
+    RT3_CORT         129.908      7.321     17.743      0.000
+    RT4_CORT         129.908      7.321     17.743      0.000
+    INTERCEPT          0.981      0.006    164.965      0.000
+    SLOPE              0.853      0.028     30.245      0.000
+    WMB_L              1.012      0.042     23.944      0.000
+    WM6_L            999.000    999.000    999.000    999.000
+    CHANGE             0.927      0.012     78.251      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    PMPDSTIM           0.000      0.000      0.079      0.937
+    PMPDSTEM           0.029      0.007      4.091      0.000
+    WMB                1.000    999.000    999.000    999.000
+    WM6                1.000    999.000    999.000    999.000
+    RT1_CORT           0.955      0.003    349.741      0.000
+    RT2_CORT           0.954      0.003    342.636      0.000
+    RT3_CORT           0.953      0.003    331.417      0.000
+    RT4_CORT           0.952      0.003    314.975      0.000
+
+     Latent                                         Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    INTERCEP           0.019      0.006      3.232      0.001
+    SLOPE              0.147      0.028      5.200      0.000
+    WMB_L           Undefined  -0.11886E-01
+    WM6_L              1.000    999.000    999.000    999.000
+    CHANGE             0.073      0.012      6.206      0.000
+
+
+TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ELA_PLUS to CHANGE
+
+  Sum of indirect     -0.061      0.010     -6.410      0.000
+
+  Specific indirect 1
+    CHANGE
+    INTERCEP
+    ELA_PLUS          -0.027      0.006     -4.190      0.000
+
+  Specific indirect 2
+    CHANGE
+    PMPDSTEM
+    ELA_PLUS          -0.034      0.007     -5.074      0.000
+
+
+
+STANDARDIZED TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ELA_PLUS to CHANGE
+
+  Sum of indirect     -0.037      0.006     -6.440      0.000
+
+  Specific indirect 1
+    CHANGE
+    INTERCEP
+    ELA_PLUS          -0.016      0.004     -4.174      0.000
+
+  Specific indirect 2
+    CHANGE
+    PMPDSTEM
+    ELA_PLUS          -0.021      0.004     -5.124      0.000
+
+
+
+STDY Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ELA_PLUS to CHANGE
+
+  Sum of indirect     -0.037      0.006     -6.440      0.000
+
+  Specific indirect 1
+    CHANGE
+    INTERCEP
+    ELA_PLUS          -0.016      0.004     -4.174      0.000
+
+  Specific indirect 2
+    CHANGE
+    PMPDSTEM
+    ELA_PLUS          -0.021      0.004     -5.124      0.000
+
+
+
+STD Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+Effects from ELA_PLUS to CHANGE
+
+  Sum of indirect     -0.021      0.003     -6.493      0.000
+
+  Specific indirect 1
+    CHANGE
+    INTERCEP
+    ELA_PLUS          -0.009      0.002     -4.201      0.000
+
+  Specific indirect 2
+    CHANGE
+    PMPDSTEM
+    ELA_PLUS          -0.012      0.002     -5.133      0.000
+
+
+
+
+CONFIDENCE INTERVALS OF MODEL RESULTS
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ INTERCEP BY
+    RT1_CORT         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    RT2_CORT         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    RT3_CORT         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    RT4_CORT         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ SLOPE    BY
+    RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_CORT         0.206       0.211       0.213       0.225       0.237       0.239       0.244
+    RT3_CORT         0.549       0.555       0.558       0.573       0.588       0.591       0.596
+    RT4_CORT         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ WMB_L    BY
+    WMB              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ WM6_L    BY
+    WM6              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ CHANGE   BY
+    WM6_L            1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ WMB_L    ON
+    WM6_L            1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ CHANGE   ON
+    SLOPE           -0.067      -0.059      -0.055      -0.033      -0.012      -0.008       0.000
+    INTERCEPT        0.003       0.004       0.005       0.007       0.008       0.009       0.010
+
+ SLOPE    ON
+    PMPDSTIMIN       3.142       3.386       3.511       4.164       4.817       4.942       5.186
+    ELA_PLUS        -0.501      -0.346      -0.267       0.148       0.563       0.643       0.798
+
+ INTERCEP ON
+    ELA_PLUS        -5.765      -5.373      -5.172      -4.124      -3.076      -2.875      -2.482
+
+ CHANGE   ON
+    ELA_PLUS        -0.223      -0.204      -0.195      -0.145      -0.095      -0.086      -0.067
+    PMPDSTIMIN       0.085       0.130       0.152       0.271       0.390       0.412       0.457
+    PMPDSTEMPO       1.789       2.069       2.212       2.960       3.707       3.850       4.130
+
+ PMPDSTIM ON
+    ELA_PLUS        -0.033      -0.026      -0.022      -0.002       0.018       0.022       0.029
+
+ PMPDSTEM ON
+    ELA_PLUS        -0.015      -0.014      -0.014      -0.012      -0.009      -0.009      -0.008
+
+ INTERCEP WITH
+    SLOPE         -222.551    -208.274    -200.971    -162.833    -124.695    -117.392    -103.115
+    PMPDSTIMIN       0.064       0.752       1.104       2.941       4.778       5.130       5.818
+    PMPDSTEMPO       0.376       0.457       0.498       0.714       0.929       0.971       1.051
+
+ WMB_L    WITH
+    CHANGE          -5.264      -5.075      -4.978      -4.473      -3.968      -3.871      -3.682
+
+ SLOPE    WITH
+    PMPDSTEMPO      -0.156      -0.127      -0.112      -0.035       0.042       0.057       0.086
+
+ PMPDSTIM WITH
+    PMPDSTEMPO       0.024       0.025       0.026       0.031       0.035       0.036       0.038
+
+ Means
+    ELA_PLUS         1.718       1.742       1.754       1.818       1.882       1.895       1.919
+
+ Intercepts
+    PMPDSTIM        13.985      14.004      14.014      14.065      14.116      14.125      14.144
+    PMPDSTEM         0.482       0.484       0.485       0.491       0.497       0.498       0.500
+    WMB              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    WM6              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT3_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT4_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    INTERCEP       624.048     625.041     625.549     628.202     630.855     631.363     632.356
+    SLOPE         -111.875    -108.421    -106.653     -97.425     -88.197     -86.430     -82.975
+    WMB_L           -3.068      -3.031      -3.011      -2.910      -2.809      -2.790      -2.752
+    WM6_L            0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    CHANGE           5.460       6.253       6.658       8.774      10.890      11.295      12.087
+
+ Variances
+    ELA_PLUS         2.818       2.893       2.932       3.133       3.334       3.372       3.447
+
+ Residual Variances
+    PMPDSTIM         0.955       0.974       0.984       1.034       1.084       1.094       1.112
+    PMPDSTEM         0.013       0.013       0.014       0.014       0.015       0.015       0.015
+    WMB              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    WM6              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT1_CORT       111.050     115.558     117.865     129.908     141.952     144.259     148.767
+    RT2_CORT       111.050     115.558     117.865     129.908     141.952     144.259     148.767
+    RT3_CORT       111.050     115.558     117.865     129.908     141.952     144.259     148.767
+    RT4_CORT       111.050     115.558     117.865     129.908     141.952     144.259     148.767
+    INTERCEP      2499.677    2552.137    2578.972    2719.108    2859.245    2886.079    2938.539
+    SLOPE           64.207      73.871      78.814     104.629     130.443     135.387     145.050
+    WMB_L            8.495       8.722       8.838       9.443      10.049      10.165      10.391
+    WM6_L            0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    CHANGE           7.291       7.505       7.614       8.186       8.757       8.866       9.080
+
+
+CONFIDENCE INTERVALS OF STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ INTERCEP BY
+    RT1_CORT         0.974       0.975       0.975       0.977       0.980       0.980       0.981
+    RT2_CORT         0.982       0.983       0.984       0.988       0.992       0.993       0.994
+    RT3_CORT         0.988       0.991       0.993       1.001       1.009       1.010       1.013
+    RT4_CORT         0.988       0.993       0.996       1.010       1.023       1.026       1.031
+
+ SLOPE    BY
+    RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_CORT         0.039       0.041       0.042       0.047       0.052       0.053       0.055
+    RT3_CORT         0.099       0.104       0.107       0.121       0.134       0.137       0.142
+    RT4_CORT         0.175       0.184       0.188       0.212       0.236       0.241       0.250
+
+ WMB_L    BY
+    WMB              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ WM6_L    BY
+    WM6              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ CHANGE   BY
+    WM6_L            1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ WMB_L    ON
+    WM6_L            0.914       0.928       0.935       0.973       1.011       1.018       1.032
+
+ CHANGE   ON
+    SLOPE           -0.237      -0.210      -0.196      -0.124      -0.052      -0.038      -0.011
+    INTERCEPT        0.062       0.075       0.081       0.116       0.150       0.157       0.170
+
+ SLOPE    ON
+    PMPDSTIMIN       0.288       0.311       0.322       0.382       0.443       0.454       0.477
+    ELA_PLUS        -0.081      -0.056      -0.043       0.024       0.090       0.103       0.128
+
+ INTERCEP ON
+    ELA_PLUS        -0.194      -0.181      -0.174      -0.139      -0.103      -0.097      -0.083
+
+ CHANGE   ON
+    ELA_PLUS        -0.133      -0.122      -0.116      -0.086      -0.057      -0.051      -0.040
+    PMPDSTIMIN       0.030       0.045       0.052       0.093       0.133       0.141       0.156
+    PMPDSTEMPO       0.073       0.085       0.090       0.120       0.150       0.156       0.167
+
+ PMPDSTIM ON
+    ELA_PLUS        -0.057      -0.045      -0.038      -0.003       0.031       0.038       0.051
+
+ PMPDSTEM ON
+    ELA_PLUS        -0.224      -0.211      -0.205      -0.171      -0.136      -0.130      -0.117
+
+ INTERCEP WITH
+    SLOPE           -0.407      -0.383      -0.371      -0.305      -0.240      -0.228      -0.203
+    PMPDSTIMIN       0.001       0.014       0.021       0.055       0.090       0.097       0.110
+    PMPDSTEMPO       0.062       0.074       0.081       0.115       0.149       0.155       0.168
+
+ WMB_L    WITH
+    CHANGE          -0.563      -0.550      -0.543      -0.509      -0.474      -0.468      -0.455
+
+ SLOPE    WITH
+    PMPDSTEMPO      -0.128      -0.104      -0.092      -0.029       0.035       0.047       0.071
+
+ PMPDSTIM WITH
+    PMPDSTEMPO       0.196       0.209       0.216       0.252       0.288       0.295       0.308
+
+ Means
+    ELA_PLUS         0.983       0.994       0.999       1.027       1.056       1.061       1.072
+
+ Intercepts
+    PMPDSTIM        13.311      13.436      13.499      13.832      14.165      14.228      14.353
+    PMPDSTEM         3.895       3.935       3.955       4.060       4.166       4.186       4.225
+    WMB              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    WM6              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT3_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT4_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    INTERCEP        11.453      11.568      11.626      11.931      12.236      12.294      12.408
+    SLOPE          -10.437     -10.045      -9.845      -8.798      -7.752      -7.551      -7.160
+    WMB_L           -1.012      -0.998      -0.991      -0.953      -0.915      -0.907      -0.893
+    WM6_L            0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    CHANGE           1.787       2.065       2.208       2.952       3.696       3.838       4.117
+
+ Variances
+    ELA_PLUS         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ Residual Variances
+    PMPDSTIM         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    PMPDSTEM         0.953       0.957       0.959       0.971       0.983       0.985       0.989
+    WMB            999.000     999.000     999.000       0.000     999.000     999.000     999.000
+    WM6            999.000     999.000     999.000       0.000     999.000     999.000     999.000
+    RT1_CORT         0.038       0.039       0.040       0.045       0.049       0.050       0.052
+    RT2_CORT         0.039       0.040       0.041       0.046       0.050       0.051       0.053
+    RT3_CORT         0.040       0.041       0.042       0.047       0.052       0.053       0.054
+    RT4_CORT         0.040       0.042       0.043       0.048       0.053       0.054       0.056
+    INTERCEP         0.965       0.969       0.971       0.981       0.991       0.992       0.996
+    SLOPE            0.781       0.798       0.807       0.853       0.900       0.909       0.926
+    WMB_L            0.903       0.929       0.942       1.012       1.081       1.095       1.121
+    WM6_L          999.000     999.000     999.000       0.000     999.000     999.000     999.000
+    CHANGE           0.896       0.903       0.907       0.927       0.946       0.950       0.957
+
+
+STDY Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ INTERCEP BY
+    RT1_CORT         0.974       0.975       0.975       0.977       0.980       0.980       0.981
+    RT2_CORT         0.982       0.983       0.984       0.988       0.992       0.993       0.994
+    RT3_CORT         0.988       0.991       0.993       1.001       1.009       1.010       1.013
+    RT4_CORT         0.988       0.993       0.996       1.010       1.023       1.026       1.031
+
+ SLOPE    BY
+    RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_CORT         0.039       0.041       0.042       0.047       0.052       0.053       0.055
+    RT3_CORT         0.099       0.104       0.107       0.121       0.134       0.137       0.142
+    RT4_CORT         0.175       0.184       0.188       0.212       0.236       0.241       0.250
+
+ WMB_L    BY
+    WMB              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ WM6_L    BY
+    WM6              1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ CHANGE   BY
+    WM6_L            1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ WMB_L    ON
+    WM6_L            0.914       0.928       0.935       0.973       1.011       1.018       1.032
+
+ CHANGE   ON
+    SLOPE           -0.237      -0.210      -0.196      -0.124      -0.052      -0.038      -0.011
+    INTERCEPT        0.062       0.075       0.081       0.116       0.150       0.157       0.170
+
+ SLOPE    ON
+    PMPDSTIMIN       0.288       0.311       0.322       0.382       0.443       0.454       0.477
+    ELA_PLUS        -0.081      -0.056      -0.043       0.024       0.090       0.103       0.128
+
+ INTERCEP ON
+    ELA_PLUS        -0.194      -0.181      -0.174      -0.139      -0.103      -0.097      -0.083
+
+ CHANGE   ON
+    ELA_PLUS        -0.133      -0.122      -0.116      -0.086      -0.057      -0.051      -0.040
+    PMPDSTIMIN       0.030       0.045       0.052       0.093       0.133       0.141       0.156
+    PMPDSTEMPO       0.073       0.085       0.090       0.120       0.150       0.156       0.167
+
+ PMPDSTIM ON
+    ELA_PLUS        -0.057      -0.045      -0.038      -0.003       0.031       0.038       0.051
+
+ PMPDSTEM ON
+    ELA_PLUS        -0.224      -0.211      -0.205      -0.171      -0.136      -0.130      -0.117
+
+ INTERCEP WITH
+    SLOPE           -0.407      -0.383      -0.371      -0.305      -0.240      -0.228      -0.203
+    PMPDSTIMIN       0.001       0.014       0.021       0.055       0.090       0.097       0.110
+    PMPDSTEMPO       0.062       0.074       0.081       0.115       0.149       0.155       0.168
+
+ WMB_L    WITH
+    CHANGE          -0.563      -0.550      -0.543      -0.509      -0.474      -0.468      -0.455
+
+ SLOPE    WITH
+    PMPDSTEMPO      -0.128      -0.104      -0.092      -0.029       0.035       0.047       0.071
+
+ PMPDSTIM WITH
+    PMPDSTEMPO       0.196       0.209       0.216       0.252       0.288       0.295       0.308
+
+ Means
+    ELA_PLUS         0.983       0.994       0.999       1.027       1.056       1.061       1.072
+
+ Intercepts
+    PMPDSTIM        13.311      13.436      13.499      13.832      14.165      14.228      14.353
+    PMPDSTEM         3.895       3.935       3.955       4.060       4.166       4.186       4.225
+    WMB              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    WM6              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT3_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT4_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    INTERCEP        11.453      11.568      11.626      11.931      12.236      12.294      12.408
+    SLOPE          -10.437     -10.045      -9.845      -8.798      -7.752      -7.551      -7.160
+    WMB_L           -1.012      -0.998      -0.991      -0.953      -0.915      -0.907      -0.893
+    WM6_L            0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    CHANGE           1.787       2.065       2.208       2.952       3.696       3.838       4.117
+
+ Variances
+    ELA_PLUS         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ Residual Variances
+    PMPDSTIM         1.000       1.000       1.000       1.000       1.000       1.000       1.000
+    PMPDSTEM         0.953       0.957       0.959       0.971       0.983       0.985       0.989
+    WMB            999.000     999.000     999.000     999.000     999.000     999.000     999.000
+    WM6            999.000     999.000     999.000     999.000     999.000     999.000     999.000
+    RT1_CORT         0.038       0.039       0.040       0.045       0.049       0.050       0.052
+    RT2_CORT         0.039       0.040       0.041       0.046       0.050       0.051       0.053
+    RT3_CORT         0.040       0.041       0.042       0.047       0.052       0.053       0.054
+    RT4_CORT         0.040       0.042       0.043       0.048       0.053       0.054       0.056
+    INTERCEP         0.965       0.969       0.971       0.981       0.991       0.992       0.996
+    SLOPE            0.781       0.798       0.807       0.853       0.900       0.909       0.926
+    WMB_L            0.903       0.929       0.942       1.012       1.081       1.095       1.121
+    WM6_L          999.000     999.000     999.000     999.000     999.000     999.000     999.000
+    CHANGE           0.896       0.903       0.907       0.927       0.946       0.950       0.957
+
+
+STD Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+ INTERCEP BY
+    RT1_CORT        50.529      51.037      51.296      52.653      54.010      54.270      54.778
+    RT2_CORT        50.529      51.037      51.296      52.653      54.010      54.270      54.778
+    RT3_CORT        50.529      51.037      51.296      52.653      54.010      54.270      54.778
+    RT4_CORT        50.529      51.037      51.296      52.653      54.010      54.270      54.778
+
+ SLOPE    BY
+    RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_CORT         2.070       2.171       2.223       2.492       2.762       2.813       2.914
+    RT3_CORT         5.239       5.504       5.639       6.345       7.051       7.186       7.450
+    RT4_CORT         9.151       9.611       9.846      11.073      12.301      12.536      12.996
+
+ WMB_L    BY
+    WMB              2.921       2.953       2.970       3.055       3.140       3.156       3.188
+
+ WM6_L    BY
+    WM6              2.813       2.851       2.871       2.972       3.074       3.093       3.131
+
+ CHANGE   BY
+    WM6_L            1.000       1.000       1.000       1.000       1.000       1.000       1.000
+
+ WMB_L    ON
+    WM6_L            0.914       0.928       0.935       0.973       1.011       1.018       1.032
+
+ CHANGE   ON
+    SLOPE           -0.237      -0.210      -0.196      -0.124      -0.052      -0.038      -0.011
+    INTERCEPT        0.062       0.075       0.081       0.116       0.150       0.157       0.170
+
+ SLOPE    ON
+    PMPDSTIMIN       0.283       0.306       0.317       0.376       0.435       0.447       0.469
+    ELA_PLUS        -0.046      -0.032      -0.024       0.013       0.051       0.058       0.072
+
+ INTERCEP ON
+    ELA_PLUS        -0.109      -0.102      -0.098      -0.078      -0.059      -0.055      -0.048
+
+ CHANGE   ON
+    ELA_PLUS        -0.075      -0.069      -0.066      -0.049      -0.032      -0.029      -0.023
+    PMPDSTIMIN       0.029       0.044       0.052       0.091       0.131       0.138       0.153
+    PMPDSTEMPO       0.609       0.701       0.748       0.996       1.243       1.290       1.383
+
+ PMPDSTIM ON
+    ELA_PLUS        -0.033      -0.026      -0.022      -0.002       0.018       0.022       0.029
+
+ PMPDSTEM ON
+    ELA_PLUS        -0.015      -0.014      -0.014      -0.012      -0.009      -0.009      -0.008
+
+ INTERCEP WITH
+    SLOPE           -0.407      -0.383      -0.371      -0.305      -0.240      -0.228      -0.203
+    PMPDSTIMIN       0.001       0.014       0.021       0.056       0.092       0.098       0.112
+    PMPDSTEMPO       0.007       0.009       0.010       0.014       0.018       0.019       0.020
+
+ WMB_L    WITH
+    CHANGE          -0.563      -0.550      -0.543      -0.509      -0.474      -0.468      -0.455
+
+ SLOPE    WITH
+    PMPDSTEMPO      -0.015      -0.012      -0.011      -0.003       0.004       0.006       0.008
+
+ PMPDSTIM WITH
+    PMPDSTEMPO       0.024       0.025       0.026       0.031       0.035       0.036       0.038
+
+ Means
+    ELA_PLUS         1.718       1.742       1.754       1.818       1.882       1.895       1.919
+
+ Intercepts
+    PMPDSTIM        13.985      14.004      14.014      14.065      14.116      14.125      14.144
+    PMPDSTEM         0.482       0.484       0.485       0.491       0.497       0.498       0.500
+    WMB              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    WM6              0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT1_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT2_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT3_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    RT4_CORT         0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    INTERCEP        11.453      11.568      11.626      11.931      12.236      12.294      12.408
+    SLOPE          -10.437     -10.045      -9.845      -8.798      -7.752      -7.551      -7.160
+    WMB_L           -1.012      -0.998      -0.991      -0.953      -0.915      -0.907      -0.893
+    WM6_L            0.000       0.000       0.000       0.000       0.000       0.000       0.000
+    CHANGE           1.787       2.065       2.208       2.952       3.696       3.838       4.117
+
+ Variances
+    ELA_PLUS         2.818       2.893       2.932       3.133       3.334       3.372       3.447
+
+ Residual Variances
+    PMPDSTIM         0.955       0.974       0.984       1.034       1.084       1.094       1.112
+    PMPDSTEM         0.013       0.013       0.014       0.014       0.015       0.015       0.015
+    WMB            999.000     999.000     999.000     999.000     999.000     999.000     999.000
+    WM6            999.000     999.000     999.000     999.000     999.000     999.000     999.000
+    RT1_CORT       111.050     115.558     117.865     129.908     141.952     144.259     148.767
+    RT2_CORT       111.050     115.558     117.865     129.908     141.952     144.259     148.767
+    RT3_CORT       111.050     115.558     117.865     129.908     141.952     144.259     148.767
+    RT4_CORT       111.050     115.558     117.865     129.908     141.952     144.259     148.767
+    INTERCEP         0.965       0.969       0.971       0.981       0.991       0.992       0.996
+    SLOPE            0.781       0.798       0.807       0.853       0.900       0.909       0.926
+    WMB_L            0.903       0.929       0.942       1.012       1.081       1.095       1.121
+    WM6_L          999.000     999.000     999.000     999.000     999.000     999.000     999.000
+    CHANGE           0.896       0.903       0.907       0.927       0.946       0.950       0.957
+
+
+CONFIDENCE INTERVALS OF TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+Effects from ELA_PLUS to CHANGE
+
+  Sum of indirect   -0.086      -0.080      -0.077      -0.061      -0.046      -0.043      -0.037
+
+  Specific indirect 1
+    CHANGE
+    INTERCEP
+    ELA_PLUS        -0.043      -0.040      -0.038      -0.027      -0.016      -0.014      -0.010
+
+  Specific indirect 2
+    CHANGE
+    PMPDSTEM
+    ELA_PLUS        -0.052      -0.048      -0.046      -0.034      -0.023      -0.021      -0.017
+
+
+
+CONFIDENCE INTERVALS OF STANDARDIZED TOTAL, TOTAL INDIRECT, SPECIFIC INDIRECT, AND DIRECT EFFECTS
+
+
+STDYX Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+Effects from ELA_PLUS to CHANGE
+
+  Sum of indirect   -0.051      -0.048      -0.046      -0.037      -0.027      -0.025      -0.022
+
+  Specific indirect 1
+    CHANGE
+    INTERCEP
+    ELA_PLUS        -0.026      -0.024      -0.022      -0.016      -0.010      -0.009      -0.006
+
+  Specific indirect 2
+    CHANGE
+    PMPDSTEM
+    ELA_PLUS        -0.031      -0.028      -0.027      -0.021      -0.014      -0.013      -0.010
+
+
+
+STDY Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+Effects from ELA_PLUS to CHANGE
+
+  Sum of indirect   -0.051      -0.048      -0.046      -0.037      -0.027      -0.025      -0.022
+
+  Specific indirect 1
+    CHANGE
+    INTERCEP
+    ELA_PLUS        -0.026      -0.024      -0.022      -0.016      -0.010      -0.009      -0.006
+
+  Specific indirect 2
+    CHANGE
+    PMPDSTEM
+    ELA_PLUS        -0.031      -0.028      -0.027      -0.021      -0.014      -0.013      -0.010
+
+
+
+STD Standardization
+
+                  Lower .5%  Lower 2.5%    Lower 5%    Estimate    Upper 5%  Upper 2.5%   Upper .5%
+
+Effects from ELA_PLUS to CHANGE
+
+  Sum of indirect   -0.029      -0.027      -0.026      -0.021      -0.015      -0.014      -0.012
+
+  Specific indirect 1
+    CHANGE
+    INTERCEP
+    ELA_PLUS        -0.015      -0.013      -0.013      -0.009      -0.006      -0.005      -0.004
+
+  Specific indirect 2
+    CHANGE
+    PMPDSTEM
+    ELA_PLUS        -0.017      -0.016      -0.015      -0.012      -0.008      -0.007      -0.006
+
+
+
+
+TECHNICAL 4 OUTPUT
+
+
+     ESTIMATES DERIVED FROM THE MODEL
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         WMB_L         WM6_L         CHANGE
+              ________      ________      ________      ________      ________
+              620.704       -38.603        16.140        19.050        19.050
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              PMPDSTIM      PMPDSTEM      ELA_PLUS
+              ________      ________      ________
+               14.061         0.470         1.818
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         WMB_L         WM6_L         CHANGE
+              ________      ________      ________      ________      ________
+                1.121         0.410         0.062         0.060         0.060
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              PMPDSTIM      PMPDSTEM      ELA_PLUS
+              ________      ________      ________
+                0.022         0.003         0.039
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         WMB_L         WM6_L         CHANGE
+              ________      ________      ________      ________      ________
+              553.695       -94.171       259.274       317.805       317.805
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              PMPDSTIM      PMPDSTEM      ELA_PLUS
+              ________      ________      ________
+              653.747       184.938        46.663
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         WMB_L         WM6_L         CHANGE
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              PMPDSTIM      PMPDSTEM      ELA_PLUS
+              ________      ________      ________
+                0.000         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         WMB_L         WM6_L         CHANGE
+              ________      ________      ________      ________      ________
+ INTERCEP    2772.382
+ SLOPE       -152.400       122.619
+ WMB_L         28.418        -3.720         9.332
+ WM6_L         28.418        -3.720         4.362         8.835
+ CHANGE        28.418        -3.720         4.362         8.835         8.835
+ PMPDSTIM       2.966         4.304         0.248         0.248         0.248
+ PMPDSTEM       0.864         0.087         0.060         0.060         0.060
+ ELA_PLUS     -12.919         0.440        -0.663        -0.663        -0.663
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              PMPDSTIM      PMPDSTEM      ELA_PLUS
+              ________      ________      ________
+ PMPDSTIM       1.034
+ PMPDSTEM       0.031         0.015
+ ELA_PLUS      -0.006        -0.037         3.133
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         WMB_L         WM6_L         CHANGE
+              ________      ________      ________      ________      ________
+ INTERCEP      86.870
+ SLOPE         23.898        16.527
+ WMB_L          3.021         1.171         0.317
+ WM6_L          3.021         1.171         0.224         0.367
+ CHANGE         3.021         1.171         0.224         0.367         0.367
+ PMPDSTIM       1.128         0.423         0.054         0.054         0.054
+ PMPDSTEM       0.133         0.051         0.007         0.007         0.007
+ ELA_PLUS       2.090         0.817         0.096         0.096         0.096
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              PMPDSTIM      PMPDSTEM      ELA_PLUS
+              ________      ________      ________
+ PMPDSTIM       0.030
+ PMPDSTEM       0.003         0.000
+ ELA_PLUS       0.038         0.005         0.122
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         WMB_L         WM6_L         CHANGE
+              ________      ________      ________      ________      ________
+ INTERCEP      31.914
+ SLOPE         -6.377         7.419
+ WMB_L          9.406        -3.178        29.474
+ WM6_L          9.406        -3.178        19.481        24.071
+ CHANGE         9.406        -3.178        19.481        24.071        24.071
+ PMPDSTIM       2.629        10.165         4.584         4.584         4.584
+ PMPDSTEM       6.499         1.704         8.890         8.890         8.890
+ ELA_PLUS      -6.180         0.539        -6.931        -6.931        -6.931
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              PMPDSTIM      PMPDSTEM      ELA_PLUS
+              ________      ________      ________
+ PMPDSTIM      33.954
+ PMPDSTEM      11.200        34.614
+ ELA_PLUS      -0.159        -7.734        25.638
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         WMB_L         WM6_L         CHANGE
+              ________      ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.000         0.000
+ WMB_L          0.000         0.001         0.000
+ WM6_L          0.000         0.001         0.000         0.000
+ CHANGE         0.000         0.001         0.000         0.000         0.000
+ PMPDSTIM       0.009         0.000         0.000         0.000         0.000
+ PMPDSTEM       0.000         0.088         0.000         0.000         0.000
+ ELA_PLUS       0.000         0.590         0.000         0.000         0.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              PMPDSTIM      PMPDSTEM      ELA_PLUS
+              ________      ________      ________
+ PMPDSTIM       0.000
+ PMPDSTEM       0.000         0.000
+ ELA_PLUS       0.874         0.000         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         WMB_L         WM6_L         CHANGE
+              ________      ________      ________      ________      ________
+ INTERCEP       1.000
+ SLOPE         -0.261         1.000
+ WMB_L          0.177        -0.110         1.000
+ WM6_L          0.182        -0.113         0.480         1.000
+ CHANGE         0.182        -0.113         0.480         1.000         1.000
+ PMPDSTIM       0.055         0.382         0.080         0.082         0.082
+ PMPDSTEM       0.136         0.065         0.161         0.166         0.166
+ ELA_PLUS      -0.139         0.022        -0.123        -0.126        -0.126
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              PMPDSTIM      PMPDSTEM      ELA_PLUS
+              ________      ________      ________
+ PMPDSTIM       1.000
+ PMPDSTEM       0.249         1.000
+ ELA_PLUS      -0.003        -0.171         1.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         WMB_L         WM6_L         CHANGE
+              ________      ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.038         0.000
+ WMB_L          0.018         0.037         0.000
+ WM6_L          0.018         0.037         0.017         0.000
+ CHANGE         0.018         0.037         0.017         0.000         0.000
+ PMPDSTIM       0.021         0.037         0.017         0.018         0.018
+ PMPDSTEM       0.020         0.038         0.017         0.018         0.018
+ ELA_PLUS       0.021         0.042         0.017         0.018         0.018
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              PMPDSTIM      PMPDSTEM      ELA_PLUS
+              ________      ________      ________
+ PMPDSTIM       0.000
+ PMPDSTEM       0.022         0.000
+ ELA_PLUS       0.021         0.021         0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         WMB_L         WM6_L         CHANGE
+              ________      ________      ________      ________      ________
+ INTERCEP     999.000
+ SLOPE         -6.878       999.000
+ WMB_L          9.812        -2.999       999.000
+ WM6_L          9.960        -3.026        27.964       999.000
+ CHANGE         9.960        -3.026        27.964   ***********       999.000
+ PMPDSTIM       2.640        10.426         4.654         4.680         4.680
+ PMPDSTEM       6.668         1.728         9.309         9.438         9.438
+ ELA_PLUS      -6.464         0.536        -7.178        -7.151        -7.151
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              PMPDSTIM      PMPDSTEM      ELA_PLUS
+              ________      ________      ________
+ PMPDSTIM     999.000
+ PMPDSTEM      11.476       999.000
+ ELA_PLUS      -0.159        -8.182       999.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              INTERCEP      SLOPE         WMB_L         WM6_L         CHANGE
+              ________      ________      ________      ________      ________
+ INTERCEP       0.000
+ SLOPE          0.000         0.000
+ WMB_L          0.000         0.003         0.000
+ WM6_L          0.000         0.002         0.000         0.000
+ CHANGE         0.000         0.002         0.000         0.000         0.000
+ PMPDSTIM       0.008         0.000         0.000         0.000         0.000
+ PMPDSTEM       0.000         0.084         0.000         0.000         0.000
+ ELA_PLUS       0.000         0.592         0.000         0.000         0.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              PMPDSTIM      PMPDSTEM      ELA_PLUS
+              ________      ________      ________
+ PMPDSTIM       0.000
+ PMPDSTEM       0.000         0.000
+ ELA_PLUS       0.874         0.000         0.000
+
+
+     Beginning Time:  10:00:19
+        Ending Time:  10:00:19
+       Elapsed Time:  00:00:00
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2022 Muthen & Muthen
