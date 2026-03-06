@@ -352,7 +352,7 @@ p_subcort <- plot_overlay_se_with_inds(
   y_breaks = seq(50000, 70000, by = 5000)
 )
 
-final_plot <- (p_gmv / p_cort / p_subcort) + plot_layout(heights = c(1,1,1))
+final_plot <- (p_cort / p_subcort) + plot_layout(heights = c(1,1))
 print(final_plot)
 
 stats <- df %>%
@@ -439,7 +439,6 @@ library(ggcorrplot)
 
 vars <- c("subcort_vol_4", "subcort_vol_3", "subcort_vol_2","subcort_vol_1",  
   "cort_vol_4", "cort_vol_3", "cort_vol_2",   "cort_vol_1", 
-  "T4_totalGMV", "T3_totalGMV", "T2_totalGMV",   "T1_totalGMV", 
   "pPDStempo", "yPDStempo", "pPDStiming",   "yPDStiming", 
   "ela_plus", "wm6", "wmb" 
 )
@@ -485,10 +484,6 @@ var_labels <- c(
   pPDStiming = "PDS timing (parent-reported)",
   yPDStempo  = "PDS tempo (youth-reported)",
   pPDStempo  = "PDS tempo (parent-reported)",
-  T1_totalGMV = "Total GMV (Baseline)",
-  T2_totalGMV = "Total GMV (Year 2)",
-  T3_totalGMV = "Total GMV (Year 4)",
-  T4_totalGMV = "Total GMV (Year 6)",
   cort_vol_1 = "Cortical volume (Baseline)",
   cort_vol_2 = "Cortical volume (Year 2)",
   cort_vol_3 = "Cortical volume (Year 4)",
